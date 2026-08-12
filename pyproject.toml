@@ -20,8 +20,12 @@ aerollm-evaluate = "aerollm.evaluation.cli:main"
 aerollm-validate-corpus = "aerollm.evaluation.validate_cli:main"
 aerollm-retrieve = "aerollm.retrieval.cli:main"
 
+[project.scripts]
+aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8.3", "ruff>=0.9"]
+transformers = ["torch>=2.5", "transformers>=4.48,<6"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -8,6 +8,7 @@ from aerollm.generation.backends import (
     GenerationTrace,
     ModelBackend,
 )
+from aerollm.generation.transformers_backend import TransformersBackend, fingerprint_model_config
 
 __all__ = [
     "BackendIdentity",
@@ -16,4 +17,6 @@ __all__ = [
     "GenerationResult",
     "GenerationTrace",
     "ModelBackend",
+    "TransformersBackend",
+    "fingerprint_model_config",
 ]
