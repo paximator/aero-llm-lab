@@ -46,6 +46,13 @@ review but is not converted into an automatic score. Reports bind the dataset ID
 version, and SHA-256 digest and include per-example failure labels plus answerability
 and split slices.
 
+Before a dataset is frozen, corpus validation joins source-manifest entries,
+canonical parsed documents, content-derived chunks, and evaluation examples. It
+rejects event-family split leakage, mismatched document offsets or page ranges,
+unknown provenance sources, and evidence that is not an exact span of its declared
+chunk. Document IDs bind source ID, parser version, and canonical text; chunk IDs
+bind document ID, offsets, content kind, and text.
+
 Primary measures are answer correctness, citation precision/recall, citation span
 validity, unsupported-claim rate, and abstention precision/recall. Results are also
 sliced by answerability, report length, table/OCR content, and retrieval difficulty.
