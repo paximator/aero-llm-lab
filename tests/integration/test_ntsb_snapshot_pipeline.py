@@ -39,6 +39,29 @@ def test_saved_snapshot_normalizes_to_neutral_records_and_manifest(tmp_path) -> 
         "event_type": "Incident",
     }
 
+
+def test_single_case_detail_resolves_formal_report_number(tmp_path) -> None:
+    body = json.dumps(
+        {
+            "ntsbNumber": "DCA20MA059",
+            "mKey": 100863,
+            "reportNumber": "AAR2101",
+            "eventType": "Accident",
+        }
+    ).encode()
+    snapshot = SnapshotStore(tmp_path).save(
+        source="ntsb",
+        source_id="aviation-case-DCA20MA059-100863",
+        source_url="https://api.example.test/GetAviationCase",
+        publisher="NTSB",
+        response=RemoteResponse(body, "application/json"),
+        retrieved_at=datetime(2026, 1, 8, tzinfo=UTC),
+    )
+
+    record = normalize_snapshot(snapshot)[0]
+
+    assert record.documents[0].source_url.endswith("/Reports/AAR2101.pdf")
+
     manifest_path = tmp_path / "manifests" / "ntsb-synthetic.json"
     SourceManifest(
         source="ntsb",

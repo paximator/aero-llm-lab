@@ -80,6 +80,12 @@ The command accepts one case only, snapshots the unmodified response, and record
 both identifiers as request provenance. It does not enumerate cases or bypass the
 bounded discovery stage.
 
+For formal reports whose API record supplies a report number but leaves
+`reportPage` null, normalization derives the fixed official NTSB PDF path only when
+the report number passes a strict compact-format check (for example `AAR2101`). The
+existing HTTPS-host allowlist, response size limit, PDF signature check, immutable
+snapshot, and parser validation still apply before any document is accepted.
+
 The base URL and subscription key are required environment variables. The command
 sends the key only in the `Ocp-Apim-Subscription-Key` request header, prints a
 provider-neutral `SourceDocument`, and writes the raw body plus a metadata sidecar

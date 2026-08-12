@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections.abc import Iterator, Mapping
 from datetime import date, datetime
 from pathlib import Path
@@ -47,15 +48,18 @@ def _case_items(payload: Any) -> Iterator[Mapping[str, Any]]:
         items = payload
     elif isinstance(payload, dict):
         envelope = _casefolded(payload)
-        found = next(
-            (envelope[key] for key in ("cases", "data", "results", "value") if key in envelope),
-            None,
-        )
-        if found is None:
-            raise NTSBSnapshotSchemaError(
-                "NTSB response must be a list or contain cases, data, results, or value"
+        if any(key in envelope for key in ("ntsbnumber", "accidentnumber", "casenumber")):
+            items = [payload]
+        else:
+            found = next(
+                (envelope[key] for key in ("cases", "data", "results", "value") if key in envelope),
+                None,
             )
-        items = found
+            if found is None:
+                raise NTSBSnapshotSchemaError(
+                    "NTSB response must be a case, list, or contain cases, data, results, or value"
+                )
+            items = found
     else:
         raise NTSBSnapshotSchemaError("NTSB response must be a JSON object or list")
     if not isinstance(items, list):
@@ -71,7 +75,10 @@ def _normalize_case(raw: Mapping[str, Any], document: SourceDocument) -> Aviatio
     source_id = _required_text(values, "ntsbnumber", "accidentnumber", "casenumber")
     event_id = _optional_text(values, "eventid", "event_id")
     source_url = _optional_text(values, "caseurl", "sourceurl", "url") or document.source_url
-    report_url = _optional_text(values, "reporturl", "finalreporturl")
+    report_url = _optional_text(values, "reporturl", "finalreporturl", "reportpage")
+    report_number = _optional_text(values, "reportnumber")
+    if report_url is None and report_number is not None:
+        report_url = _official_report_url(report_number)
     attributes = _attributes(values)
     return AviationReportRecord(
         source="ntsb",
@@ -141,3 +148,11 @@ def _documents(
             event_id=event_id,
         ),
     )
+
+
+def _official_report_url(report_number: str) -> str | None:
+    """Resolve compact formal report numbers to NTSB's fixed official PDF path."""
+    compact = re.sub(r"[-/\s]", "", report_number).upper()
+    if re.fullmatch(r"[A-Z]{2,4}\d{4}", compact) is None:
+        return None
+    return f"https://www.ntsb.gov/investigations/AccidentReports/Reports/{compact}.pdf"

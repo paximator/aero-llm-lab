@@ -9,7 +9,7 @@ from importlib.metadata import version
 from pathlib import Path
 
 from pypdf import PdfReader
-from pypdf.errors import PdfReadError
+from pypdf.errors import DependencyError, PdfReadError
 
 from aerollm.common.schemas import Document, PageSpan, SourceDocument
 
@@ -33,10 +33,16 @@ def parse_pdf_snapshot(source: SourceDocument, *, max_bytes: int = 25 * 1024 * 1
         raise PDFParseError("snapshot does not have a PDF signature")
     try:
         reader = PdfReader(io.BytesIO(body), strict=True)
-    except (PdfReadError, TypeError, ValueError) as error:
+    except (DependencyError, PdfReadError, TypeError, ValueError) as error:
         raise PDFParseError("PDF snapshot could not be parsed") from error
+    decrypted_with_empty_password = False
     if reader.is_encrypted:
-        raise PDFParseError("encrypted PDF snapshots are not supported")
+        try:
+            decrypted_with_empty_password = bool(reader.decrypt(""))
+        except (DependencyError, PdfReadError, TypeError, ValueError) as error:
+            raise PDFParseError("encrypted PDF snapshot could not be opened") from error
+        if not decrypted_with_empty_password:
+            raise PDFParseError("password-protected PDF snapshots are not supported")
     try:
         page_texts = tuple(
             (page.extract_text(extraction_mode="layout") or "").rstrip() for page in reader.pages
@@ -50,7 +56,11 @@ def parse_pdf_snapshot(source: SourceDocument, *, max_bytes: int = 25 * 1024 * 1
         text=text,
         pages=spans,
         parser=f"pypdf/{version('pypdf')}",
-        metadata={"page_count": len(spans), "extraction_mode": "layout"},
+        metadata={
+            "page_count": len(spans),
+            "extraction_mode": "layout",
+            "empty_password_decryption": decrypted_with_empty_password,
+        },
     )
 
 

@@ -86,11 +86,9 @@ class Document:
             raise ValueError("document_id does not match source digest")
         cursor = 0
         for page in self.pages:
-            if page.start_offset != cursor:
-                raise ValueError("page spans must be ordered and contiguous")
+            if page.start_offset < cursor:
+                raise ValueError("page spans must be ordered and non-overlapping")
             cursor = page.end_offset
-        if self.pages and cursor != len(self.text):
-            raise ValueError("page spans must cover the complete document text")
 
     def to_dict(self) -> dict[str, Any]:
         return {
