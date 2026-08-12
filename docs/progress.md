@@ -16,17 +16,18 @@ This page is the narrative milestone log. Reproducible measurements live in
   quarantined the unreliable table heuristic from retrieval features.
 - Independently reviewed and froze retrieval test set v1: 10 grounded questions with
   exact corpus evidence and an immutable digest.
+- Ran the locked BM25 test baseline without test-driven tuning: Recall@10 and MRR@10
+  were both 0.500 on 10 examples.
 
 ## Current milestone
 
-Run the first locked BM25 retrieval benchmark against retrieval test set v1 without
-tuning against the test split. The development BM25 baseline remains the only source
-for retrieval design decisions.
+Develop and select the first dense retriever using only the development split. The
+locked BM25 test result is recorded for final comparison and must not drive changes.
 
 ## Next milestones
 
-1. Locked BM25 test retrieval evaluation and error analysis (report only; do not tune).
-2. Dense retrieval and measured comparison with BM25.
+1. Dense retrieval development and measured comparison with BM25.
+2. One locked dense-retrieval test measurement after configuration selection.
 3. Reranking only if baseline failures justify it.
 4. Base, prompted, and RAG generation comparisons on the frozen task suite.
 5. QLoRA SFT on the documented local hardware budget.
