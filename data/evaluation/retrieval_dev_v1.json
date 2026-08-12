@@ -1,0 +1,500 @@
+{
+  "dataset_id": "ntsb-retrieval-development",
+  "examples": [
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_089a7bae0f6b3c9f87aa7cb7b7052f0535fef09c8b39baab5f068d6a6984d96d",
+          "quote": "The pilot and eight passengers died"
+        }
+      ],
+      "example_id": "dev-calabasas-fatalities",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "How many people died in the Calabasas helicopter accident?",
+      "reference_answer": "The pilot and eight passengers died.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_089a7bae0f6b3c9f87aa7cb7b7052f0535fef09c8b39baab5f068d6a6984d96d",
+          "quote": "Sikorsky S-76B helicopter,\nN72EX"
+        }
+      ],
+      "example_id": "dev-calabasas-aircraft",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "What helicopter model and registration were involved in the Calabasas accident?",
+      "reference_answer": "A Sikorsky S-76B registered N72EX.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_089a7bae0f6b3c9f87aa7cb7b7052f0535fef09c8b39baab5f068d6a6984d96d",
+          "quote": "entered a rapidly   descending left turn and crashed into terrain"
+        }
+      ],
+      "example_id": "dev-calabasas-final-maneuver",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "What maneuver immediately preceded the Calabasas terrain impact?",
+      "reference_answer": "The helicopter entered a rapidly descending left turn.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_52631fb2e42b42850aed1933dbef747ae9a5f6c31b964fffc9b1cabd3da646bd",
+          "quote": "which led to his loss of helicopter control and the resulting\n              collision with terrain"
+        }
+      ],
+      "example_id": "dev-calabasas-disorientation",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "What effect did spatial disorientation have on the Calabasas pilot?",
+      "reference_answer": "It led to loss of helicopter control and collision with terrain.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_56064272856987bb459d674b6044d1aa0230a6543b69f91204a9370234f06753",
+          "quote": "identified no evidence of preimpact malfunction or failure\n                         that would have precluded normal operation"
+        }
+      ],
+      "example_id": "dev-calabasas-mechanical",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "Did investigators identify a mechanical anomaly in the Calabasas helicopter?",
+      "reference_answer": "No; investigators determined there were no mechanical anomalies.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_8a49ef818a1291aaed146b24407694f8ae4bc06f02f945906c169af2a0e1cb20",
+          "quote": "The pilot was certificated, current, and qualified"
+        }
+      ],
+      "example_id": "dev-calabasas-qualification",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "Was the Calabasas pilot qualified to conduct the VFR flight?",
+      "reference_answer": "Yes; he was certificated, current, and qualified.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_8a49ef818a1291aaed146b24407694f8ae4bc06f02f945906c169af2a0e1cb20",
+          "quote": "toxicology testing revealed negative results for alcohol and other tested-                          for substances"
+        }
+      ],
+      "example_id": "dev-calabasas-toxicology",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "What did postmortem toxicology show for the Calabasas pilot?",
+      "reference_answer": "It was negative for alcohol and the other tested substances.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_6d968a95508c0cc20e6a71136416c4be3b322354b5e79899df14ce8ebbb4eaae",
+          "quote": "the pilot lost visual reference to the horizon and the ground"
+        }
+      ],
+      "example_id": "dev-calabasas-clouds",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "What visual references did the pilot lose after the helicopter began penetrating clouds?",
+      "reference_answer": "He lost visual reference to the horizon and the ground.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [
+        {
+          "chunk_id": "chk_f8d4f435012763629ea17024f7ceb8a89f323107b7a3120d222ff577a15f5a7c",
+          "quote": "Participate in     the    Federal Aviation Administration\u2019s      Safety    Management     System\n                      Voluntary Program"
+        }
+      ],
+      "example_id": "dev-calabasas-sms",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "Which FAA safety program did the NTSB recommend Island Express join?",
+      "reference_answer": "The FAA Safety Management System Voluntary Program.",
+      "report_id": "DCA20MA059:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": false,
+      "event_family_id": "DCA20MA059",
+      "event_id": "DCA20MA059",
+      "evidence": [],
+      "example_id": "dev-calabasas-negative",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA20MA059:report"
+        ]
+      },
+      "question": "What color luggage did the Calabasas passengers carry?",
+      "reference_answer": null,
+      "report_id": "DCA20MA059:report",
+      "rubric": [
+        "Abstain because the report does not establish passenger luggage colors."
+      ],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_0f274548a25df050a0bc80b854a92e1e014ce8694f0408c163e129621aeba4af",
+          "quote": "The pilot and nine passengers were\nfatally injured"
+        }
+      ],
+      "example_id": "dev-mutiny-fatalities",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "How many occupants died in the Mutiny Bay accident?",
+      "reference_answer": "The pilot and nine passengers, ten occupants in total, died.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_0f274548a25df050a0bc80b854a92e1e014ce8694f0408c163e129621aeba4af",
+          "quote": "de Havilland DHC-3, N725TH"
+        }
+      ],
+      "example_id": "dev-mutiny-aircraft",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What aircraft model and registration were involved at Mutiny Bay?",
+      "reference_answer": "A de Havilland DHC-3 registered N725TH.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_3a246880bc63cefc01c820029915b8d6aad4b6c235faf65130a586a80cf7468b",
+          "quote": "sank to a depth of about         200 ft"
+        }
+      ],
+      "example_id": "dev-mutiny-depth",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "At approximately what depth did the Mutiny Bay airplane sink?",
+      "reference_answer": "About 200 feet.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_c648be2ff02219b681fe995c54b924c6bf87589ee26071ca91ea8d99b4544581",
+          "quote": "had unscrewed from the barrel"
+        }
+      ],
+      "example_id": "dev-mutiny-clamp-nut",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What happened to the horizontal stabilizer trim actuator clamp nut?",
+      "reference_answer": "It unscrewed from the actuator barrel.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_c648be2ff02219b681fe995c54b924c6bf87589ee26071ca91ea8d99b4544581",
+          "quote": "the circular\nwire lock ring, which was designed to prevent the clamp nut from unscrewing, was\nnot present"
+        }
+      ],
+      "example_id": "dev-mutiny-lock-ring",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What safety component was absent from the Mutiny Bay actuator assembly?",
+      "reference_answer": "The circular wire lock ring was absent.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_39562bd48e34ffa00944f5b0d387b328794a34365f00354fd10f2ee0376dcf36",
+          "quote": "the in                                                                                                               -flight\nunthreading                                                        of the clamp nut from the horizontal stabilizer trim actuator barrel due to\na missing lock ring"
+        }
+      ],
+      "example_id": "dev-mutiny-probable-cause",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What did the NTSB determine was the probable cause of the Mutiny Bay accident?",
+      "reference_answer": "The clamp nut unthreaded in flight because the lock ring was missing, allowing uncontrolled horizontal-stabilizer movement.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_47341c29d58b286d0904d5291410462481f7c27eecfc6e4a6c2dd8768e158c62",
+          "quote": "an immediate one                                                           -time\ninspection of the horizontal stabilizer trim actuator lock ring"
+        }
+      ],
+      "example_id": "dev-mutiny-inspection",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What urgent inspection did the NTSB recommend for DHC-3 operators?",
+      "reference_answer": "An immediate one-time inspection of the horizontal stabilizer trim actuator lock ring.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_2ca59e4a9a6584bcea907f27462b2165025a0a14942f96defe75313921b75d7f",
+          "quote": "The en route altitude was between 600and\n1,000 ft above mean sea level"
+        }
+      ],
+      "example_id": "dev-mutiny-flight-altitude",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What was the Mutiny Bay airplane's en route altitude range?",
+      "reference_answer": "Between 600 and 1,000 feet mean sea level.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": true,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [
+        {
+          "chunk_id": "chk_39562bd48e34ffa00944f5b0d387b328794a34365f00354fd10f2ee0376dcf36",
+          "quote": "maintenance documents do not currently defin           e how many holes are\nallowed to be drilled into a clamp nut,specify a torque requirement"
+        }
+      ],
+      "example_id": "dev-mutiny-maintenance-guidance",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "Name one omission the NTSB identified in the actuator maintenance documents.",
+      "reference_answer": "The documents did not specify a clamp-nut installation torque requirement.",
+      "report_id": "DCA22MA193:report",
+      "rubric": [],
+      "split": "development"
+    },
+    {
+      "answerable": false,
+      "event_family_id": "DCA22MA193",
+      "event_id": "DCA22MA193",
+      "evidence": [],
+      "example_id": "dev-mutiny-negative",
+      "provenance": {
+        "author": "openai-codex-assisted",
+        "is_synthetic": true,
+        "reviewers": [],
+        "source_document_ids": [
+          "DCA22MA193:report"
+        ]
+      },
+      "question": "What was the favorite meal of the Mutiny Bay pilot?",
+      "reference_answer": null,
+      "report_id": "DCA22MA193:report",
+      "rubric": [
+        "Abstain because the report does not establish the pilot's favorite meal."
+      ],
+      "split": "development"
+    }
+  ],
+  "version": "1.0.0"
+}

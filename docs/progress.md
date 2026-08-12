@@ -17,8 +17,9 @@ This page is the narrative milestone log. Reproducible measurements live in
 
 ## Current milestone
 
-Create the evidence-linked retrieval evaluation set, then run the first BM25
-baseline over the frozen corpus without tuning against the test split.
+Review the evidence-linked test packet, then freeze and run the first test retrieval
+benchmark without tuning against the test split. The untuned development BM25
+baseline is recorded for diagnostics.
 
 ## Next milestones
 

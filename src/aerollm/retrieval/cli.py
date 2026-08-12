@@ -33,3 +33,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.json_output and not args.markdown_output:
         print(report.to_json(), end="")
     return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

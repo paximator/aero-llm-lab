@@ -1,0 +1,159 @@
+dataset_id = "ntsb-retrieval-development"
+version = "1.0.0"
+author = "openai-codex-assisted"
+
+[[examples]]
+id = "dev-calabasas-fatalities"
+report_id = "DCA20MA059:report"
+question = "How many people died in the Calabasas helicopter accident?"
+answer = "The pilot and eight passengers died."
+chunk_id = "chk_089a7bae0f6b3c9f87aa7cb7b7052f0535fef09c8b39baab5f068d6a6984d96d"
+quote = "The pilot and eight passengers died"
+
+[[examples]]
+id = "dev-calabasas-aircraft"
+report_id = "DCA20MA059:report"
+question = "What helicopter model and registration were involved in the Calabasas accident?"
+answer = "A Sikorsky S-76B registered N72EX."
+chunk_id = "chk_089a7bae0f6b3c9f87aa7cb7b7052f0535fef09c8b39baab5f068d6a6984d96d"
+quote = "Sikorsky S-76B helicopter, N72EX"
+
+[[examples]]
+id = "dev-calabasas-final-maneuver"
+report_id = "DCA20MA059:report"
+question = "What maneuver immediately preceded the Calabasas terrain impact?"
+answer = "The helicopter entered a rapidly descending left turn."
+chunk_id = "chk_089a7bae0f6b3c9f87aa7cb7b7052f0535fef09c8b39baab5f068d6a6984d96d"
+quote = "entered a rapidly descending left turn and crashed into terrain"
+
+[[examples]]
+id = "dev-calabasas-disorientation"
+report_id = "DCA20MA059:report"
+question = "What effect did spatial disorientation have on the Calabasas pilot?"
+answer = "It led to loss of helicopter control and collision with terrain."
+chunk_id = "chk_52631fb2e42b42850aed1933dbef747ae9a5f6c31b964fffc9b1cabd3da646bd"
+quote = "which led to his loss of helicopter control and the resulting collision with terrain"
+
+[[examples]]
+id = "dev-calabasas-mechanical"
+report_id = "DCA20MA059:report"
+question = "Did investigators identify a mechanical anomaly in the Calabasas helicopter?"
+answer = "No; investigators determined there were no mechanical anomalies."
+chunk_id = "chk_56064272856987bb459d674b6044d1aa0230a6543b69f91204a9370234f06753"
+quote = "identified no evidence of preimpact malfunction or failure that would have precluded normal operation"
+
+[[examples]]
+id = "dev-calabasas-qualification"
+report_id = "DCA20MA059:report"
+question = "Was the Calabasas pilot qualified to conduct the VFR flight?"
+answer = "Yes; he was certificated, current, and qualified."
+chunk_id = "chk_8a49ef818a1291aaed146b24407694f8ae4bc06f02f945906c169af2a0e1cb20"
+quote = "The pilot was certificated, current, and qualified"
+
+[[examples]]
+id = "dev-calabasas-toxicology"
+report_id = "DCA20MA059:report"
+question = "What did postmortem toxicology show for the Calabasas pilot?"
+answer = "It was negative for alcohol and the other tested substances."
+chunk_id = "chk_8a49ef818a1291aaed146b24407694f8ae4bc06f02f945906c169af2a0e1cb20"
+quote = "toxicology testing revealed negative results for alcohol and other tested- for substances"
+
+[[examples]]
+id = "dev-calabasas-clouds"
+report_id = "DCA20MA059:report"
+question = "What visual references did the pilot lose after the helicopter began penetrating clouds?"
+answer = "He lost visual reference to the horizon and the ground."
+chunk_id = "chk_6d968a95508c0cc20e6a71136416c4be3b322354b5e79899df14ce8ebbb4eaae"
+quote = "the pilot lost visual reference to the horizon and the ground"
+
+[[examples]]
+id = "dev-calabasas-sms"
+report_id = "DCA20MA059:report"
+question = "Which FAA safety program did the NTSB recommend Island Express join?"
+answer = "The FAA Safety Management System Voluntary Program."
+chunk_id = "chk_f8d4f435012763629ea17024f7ceb8a89f323107b7a3120d222ff577a15f5a7c"
+quote = "Participate in the Federal Aviation Administration’s Safety Management System Voluntary Program"
+
+[[examples]]
+id = "dev-calabasas-negative"
+report_id = "DCA20MA059:report"
+question = "What color luggage did the Calabasas passengers carry?"
+rubric = "Abstain because the report does not establish passenger luggage colors."
+
+[[examples]]
+id = "dev-mutiny-fatalities"
+report_id = "DCA22MA193:report"
+question = "How many occupants died in the Mutiny Bay accident?"
+answer = "The pilot and nine passengers, ten occupants in total, died."
+chunk_id = "chk_0f274548a25df050a0bc80b854a92e1e014ce8694f0408c163e129621aeba4af"
+quote = "The pilot and nine passengers were fatally injured"
+
+[[examples]]
+id = "dev-mutiny-aircraft"
+report_id = "DCA22MA193:report"
+question = "What aircraft model and registration were involved at Mutiny Bay?"
+answer = "A de Havilland DHC-3 registered N725TH."
+chunk_id = "chk_0f274548a25df050a0bc80b854a92e1e014ce8694f0408c163e129621aeba4af"
+quote = "de Havilland DHC-3, N725TH"
+
+[[examples]]
+id = "dev-mutiny-depth"
+report_id = "DCA22MA193:report"
+question = "At approximately what depth did the Mutiny Bay airplane sink?"
+answer = "About 200 feet."
+chunk_id = "chk_3a246880bc63cefc01c820029915b8d6aad4b6c235faf65130a586a80cf7468b"
+quote = "sank to a depth of about 200 ft"
+
+[[examples]]
+id = "dev-mutiny-clamp-nut"
+report_id = "DCA22MA193:report"
+question = "What happened to the horizontal stabilizer trim actuator clamp nut?"
+answer = "It unscrewed from the actuator barrel."
+chunk_id = "chk_c648be2ff02219b681fe995c54b924c6bf87589ee26071ca91ea8d99b4544581"
+quote = "had unscrewed from the barrel"
+
+[[examples]]
+id = "dev-mutiny-lock-ring"
+report_id = "DCA22MA193:report"
+question = "What safety component was absent from the Mutiny Bay actuator assembly?"
+answer = "The circular wire lock ring was absent."
+chunk_id = "chk_c648be2ff02219b681fe995c54b924c6bf87589ee26071ca91ea8d99b4544581"
+quote = "the circular wire lock ring, which was designed to prevent the clamp nut from unscrewing, was not present"
+
+[[examples]]
+id = "dev-mutiny-probable-cause"
+report_id = "DCA22MA193:report"
+question = "What did the NTSB determine was the probable cause of the Mutiny Bay accident?"
+answer = "The clamp nut unthreaded in flight because the lock ring was missing, allowing uncontrolled horizontal-stabilizer movement."
+chunk_id = "chk_39562bd48e34ffa00944f5b0d387b328794a34365f00354fd10f2ee0376dcf36"
+quote = "the in -flight unthreading of the clamp nut from the horizontal stabilizer trim actuator barrel due to a missing lock ring"
+
+[[examples]]
+id = "dev-mutiny-inspection"
+report_id = "DCA22MA193:report"
+question = "What urgent inspection did the NTSB recommend for DHC-3 operators?"
+answer = "An immediate one-time inspection of the horizontal stabilizer trim actuator lock ring."
+chunk_id = "chk_47341c29d58b286d0904d5291410462481f7c27eecfc6e4a6c2dd8768e158c62"
+quote = "an immediate one -time inspection of the horizontal stabilizer trim actuator lock ring"
+
+[[examples]]
+id = "dev-mutiny-flight-altitude"
+report_id = "DCA22MA193:report"
+question = "What was the Mutiny Bay airplane's en route altitude range?"
+answer = "Between 600 and 1,000 feet mean sea level."
+chunk_id = "chk_2ca59e4a9a6584bcea907f27462b2165025a0a14942f96defe75313921b75d7f"
+quote = "The en route altitude was between 600and 1,000 ft above mean sea level"
+
+[[examples]]
+id = "dev-mutiny-maintenance-guidance"
+report_id = "DCA22MA193:report"
+question = "Name one omission the NTSB identified in the actuator maintenance documents."
+answer = "The documents did not specify a clamp-nut installation torque requirement."
+chunk_id = "chk_39562bd48e34ffa00944f5b0d387b328794a34365f00354fd10f2ee0376dcf36"
+quote = "maintenance documents do not currently defin e how many holes are allowed to be drilled into a clamp nut,specify a torque requirement"
+
+[[examples]]
+id = "dev-mutiny-negative"
+report_id = "DCA22MA193:report"
+question = "What was the favorite meal of the Mutiny Bay pilot?"
+rubric = "Abstain because the report does not establish the pilot's favorite meal."

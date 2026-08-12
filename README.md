@@ -41,6 +41,7 @@ tool-use support, hardware constraints, and reproducible availability.
 - [Data sources, NTSB account, and credential setup](docs/data-sources.md)
 - [Project progress](docs/progress.md)
 - [Experiment results](docs/results/README.md)
+- [Retrieval annotation guide](docs/evaluation/retrieval-annotation-guide.md)
 
 ## Local setup
 
