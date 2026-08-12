@@ -69,6 +69,27 @@ def test_reference_fetch_uses_relative_path_and_subscription_header() -> None:
         source.fetch_reference("https://untrusted.example/version")
 
 
+def test_aviation_case_fetch_encodes_both_discovery_identifiers() -> None:
+    calls = []
+
+    def transport(url, headers, timeout):
+        calls.append((url, headers, timeout))
+        return RemoteResponse(b'{"case":true}', "application/json")
+
+    source = NTSBSource("https://api.example.test/public/api", "key", transport=transport)
+    url, response = source.fetch_aviation_case(
+        "Aviation/v1/GetAviationCase/", ntsb_number="WPR26LA075", mkey=202254
+    )
+
+    assert url.endswith("?ntsbNumber=WPR26LA075&mkey=202254")
+    assert calls[0][0] == url
+    assert response.body == b'{"case":true}'
+    with pytest.raises(ValueError, match="positive integer"):
+        source.fetch_aviation_case(
+            "Aviation/v1/GetAviationCase/", ntsb_number="WPR26LA075", mkey=0
+        )
+
+
 def test_ntsb_request_error_does_not_include_credentials(monkeypatch) -> None:
     def failing_transport(url, headers, timeout):
         raise NTSBRequestError("NTSB API request failed")

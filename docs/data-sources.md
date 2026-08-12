@@ -69,6 +69,17 @@ uv run aerollm-acquire-ntsb-reference version
 uv run aerollm-acquire-ntsb-reference aviation_data_dictionary
 ```
 
+Use the `ntsbNumber` and `mKey` returned by a snapshotted discovery page to fetch
+one aviation-specific case detail:
+
+```powershell
+uv run aerollm-acquire-ntsb-case --ntsb-number WPR26LA075 --mkey 202254
+```
+
+The command accepts one case only, snapshots the unmodified response, and records
+both identifiers as request provenance. It does not enumerate cases or bypass the
+bounded discovery stage.
+
 The base URL and subscription key are required environment variables. The command
 sends the key only in the `Ocp-Apim-Subscription-Key` request header, prints a
 provider-neutral `SourceDocument`, and writes the raw body plus a metadata sidecar

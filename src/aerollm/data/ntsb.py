@@ -95,6 +95,32 @@ class NTSBSource:
         base = self.base_url.rstrip("/") + "/"
         return transport(urljoin(base, endpoint_path.lstrip("/")), headers, self.timeout_seconds)
 
+    def fetch_aviation_case(
+        self, endpoint_path: str, *, ntsb_number: str, mkey: int | None = None
+    ) -> tuple[str, RemoteResponse]:
+        """Fetch one aviation case detail by its discovery-record identity."""
+        number = ntsb_number.strip()
+        if not number or not number.replace("-", "").isalnum():
+            raise ValueError("ntsb_number must be a non-empty aviation case identifier")
+        if mkey is not None and (type(mkey) is not int or mkey <= 0):
+            raise ValueError("mkey must be a positive integer when provided")
+        if not endpoint_path or endpoint_path.startswith(("http://", "https://")):
+            raise ValueError("aviation case endpoint must be a relative path")
+        parameters: dict[str, str | int] = {"ntsbNumber": number}
+        if mkey is not None:
+            parameters["mkey"] = mkey
+        base = self.base_url.rstrip("/") + "/"
+        endpoint = urljoin(base, endpoint_path.lstrip("/"))
+        url = f"{endpoint}?{urlencode(parameters)}"
+        headers = {
+            "Accept": "application/json",
+            "Cache-Control": "no-cache",
+            "Ocp-Apim-Subscription-Key": self.api_key,
+            "User-Agent": "aerollm-lab/0.1",
+        }
+        transport = self.transport or _urlopen_transport
+        return url, transport(url, headers, self.timeout_seconds)
+
     def _request_url(self, parameters: Mapping[str, str]) -> str:
         base = self.base_url.rstrip("/") + "/"
         endpoint = urljoin(base, self.endpoint_path.lstrip("/"))

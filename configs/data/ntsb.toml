@@ -11,6 +11,7 @@ timeout_seconds = 30
 [remote.reference_paths]
 version = "getversion"
 aviation_data_dictionary = "Aviation/v1/GetAviationDataDictionary"
+aviation_case = "Aviation/v1/GetAviationCase/"
 
 [snapshot]
 root = "artifacts/source-snapshots/ntsb"
