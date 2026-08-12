@@ -57,7 +57,10 @@ id = "test-dca-altitude"
 question = "What was PAT25's recorded radio altitude six seconds before the collision?"
 answer = "266 feet."
 chunk_id = "chk_d345897a5f30fc28202b6d5a495545efc5ded7182f2c7f543454c7ec480d1cd1"
-quote = "the helicopter’s recorded radio altitude was 2 66 ft"
+quotes = [
+  "At 2047:53(or 6 seconds before the collision) ,",
+  "At this time, the helicopter’s recorded radio altitude was 2 66 ft",
+]
 
 [[examples]]
 id = "test-dca-route-separation"

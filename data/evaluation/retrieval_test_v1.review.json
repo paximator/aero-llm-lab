@@ -7,27 +7,27 @@
       "example_id": "test-dca-aircraft",
       "page": 22,
       "question": "Which two aircraft were involved in the collision near Reagan National Airport?",
-      "quote": "a Sikorsky\nUH-60L, operated by the US Army under the callsign PAT25(Priority Air Transport\nFlight 25), and an MHI (Mitsubishi Heavy Industries) RJ Aviation (formerly\nBombardier) CL-600-2C10 (CRJ700), N709PS, operated by PSA Airlines as American\nAirlines flight 5342",
+      "quote": "a Sikorsky \nUH-60L, operated by the US Army under the callsign PAT25 (Priority Air Transport \nFlight 25), and an MHI (Mitsubishi Heavy Industries) RJ Aviation (formerly \nBombardier) CL-600-2C10 (CRJ700), N709PS, operated by PSA Airlines as American \nAirlines flight 5342, collided in flight about 0.5 miles southeast of Ronald Reagan \nWashington National Airport (DCA)",
       "reference_answer": "A US Army Sikorsky UH-60L operating as PAT25 and an MHI RJ Aviation (formerly Bombardier) CL-600-2C10 (CRJ700), N709PS, operating as American Airlines flight 5342.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_72c137314e6c561598322a2ace47c0db8e91483ec6cad0ff16ca06db3abfc12d",
       "example_id": "test-dca-fatalities",
       "page": 22,
       "question": "How many people aboard both aircraft died?",
-      "quote": "The 2 pilots, 2flight attendants, and\n60passengers on board the airplane and a                                                                  ll 3crewmembers on board the helicopter\ndied",
+      "quote": "The 2 pilots, 2 flight attendants, and \n60 passengers on board the airplane and all 3 crewmembers on board the helicopter \ndied",
       "reference_answer": "All 67 occupants died: 64 aboard the airplane and 3 aboard the helicopter.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_72c137314e6c561598322a2ace47c0db8e91483ec6cad0ff16ca06db3abfc12d",
       "example_id": "test-dca-time",
       "page": 22,
       "question": "When did the midair collision occur?",
-      "quote": "On January 29, 2025, about 2048 eastern standard time",
+      "quote": "On January 29, 2025, about 2048 eastern standard time (EST)",
       "reference_answer": "January 29, 2025, at about 2048 eastern standard time.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_72c137314e6c561598322a2ace47c0db8e91483ec6cad0ff16ca06db3abfc12d",
@@ -36,7 +36,7 @@
       "question": "What was the purpose of PAT25's flight?",
       "quote": "for the purpose of the pilot\u2019s\nannual standardization evaluation flight with the use of night vision goggles",
       "reference_answer": "It was the pilot's annual standardization evaluation flight using night vision goggles.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_72c137314e6c561598322a2ace47c0db8e91483ec6cad0ff16ca06db3abfc12d",
@@ -45,16 +45,16 @@
       "question": "What meteorological conditions prevailed near DCA?",
       "quote": "Night visual meteorological conditions prevailed",
       "reference_answer": "Night visual meteorological conditions.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_6f8f83f1fb104a161fba7f281b4e876af59733d18377c4f4f178fff41eb60d79",
       "example_id": "test-dca-route-cause",
       "page": 330,
       "question": "What helicopter-route placement did the NTSB identify as causal?",
-      "quote": "placement of a helicopter route in close proximity to a\nrunway approach path",
+      "quote": "The NTSB determines that the probable cause of this accident was the Federal \nAviation Administration\u2019s (FAA) placement of a helicopter route in close proximity to a \nrunway approach path",
       "reference_answer": "The FAA placed a helicopter route close to a runway approach path.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_6f8f83f1fb104a161fba7f281b4e876af59733d18377c4f4f178fff41eb60d79",
@@ -63,34 +63,40 @@
       "question": "What separation practice did the probable-cause finding say the air traffic system overrelied on?",
       "quote": "the air traffic system\u2019s overreliance on visual separation",
       "reference_answer": "It overrelied on visual separation.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_d345897a5f30fc28202b6d5a495545efc5ded7182f2c7f543454c7ec480d1cd1",
       "example_id": "test-dca-altitude",
       "page": 40,
       "question": "What was PAT25's recorded radio altitude six seconds before the collision?",
-      "quote": "the helicopter\u2019s\nrecorded radio                               altitude was 2           66 ft",
+      "quotes": [
+        "At 2047:53 (or 6 seconds before the collision)",
+        "At this time, the helicopter\u2019s \nrecorded radio altitude was 266 ft"
+      ],
       "reference_answer": "266 feet.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_f42be5b3f4cff3a3765cf3da5d6524aa727f0605d75931a5421a2e5f7ceafd82",
       "example_id": "test-dca-route-separation",
       "page": 83,
       "question": "Was Route 4 procedurally separated from the runway 33 approach path?",
-      "quote": "Route 4 and the runway 33 approach path were not\nprocedurally separated",
+      "quote": "In a postaccident interview, the \naccident LC controller stated that Route 4 and the runway 33 approach path were not \nprocedurally separated.",
       "reference_answer": "No, it was not procedurally separated.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     },
     {
       "chunk_id": "chk_c6b3a74aa16605bb78971e555b6880ef5b3f1467d570e2686c9e6021aea80621",
       "example_id": "test-dca-crew-qualification",
       "page": 321,
       "question": "What did the NTSB find about the qualification of both flight crews?",
-      "quote": "The pilots of flight 5342 were certificated and qualified",
+      "quotes": [
+        "The pilots of flight 5342 were certificated and qualified in accordance with \nfederal regulations",
+        "The pilot, instructor pilot, and crew chief onboard PAT25 were qualified and current in their positions as designated by the unit commander in accordance with Army regulations"
+      ],
       "reference_answer": "The flight 5342 pilots and the PAT25 pilot, instructor pilot, and crew chief were qualified.",
-      "review_status": "pending-human-review"
+      "review_status": "approved"
     }
   ],
   "report_id": "DCA25MA108:report",
