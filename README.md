@@ -139,6 +139,16 @@ The freeze command records `data/evaluation/retrieval_test_v1.sha256`, is idempo
 for identical content, and refuses to overwrite different bytes. Test questions,
 answers, evidence, failures, and metrics are excluded from training and tuning.
 
+Install the local Transformers stack with the platform-pinned CUDA build of Torch:
+
+```powershell
+uv sync --extra transformers
+```
+
+The dense retrieval baseline uses the pinned `intfloat/e5-small-v2` revision in
+`configs/retrieval/dense_e5_small_v2.toml`. Model weights, persistent embeddings,
+and raw run reports remain under ignored `artifacts/` paths.
+
 Do not pass `--refresh-plan` during materialization: that flag intentionally
 replaces the reviewed selection. Generated source snapshots, parsed documents,
 chunks, failure reports, and corpora are stored under ignored `artifacts/` paths.

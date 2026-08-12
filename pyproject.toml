@@ -28,11 +28,28 @@ aerollm-freeze-retrieval-test = "aerollm.evaluation.retrieval_freeze_cli:main"
 aerollm-evaluate = "aerollm.evaluation.cli:main"
 aerollm-validate-corpus = "aerollm.evaluation.validate_cli:main"
 aerollm-retrieve = "aerollm.retrieval.cli:main"
+aerollm-dense-retrieve = "aerollm.retrieval.dense_cli:main"
 aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3", "ruff>=0.9"]
-transformers = ["torch>=2.5", "transformers>=4.48,<6"]
+transformers = ["torch==2.6.0", "transformers>=4.48,<6"]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu126", marker = "sys_platform == 'win32'" },
+    { index = "pytorch-cu124", marker = "sys_platform == 'linux'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

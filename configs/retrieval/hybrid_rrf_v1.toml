@@ -1,0 +1,8 @@
+version = "hybrid-rrf-v1"
+lexical_weight = 0.25
+dense_weight = 0.75
+rrf_constant = 60
+candidate_k = 100
+selection_split = "development"
+selection_metric = "mrr_at_10"
+selection_grid_lexical_weights = [0.25, 0.5, 0.75]

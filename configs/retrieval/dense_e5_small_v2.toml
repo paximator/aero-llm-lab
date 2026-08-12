@@ -1,0 +1,9 @@
+model_id = "intfloat/e5-small-v2"
+model_revision = "f9611f088d69fc3157ff1878217feee72bda0145"
+dimension = 384
+max_length = 512
+pooling = "attention-mask-mean"
+normalization = "l2"
+query_prefix = "query: "
+passage_prefix = "passage: "
+index = "exact-cosine-v1"
