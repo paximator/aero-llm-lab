@@ -198,7 +198,7 @@ def discover_plan(
         start, end, requests=pilot.max_discovery_requests,
         window_days=pilot.discovery_window_days,
     ):
-        metadata = next(source.list_reports(window_start, window_end))
+        metadata = next(source.list_reports(window_start, window_end, mode="Aviation"))
         response = source.fetch_report(metadata)
         saved = store.save(
             source=source.name, source_id=metadata.source_id, source_url=metadata.source_url,
@@ -305,6 +305,8 @@ def _candidates_from_snapshot(snapshot: SourceDocument) -> list[PilotCandidate]:
     metadata_path = Path(snapshot.artifact_path).with_suffix(".json").as_posix()
     candidates: list[PilotCandidate] = []
     for record in normalize_snapshot(snapshot):
+        if record.attributes.get("mode", "").casefold() != "aviation":
+            continue
         document = next(iter(record.documents), None)
         if document is None or record.occurred_on is None:
             continue

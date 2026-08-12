@@ -10,6 +10,7 @@ from aerollm.data.pilot import (
     PilotCandidate,
     PilotConfig,
     PilotPlan,
+    _candidates_from_snapshot,
     discovery_windows,
     materialize_plan,
     select_diverse,
@@ -55,6 +56,31 @@ def test_pilot_plan_round_trip(tmp_path: Path) -> None:
     plan.write(path)
 
     assert PilotPlan.load(path) == plan
+
+
+def test_candidate_extraction_rejects_non_aviation_cases(tmp_path: Path) -> None:
+    payload = {
+        "data": [
+            {
+                "ntsbNumber": "DCA24FM001", "eventDate": "2024-01-01",
+                "mode": "Marine", "reportNumber": "MIR2401",
+            },
+            {
+                "ntsbNumber": "CEN24FA001", "eventDate": "2024-01-02",
+                "mode": "Aviation", "reportNumber": "AAR2401",
+            },
+        ]
+    }
+    snapshot = SnapshotStore(tmp_path).save(
+        source="ntsb", source_id="cases", source_url="https://api.test/cases",
+        publisher="NTSB",
+        response=RemoteResponse(json.dumps(payload).encode(), "application/json"),
+        retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
+    )
+
+    candidates = _candidates_from_snapshot(snapshot)
+
+    assert [candidate.source_id for candidate in candidates] == ["CEN24FA001"]
 
 
 def test_materialization_is_resumable_and_writes_failure_report(tmp_path: Path) -> None:

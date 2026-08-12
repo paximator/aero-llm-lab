@@ -128,15 +128,24 @@ def _attributes(values: Mapping[str, Any]) -> dict[str, str]:
         "location": ("location", "eventlocation"),
         "country": ("eventcountry", "country"),
         "severity": ("highestinjurylevel",),
-        "weather": ("weatherconditions",),
         "report_type": ("reporttype",),
         "mode": ("mode", "topicmode"),
     }
-    return {
+    attributes = {
         output_name: value
         for output_name, input_names in aliases.items()
         if (value := _optional_text(values, *input_names)) is not None
     }
+    weather = values.get("weatherconditions")
+    if isinstance(weather, list):
+        conditions = {
+            str(item.get("accidentSiteCondition")).strip()
+            for item in weather
+            if isinstance(item, dict) and item.get("accidentSiteCondition")
+        }
+        if conditions:
+            attributes["weather"] = ", ".join(sorted(conditions))
+    return attributes
 
 
 def _documents(
