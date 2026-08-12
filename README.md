@@ -54,3 +54,14 @@ uv run aerollm-chunk-document artifacts/parsed/ntsb/<prefix>/<digest>.json
 Chunking parameters live in `configs/data/chunking.toml`. Manifests retain exact
 source offsets, page provenance, content type, section metadata, and a configuration
 fingerprint so retrieval experiments can be reproduced and audited.
+
+Build a frozen pilot corpus from one or more report acquisition manifests with:
+
+```powershell
+uv run aerollm-build-corpus artifacts/manifests/ntsb-reports-*.json
+```
+
+The corpus builder verifies immutable artifact hashes, keeps complete NTSB events in
+one deterministic train/development/test split, checks page coverage and chunk
+quality, and writes a companion build manifest. Pilot settings are versioned in
+`configs/data/corpus.toml`; generated corpora remain ignored local artifacts.

@@ -1,0 +1,10 @@
+schema_version = 1
+version = "ntsb-pilot-v1"
+seed = "aerollm-2026"
+train_fraction = 0.80
+development_fraction = 0.10
+test_fraction = 0.10
+minimum_chunk_characters = 100
+chunk_root = "artifacts/chunks/ntsb"
+output = "artifacts/corpora/ntsb-pilot-v1.json"
+
