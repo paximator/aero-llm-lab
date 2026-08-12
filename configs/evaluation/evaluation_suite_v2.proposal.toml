@@ -1,0 +1,175 @@
+# APPROVED COVERAGE PLAN — not a frozen evaluation dataset.
+proposal_id = "ntsb-grounded-qa-suite-v2-proposal"
+version = "1.0.0-approved"
+status = "approved_for_corpus_selection"
+derived_from_corpus = "ntsb-pilot-v1"
+author = "openai-codex-assisted"
+approved_by = "repository-owner"
+approved_on = "2026-08-13"
+target_total_examples = 72
+minimum_total_examples = 50
+maximum_total_examples = 100
+split_unit = "event_family"
+freeze_only_after_independent_review = true
+
+[current_inventory]
+total_event_families = 16
+train_event_families = 13
+development_event_families = 2
+test_event_families = 1
+development_ids = ["DCA20MA059", "DCA22MA193"]
+test_ids = ["DCA25MA108"]
+constraint = "The current corpus cannot support a diverse multi-family test suite. Acquire untouched reports and assign their event families before question annotation."
+
+[corpus_v2_acquisition]
+minimum_new_event_families = 12
+preferred_new_event_families = 16
+minimum_new_development_families = 3
+minimum_new_test_families = 5
+minimum_new_train_families = 4
+selection_rule = "Select public aviation reports for task diversity before reading or drafting evaluation questions."
+published_v1_rule = "Do not reassign published v1 event families across splits; preserve v1 as a historical benchmark."
+test_rule = "New test families must be untouched by prompt, retrieval, SFT-data, and hyperparameter selection."
+
+[coverage]
+total = 72
+answerable = 60
+unanswerable = 12
+minimum_event_families = 8
+minimum_test_event_families = 5
+maximum_examples_per_event_family = 12
+minimum_multi_evidence = 12
+minimum_identifier_heavy = 10
+minimum_natural_language = 40
+
+# Primary task types are mutually exclusive and sum to 72.
+[[coverage.primary_task_types]]
+task_type = "numeric"
+target = 10
+scoring_strategy = "numeric_exact_or_tolerance_v1"
+examples = ["casualty count", "altitude", "distance", "duration"]
+
+[[coverage.primary_task_types]]
+task_type = "date_time"
+target = 8
+scoring_strategy = "normalized_datetime_v1"
+examples = ["occurrence date", "local time", "timeline interval"]
+
+[[coverage.primary_task_types]]
+task_type = "entity_identifier"
+target = 12
+scoring_strategy = "normalized_entity_set_v1"
+examples = ["aircraft model", "registration", "flight/callsign", "component"]
+
+[[coverage.primary_task_types]]
+task_type = "categorical_yes_no"
+target = 8
+scoring_strategy = "categorical_exact_v1"
+examples = ["qualification", "weather category", "mechanical anomaly"]
+
+[[coverage.primary_task_types]]
+task_type = "causal_finding"
+target = 12
+scoring_strategy = "required_key_facts_v1"
+examples = ["probable cause", "contributing factor", "failure mechanism"]
+
+[[coverage.primary_task_types]]
+task_type = "multi_evidence_grounded_qa"
+target = 10
+scoring_strategy = "required_key_facts_v1"
+examples = ["cross-section synthesis", "sequence plus cause", "crew comparison"]
+
+[[coverage.primary_task_types]]
+task_type = "unanswerable"
+target = 12
+scoring_strategy = "abstention_v1"
+examples = ["fact absent from report", "unsupported premise", "insufficient evidence"]
+
+[secondary_tags]
+allowed = [
+  "identifier_heavy",
+  "natural_language",
+  "single_evidence",
+  "multi_evidence",
+  "citation_sensitive",
+  "cross_section",
+  "table_or_ocr",
+  "negative_premise",
+]
+rule = "Every example requires query-style and evidence-complexity tags; other tags are optional and non-exclusive."
+
+[annotation_schema]
+required_fields = [
+  "example_id",
+  "question",
+  "report_id",
+  "event_id",
+  "event_family_id",
+  "split",
+  "task_type",
+  "scoring_strategy",
+  "secondary_tags",
+  "answerable",
+  "reference_answer",
+  "required_key_facts",
+  "structured_target",
+  "evidence",
+  "citation_required",
+  "author",
+  "reviewers",
+  "review_status",
+  "is_synthetic",
+]
+review_status_values = ["draft", "needs_changes", "approved", "rejected"]
+
+[annotation_schema.structured_target]
+description = "Task-specific canonical target; null for rubric-only open QA."
+examples = [
+  '{ "kind" = "number", "value" = "266", "unit" = "ft", "tolerance" = "0" }',
+  '{ "kind" = "date_time", "value" = "2025-01-29T20:48:00-05:00" }',
+  '{ "kind" = "entity_set", "values" = "UH-60L|PAT25" }',
+  '{ "kind" = "category", "value" = "yes" }',
+]
+
+[evidence_rules]
+answerable_minimum_spans = 1
+quote_must_be_exact_chunk_span = true
+all_spans_must_match_report = true
+smallest_sufficient_span_preferred = true
+unanswerable_evidence_must_be_empty = true
+unanswerable_requires_search_note = true
+multi_evidence_requires_distinct_supporting_spans = true
+
+[review_gates]
+independent_test_reviewer = true
+author_cannot_review_own_test_example = true
+all_test_examples_must_be_human_authored = true
+synthetic_test_examples_forbidden = true
+duplicate_and_near_duplicate_check = true
+event_split_leakage_check = true
+coverage_quota_check = true
+exact_evidence_resolution_check = true
+task_target_consistency_check = true
+freeze_digest_after_all_approvals = true
+
+[execution_order]
+steps = [
+  "Approve this coverage proposal.",
+  "Acquire and validate corpus-v2 candidate reports without drafting questions.",
+  "Freeze event-family split assignments.",
+  "Generate blank annotation slots from approved quotas and eligible families.",
+  "Draft development examples and independently author/review test examples.",
+  "Run schema, leakage, evidence, duplicate, and coverage validators.",
+  "Freeze suite-v2 bytes and SHA-256 only after every test example is approved.",
+]
+
+[review_questions]
+decision = "All six proposed decisions approved without modification on 2026-08-13."
+questions = [
+  "Is 72 examples an acceptable first target, with 50 as the minimum freeze gate?",
+  "Are five independent test event families sufficient for the first portfolio release?",
+  "Should causal and multi-evidence tasks receive more weight than numeric/entity tasks?",
+  "Are twelve unanswerable examples enough to measure abstention?",
+  "Should table/OCR examples be mandatory now or deferred until extraction quality improves?",
+  "Do you approve preserving every published v1 family in its existing split?",
+]
