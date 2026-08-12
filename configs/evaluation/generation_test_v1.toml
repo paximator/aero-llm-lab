@@ -1,0 +1,37 @@
+version = "generation-test-v1"
+allowed_split = "test"
+locked_test_dataset_sha256 = "c095f7bd656f0dfebfdd7ea4cb221c7a11d76c7a6aef1df3ebd9cf952e044723"
+selected_from = "configs/evaluation/generation_dev_v1.toml"
+variants = ["base", "prompted", "rag"]
+max_new_tokens = 48
+temperature = 0.0
+seed = 0
+rag_context_chunks = 3
+
+[model]
+id = "mistralai/Ministral-3-3B-Instruct-2512"
+revision = "b35d4dfe56c142746f54dbd64f579faab2744308"
+fp8_kernel_revision = "7cdb05d472d6c954c7d03182ed836ebfd4610df0"
+
+[dense]
+id = "intfloat/e5-small-v2"
+revision = "f9611f088d69fc3157ff1878217feee72bda0145"
+device = "cuda"
+batch_size = 32
+
+[hybrid]
+lexical_weight = 0.25
+rrf_constant = 60
+candidate_k = 100
+
+[reranker]
+id = "cross-encoder/ms-marco-MiniLM-L6-v2"
+revision = "c5ee24cb16019beea0893ab7796b1df96625c6b8"
+candidate_k = 20
+device = "cuda"
+batch_size = 32
+
+[prompts]
+base = "{question}"
+prompted = "Answer in one concise sentence. Do not invent dates, operators, aircraft, or casualty counts. If you do not know, state that you do not know.\n\nNTSB event: {event_id}\nReport: {report_id}\nQuestion: {question}\nAnswer:"
+rag = "Use only the numbered report excerpts below. Answer concisely and cite supporting excerpts as [1], [2], etc. If the excerpts do not support an answer, say that the available evidence is insufficient.\n\nQuestion: {question}\nAnswer:"

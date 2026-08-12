@@ -42,6 +42,7 @@ aerollm-retrieve = "aerollm.retrieval.cli:main"
 aerollm-dense-retrieve = "aerollm.retrieval.dense_cli:main"
 aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
 aerollm-generation-smoke = "aerollm.generation.smoke:main"
+aerollm-evaluate-generation = "aerollm.evaluation.generation_cli:main"
 aerollm-doctor = "aerollm.doctor:main"
 
 [project.optional-dependencies]
