@@ -6,7 +6,7 @@ report_id = "DCA25MA108:report"
 [[examples]]
 id = "test-dca-aircraft"
 question = "Which two aircraft were involved in the collision near Reagan National Airport?"
-answer = "A US Army Sikorsky UH-60L operating as PAT25 and an MHI RJ Aviation CL-600-2C10 (CRJ700), N709PS, operating as American Airlines flight 5342."
+answer = "A US Army Sikorsky UH-60L operating as PAT25 and an MHI RJ Aviation (formerly Bombardier) CL-600-2C10 (CRJ700), N709PS, operating as American Airlines flight 5342."
 chunk_id = "chk_72c137314e6c561598322a2ace47c0db8e91483ec6cad0ff16ca06db3abfc12d"
 quote = "a Sikorsky UH-60L, operated by the US Army under the callsign PAT25(Priority Air Transport Flight 25), and an MHI (Mitsubishi Heavy Industries) RJ Aviation (formerly Bombardier) CL-600-2C10 (CRJ700), N709PS, operated by PSA Airlines as American Airlines flight 5342"
 
