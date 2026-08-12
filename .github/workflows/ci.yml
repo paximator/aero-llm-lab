@@ -8,6 +8,11 @@ on:
 permissions:
   contents: read
 
+env:
+  # CI must validate against the runner Python selected below, not hide a missing
+  # interpreter by downloading a separate uv-managed build.
+  UV_PYTHON_DOWNLOADS: never
+
 jobs:
   core:
     name: core / ${{ matrix.os }} / py${{ matrix.python-version }}
@@ -18,8 +23,11 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python-version: ["3.11", "3.13"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: astral-sh/setup-uv@v10
         with:
           version: "0.8.12"
           enable-cache: true
