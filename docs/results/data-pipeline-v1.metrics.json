@@ -1,0 +1,35 @@
+{
+  "chunk_characters": {
+    "maximum": 1996,
+    "median": 1480,
+    "minimum": 4,
+    "p95": 1854
+  },
+  "chunks": 6903,
+  "code_revision": "e0a25ce",
+  "config_fingerprint": "sha256:8493da349eae666a43cec42dbd12a6d59bd8ef6fe48bef9dd284527545f93a03",
+  "content_kinds": {
+    "table": 5679,
+    "text": 1224
+  },
+  "corpus_sha256": "a0949e1f1fd548d6c14d89614dd9c13feb25f7a6981603d7f1ccc3925f1dcd57",
+  "corpus_version": "ntsb-pilot-v1",
+  "failed_reports": 3,
+  "failure_categories": {
+    "NTSB report returned HTTP 401": 1,
+    "NTSB report returned unsupported content type 'text/html'": 2
+  },
+  "materialized_reports": 16,
+  "milestone": "data-pipeline-v1",
+  "pages": 2017,
+  "planned_reports": 19,
+  "schema_version": 1,
+  "source_availability_percent": 84.2,
+  "splits": {
+    "development": 2,
+    "test": 1,
+    "train": 13
+  },
+  "validation_errors": 0,
+  "validation_warnings": 6
+}

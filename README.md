@@ -39,6 +39,8 @@ tool-use support, hardware constraints, and reproducible availability.
 - [Implementation roadmap](docs/roadmap.md)
 - [Local hardware profile](docs/hardware-profile.md)
 - [Data sources, NTSB account, and credential setup](docs/data-sources.md)
+- [Project progress](docs/progress.md)
+- [Experiment results](docs/results/README.md)
 
 ## Local setup
 
