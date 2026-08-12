@@ -38,6 +38,42 @@ tool-use support, hardware constraints, and reproducible availability.
 - [Repository architecture](docs/architecture.md)
 - [Implementation roadmap](docs/roadmap.md)
 - [Local hardware profile](docs/hardware-profile.md)
+- [Data sources, NTSB account, and credential setup](docs/data-sources.md)
+
+## Local setup
+
+Install [uv](https://docs.astral.sh/uv/), clone the repository, and create the
+locked development environment:
+
+```powershell
+uv sync --extra dev
+```
+
+Create an account in the [NTSB Developer Portal](https://developer.ntsb.gov/) and
+subscribe to the public API product to obtain a subscription key. Copy the tracked
+template to the shared repository-level secrets directory. These commands derive
+the correct location from Git and work from any worktree:
+
+```powershell
+$commonGitDir = git rev-parse --path-format=absolute --git-common-dir
+$repositoryRoot = Split-Path -Parent $commonGitDir
+New-Item -ItemType Directory -Force "$repositoryRoot\.secrets"
+Copy-Item configs\secrets\ntsb.env.example "$repositoryRoot\.secrets\ntsb.env"
+```
+
+Edit `<repository-root>/.secrets/ntsb.env` and replace only the placeholder after
+`AEROLLM_NTSB_API_KEY=`. Never put the key in a tracked TOML file, command argument,
+issue, log, or chat.
+
+Load it into the current PowerShell process without printing its value:
+
+```powershell
+. .\scripts\import-local-env.ps1 -Name ntsb
+```
+
+The loader automatically resolves the shared repository root, so the same secret
+works from every Git/Cascade worktree. API configuration and endpoint paths remain
+public in `configs/data/ntsb.toml`.
 
 ## Current status
 
@@ -79,3 +115,23 @@ plan, then repeat the command without `--dry-run`. Completed reports are skipped
 retry, failures are isolated in `artifacts/pilot/failures.json`, and the final run
 builds the frozen corpus. Use `--refresh-plan` only when intentionally replacing an
 existing selection.
+
+Materialize the reviewed frozen plan and build the corpus:
+
+```powershell
+uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
+  --target-reports 19
+```
+
+Do not pass `--refresh-plan` during materialization: that flag intentionally
+replaces the reviewed selection. Generated source snapshots, parsed documents,
+chunks, failure reports, and corpora are stored under ignored `artifacts/` paths.
+If an official report URL is unavailable, successful reports remain resumable and
+the sanitized reason is recorded in `artifacts/pilot/failures.json`. After reviewing
+those failures, build a validated corpus from the completed manifests with:
+
+```powershell
+$manifests = Get-ChildItem artifacts/manifests/pilot -Filter *.json |
+  Sort-Object Name | ForEach-Object FullName
+uv run aerollm-build-corpus @manifests
+```

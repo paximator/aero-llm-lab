@@ -86,8 +86,9 @@ the report number passes a strict compact-format check (for example `AAR2101`). 
 existing HTTPS-host allowlist, response size limit, PDF signature check, immutable
 snapshot, and parser validation still apply before any document is accepted.
 
-The base URL and subscription key are required environment variables. The command
-sends the key only in the `Ocp-Apim-Subscription-Key` request header, prints a
+The base URL is tracked public configuration; only the subscription key is a
+required environment variable. The command sends the key only in the
+`Ocp-Apim-Subscription-Key` request header, prints a
 provider-neutral `SourceDocument`, and writes the raw body plus a metadata sidecar
 under the ignored `artifacts/` directory. Request credentials and non-allowlisted
 response headers are never persisted.
