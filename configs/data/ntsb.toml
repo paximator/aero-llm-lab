@@ -1,0 +1,14 @@
+source = "ntsb"
+mode = "snapshot"
+
+[remote]
+# Exact endpoint and credentials are environment-specific and are deliberately not
+# committed. Obtain them from the official NTSB Developer Portal.
+base_url_env = "AEROLLM_NTSB_BASE_URL"
+api_key_env = "AEROLLM_NTSB_API_KEY"
+timeout_seconds = 30
+
+[snapshot]
+root = "artifacts/source-snapshots/ntsb"
+retain_response_headers = ["content-type", "etag", "last-modified"]
+redact_request_headers = ["authorization", "x-api-key"]

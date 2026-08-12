@@ -1,16 +1,14 @@
 # AeroLLM Lab
 
 AeroLLM Lab is an evaluation-first LLM engineering project for grounded aviation
-analysis. It is intended to demonstrate the complete lifecycle of a domain LLM:
-data provenance, retrieval, post-training, evaluation, inference, deployment, and
-systems benchmarking.
+analysis. It demonstrates the complete lifecycle of a domain LLM: data provenance,
+retrieval, post-training, evaluation, inference, deployment, and benchmarking.
 
 This is not a general-purpose aviation chatbot. The initial product surface is a
-small set of evidence-backed tasks over public aviation safety reports, such as
-extracting structured facts, answering questions with citations, and producing
-grounded incident summaries.
+small set of evidence-backed tasks over public aviation safety reports: structured
+fact extraction, cited question answering, and grounded incident summaries.
 
-## Intended comparisons
+## Intended comparison
 
 Every approach is evaluated against the same frozen task suite:
 
@@ -21,8 +19,8 @@ Every approach is evaluated against the same frozen task suite:
 5. SFT plus RAG;
 6. optional preference tuning after the earlier baselines are stable.
 
-The exact open-weight Mistral checkpoint is deliberately a configuration choice.
-It will be selected during the baseline milestone based on license, context length,
+The exact open-weight Mistral checkpoint remains a configuration choice until the
+baseline milestone, where it will be selected based on license, context length,
 tool-use support, hardware constraints, and reproducible availability.
 
 ## Design principles
@@ -31,9 +29,9 @@ tool-use support, hardware constraints, and reproducible availability.
 - Raw source documents are immutable and traceable.
 - Splits are performed by report or event, never by chunk.
 - Generated examples cannot silently enter the test set.
-- Answers that require evidence must expose citations.
+- Answers requiring evidence expose verifiable citations.
 - Experiments record data, prompt, model, adapter, index, and code versions.
-- Each added technique must justify its complexity through measured improvement.
+- Added techniques must justify their complexity through measured improvement.
 
 ## Documentation
 
@@ -43,5 +41,5 @@ tool-use support, hardware constraints, and reproducible availability.
 ## Current status
 
 Phase 0: project design. The repository currently defines boundaries, artifacts,
-and milestone gates; implementation follows only after the first task contract and
-evaluation specification are fixed.
+and milestone gates. Implementation begins only after the initial task contract
+and evaluation specification are fixed.

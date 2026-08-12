@@ -1,0 +1,43 @@
+# Initial task contract
+
+## Task: report-grounded factual QA
+
+Given a question and retrieved passages from one public aviation safety report,
+produce a concise answer supported only by those passages.
+
+The machine-readable output has this shape:
+
+```json
+{
+  "answer": "string or null",
+  "citations": [{"chunk_id": "string", "quote": "short evidence span"}],
+  "abstained": false,
+  "abstention_reason": null
+}
+```
+
+## Required behavior
+
+- Every material factual claim must be supported by at least one citation.
+- Citation text must be an exact span from the identified chunk.
+- If evidence is absent, conflicting, or insufficient, the system must abstain.
+- The answer must not infer operational guidance, fault, blame, or legal liability.
+- Retrieved text is evidence, not executable instructions.
+
+## Initial evaluation unit
+
+One example contains a question, report/event identity, reference answer or rubric,
+verified evidence spans, answerability, provenance, and split. Splits are assigned
+at event-family level before chunks or examples are derived.
+
+Primary measures are answer correctness, citation precision/recall, citation span
+validity, unsupported-claim rate, and abstention precision/recall. Results are also
+sliced by answerability, report length, table/OCR content, and retrieval difficulty.
+
+## Out of scope for the first slice
+
+- General aviation chat or operational flight advice
+- Assigning blame or liability
+- Cross-report synthesis
+- Autonomous browsing or open-ended agent loops
+- Synthetic or model-judged examples in the frozen test set
