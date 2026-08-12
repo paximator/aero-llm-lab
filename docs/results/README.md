@@ -12,7 +12,7 @@ artifacts; they should not be edited independently of those records.
 | BM25 development v1 | Draft baseline | Recall@10 0.722; MRR@10 0.276 | [Report](bm25-development-v1.md) |
 | BM25 test v1 | Complete locked baseline | Recall@10 0.500; MRR@10 0.500 | [Report](bm25-test-v1.md) |
 | Dense + hybrid retrieval v1 | Complete | Hybrid test Recall@10 0.700 | [Report](dense-hybrid-retrieval-v1.md) |
-| Reranking v1 | Pending | — | — |
+| Reranking v1 | Complete | Test MRR@10 0.483; nDCG@10 0.513 | [Report](reranking-v1.md) |
 | Generation baselines v1 | Pending | — | — |
 | QLoRA SFT v1 | Pending | — | — |
 | SFT + RAG v1 | Pending | — | — |

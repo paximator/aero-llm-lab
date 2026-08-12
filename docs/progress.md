@@ -20,14 +20,16 @@ This page is the narrative milestone log. Reproducible measurements live in
   were both 0.500 on 10 examples.
 - Added GPU-backed E5 dense retrieval and development-selected RRF. The locked hybrid
   test run improved Recall@10 from 0.500 to 0.700, with lower MRR than BM25.
+- Added development-selected MiniLM cross-encoder reranking. On locked test it raised
+  hybrid MRR@10 from 0.348 to 0.483, while top-20 candidate recall limited Recall@10
+  to 0.600.
 
 ## Current milestone
 
-Develop a cross-encoder reranker using only the development split. Keep the frozen
-hybrid candidate generator unchanged and treat its test result as locked.
+Build base, prompted, and RAG generation evaluation using the frozen retrieval
+operating points. Select prompts and context budgets using development only.
 
 ## Next milestones
 
-1. Development-selected cross-encoder reranking over frozen hybrid candidates.
-2. Base, prompted, and RAG generation comparisons on the frozen task suite.
-3. QLoRA SFT on the documented local hardware budget.
+1. Base, prompted, and RAG generation comparisons on the frozen task suite.
+2. QLoRA SFT on the documented local hardware budget.
