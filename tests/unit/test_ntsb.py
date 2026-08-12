@@ -40,7 +40,13 @@ def test_ntsb_source_rejects_invalid_ranges() -> None:
 
 
 def test_v2_pagination_parameters_are_explicit_and_marker_identity_is_safe() -> None:
-    source = NTSBSource("https://api.example.test", "key")
+    calls = []
+
+    def transport(url, headers, timeout):
+        calls.append(url)
+        return RemoteResponse(b'{"data": []}', "application/json")
+
+    source = NTSBSource("https://api.example.test", "key", transport=transport)
     report = next(
         source.list_reports(
             date(2026, 1, 1), date(2026, 1, 2), mode="aviation", marker="opaque marker"
@@ -50,6 +56,9 @@ def test_v2_pagination_parameters_are_explicit_and_marker_identity_is_safe() -> 
     assert "mode=aviation" in report.source_url
     assert "marker=opaque+marker" in report.source_url
     assert "opaque marker" not in report.source_id
+    source.fetch_report(report)
+    assert "mode=aviation" in calls[0]
+    assert "marker=opaque+marker" in calls[0]
 
 
 def test_reference_fetch_uses_relative_path_and_subscription_header() -> None:

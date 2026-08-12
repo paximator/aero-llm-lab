@@ -71,7 +71,7 @@ class NTSBSource:
             for key in ("startDate", "endDate", "mode", "marker")
             if key in report.attributes
         }
-        if len(parameters) != 2:
+        if not {"startDate", "endDate"}.issubset(parameters):
             raise ValueError("NTSB report metadata lacks date-range parameters")
         transport = self.transport or _urlopen_transport
         headers = {
