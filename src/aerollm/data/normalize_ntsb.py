@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from aerollm.common.schemas import SourceDocument
-from aerollm.data.sources import AviationReportRecord
+from aerollm.data.sources import AviationReportRecord, ReportDocumentMetadata
 
 
 class NTSBSnapshotSchemaError(ValueError):
@@ -70,7 +70,8 @@ def _normalize_case(raw: Mapping[str, Any], document: SourceDocument) -> Aviatio
     values = _casefolded(raw)
     source_id = _required_text(values, "ntsbnumber", "accidentnumber", "casenumber")
     event_id = _optional_text(values, "eventid", "event_id")
-    source_url = _optional_text(values, "reporturl", "sourceurl", "url") or document.source_url
+    source_url = _optional_text(values, "caseurl", "sourceurl", "url") or document.source_url
+    report_url = _optional_text(values, "reporturl", "finalreporturl")
     attributes = _attributes(values)
     return AviationReportRecord(
         source="ntsb",
@@ -80,6 +81,7 @@ def _normalize_case(raw: Mapping[str, Any], document: SourceDocument) -> Aviatio
         occurred_on=_optional_date(values, "eventdate", "occurreddate"),
         published_on=_optional_date(values, "publisheddate", "publicationdate"),
         attributes=attributes,
+        documents=_documents(source_id, event_id, report_url),
     )
 
 
@@ -124,3 +126,18 @@ def _attributes(values: Mapping[str, Any]) -> dict[str, str]:
         for output_name, input_names in aliases.items()
         if (value := _optional_text(values, *input_names)) is not None
     }
+
+
+def _documents(
+    source_id: str, event_id: str | None, report_url: str | None
+) -> tuple[ReportDocumentMetadata, ...]:
+    if report_url is None:
+        return ()
+    return (
+        ReportDocumentMetadata(
+            source_id=f"{source_id}:report",
+            source_url=report_url,
+            kind="investigation-report",
+            event_id=event_id,
+        ),
+    )

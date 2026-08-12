@@ -25,6 +25,21 @@ class RemoteResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class ReportDocumentMetadata:
+    """Provider-neutral pointer to one published report document."""
+
+    source_id: str
+    source_url: str
+    kind: str
+    media_type: str = "application/pdf"
+    event_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.source_id or not self.source_url or not self.kind:
+            raise ValueError("source_id, source_url, and kind are required")
+
+
+@dataclass(frozen=True, slots=True)
 class AviationReportRecord:
     """Stable normalized identity and dates shared by aviation providers."""
 
@@ -35,6 +50,7 @@ class AviationReportRecord:
     occurred_on: date | None = None
     published_on: date | None = None
     attributes: Mapping[str, str] = field(default_factory=dict)
+    documents: tuple[ReportDocumentMetadata, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.source or not self.source_id or not self.source_url:
