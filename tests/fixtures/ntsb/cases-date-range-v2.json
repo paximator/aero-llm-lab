@@ -1,0 +1,21 @@
+{
+  "cases": [
+    {
+      "eventId": "20260102X00001",
+      "ntsbNumber": "CEN26FA001",
+      "eventDate": "2026-01-02T14:30:00Z",
+      "publishedDate": "2026-01-15",
+      "reportUrl": "https://example.test/reports/CEN26FA001",
+      "eventType": "Accident",
+      "status": "Completed",
+      "providerOnlyField": "must not leak"
+    },
+    {
+      "EventId": "20260103X00002",
+      "AccidentNumber": "ERA26LA002",
+      "EventDate": "2026-01-03",
+      "EventCountry": "United States",
+      "InvestigationType": "Incident"
+    }
+  ]
+}

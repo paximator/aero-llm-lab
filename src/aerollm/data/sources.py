@@ -24,6 +24,23 @@ class RemoteResponse:
     headers: Mapping[str, str] = field(default_factory=dict)
 
 
+@dataclass(frozen=True, slots=True)
+class AviationReportRecord:
+    """Stable normalized identity and dates shared by aviation providers."""
+
+    source: str
+    source_id: str
+    source_url: str
+    event_id: str | None = None
+    occurred_on: date | None = None
+    published_on: date | None = None
+    attributes: Mapping[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.source or not self.source_id or not self.source_url:
+            raise ValueError("source, source_id, and source_url are required")
+
+
 class ReportSource(Protocol):
     """The only boundary permitted to communicate with a source provider."""
 

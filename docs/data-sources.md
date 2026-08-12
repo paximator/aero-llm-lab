@@ -44,6 +44,19 @@ provider-neutral `SourceDocument`, and writes the raw body plus a metadata sidec
 under the ignored `artifacts/` directory. Request credentials and non-allowlisted
 response headers are never persisted.
 
+### Snapshot normalization and manifests
+
+`normalize_snapshot` accepts a provider-neutral `SourceDocument`, verifies the
+saved bytes against its SHA-256 digest, and then maps supported NTSB response
+envelopes into `AviationReportRecord` values. It has no HTTP dependency and rejects
+invalid JSON, unsupported envelopes, missing case identities, and malformed dates.
+Only a small allowlist of normalized attributes crosses the provider boundary.
+
+`SourceManifest` records the source, creation time, snapshot identities, artifact
+paths, retrieval times, and digests required to reproduce a dataset build. It does
+not serialize arbitrary snapshot metadata, keeping credentials and provider-only
+response details outside manifests.
+
 This separates convenience from reproducibility: an API can refresh the corpus,
 but a historical experiment always resolves to the exact bytes it consumed.
 
