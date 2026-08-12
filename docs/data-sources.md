@@ -32,9 +32,19 @@ The initial command intentionally acquires exactly one API response for an inclu
 date range of at most 31 days. It does not paginate, normalize cases, or build a
 dataset; those operations must read the resulting immutable snapshot.
 
+Keep local credentials in the shared, ignored file
+`<repository-root>/.secrets/ntsb.env`. Copy
+`configs/secrets/ntsb.env.example` there and fill in the portal values. From any
+Cascade worktree, dot-source the loader so the variables remain in that terminal:
+
 ```powershell
-$env:AEROLLM_NTSB_BASE_URL = "https://<endpoint-from-the-developer-portal>"
-$env:AEROLLM_NTSB_API_KEY = "<subscription-key>"
+. .\scripts\import-local-env.ps1 -Name ntsb
+```
+
+The loader derives the common repository root from Git, validates each entry, and
+prints variable names only. It never prints values.
+
+```powershell
 uv run aerollm-acquire-ntsb --start 2026-01-01 --end 2026-01-07
 ```
 
