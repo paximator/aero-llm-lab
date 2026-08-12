@@ -38,12 +38,14 @@ def acquire(start: date, end: date, config_path: Path) -> dict[str, Any]:
     config = tomllib.loads(config_path.read_text(encoding="utf-8"))
     remote = config["remote"]
     snapshot = config["snapshot"]
-    base_url = _required_environment(remote["base_url_env"])
+    base_url = remote["base_url"]
+    if not isinstance(base_url, str) or not base_url:
+        raise ValueError("remote.base_url must be configured")
     api_key = _required_environment(remote["api_key_env"])
     source = NTSBSource(
         base_url=base_url,
         api_key=api_key,
-        endpoint_path=remote.get("endpoint_path", "aviation/api/GetCasesByDateRangeV2"),
+        endpoint_path=remote.get("endpoint_path", "Common/v2/GetCasesByDateRange"),
         timeout_seconds=float(remote.get("timeout_seconds", 30)),
     )
     report = next(source.list_reports(start, end))

@@ -36,6 +36,9 @@ foreach ($line in Get-Content -LiteralPath $environmentFile) {
     if (-not $variableValue) {
         throw "Environment variable $variableName has no value in $environmentFile."
     }
+    if ($variableValue -match '^<.*>$') {
+        throw "Replace the placeholder value for $variableName in $environmentFile."
+    }
 
     [Environment]::SetEnvironmentVariable($variableName, $variableValue, "Process")
     $loaded.Add($variableName)

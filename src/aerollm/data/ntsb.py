@@ -24,7 +24,7 @@ class NTSBSource:
 
     base_url: str
     api_key: str
-    endpoint_path: str = "aviation/api/GetCasesByDateRangeV2"
+    endpoint_path: str = "Common/v2/GetCasesByDateRange"
     timeout_seconds: float = 30.0
     transport: Transport | None = None
 

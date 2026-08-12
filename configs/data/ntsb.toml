@@ -2,11 +2,10 @@ source = "ntsb"
 mode = "snapshot"
 
 [remote]
-# Exact endpoint and credentials are environment-specific and are deliberately not
-# committed. Obtain them from the official NTSB Developer Portal.
-base_url_env = "AEROLLM_NTSB_BASE_URL"
+# Public API location is tracked; only the subscription key remains local.
+base_url = "https://api.ntsb.gov/public/api"
 api_key_env = "AEROLLM_NTSB_API_KEY"
-endpoint_path = "aviation/api/GetCasesByDateRangeV2"
+endpoint_path = "Common/v2/GetCasesByDateRange"
 timeout_seconds = 30
 
 [snapshot]

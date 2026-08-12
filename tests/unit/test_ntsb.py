@@ -24,7 +24,7 @@ def test_ntsb_source_builds_concrete_date_range_request_without_leaking_key() ->
 
     url, headers, timeout = calls[0]
     assert url == (
-        "https://api.example.test/root/aviation/api/GetCasesByDateRangeV2"
+        "https://api.example.test/root/Common/v2/GetCasesByDateRange"
         "?startDate=2026-01-02&endDate=2026-01-03"
     )
     assert headers["Ocp-Apim-Subscription-Key"] == "top-secret"

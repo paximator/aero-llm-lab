@@ -37,6 +37,15 @@ Keep local credentials in the shared, ignored file
 `configs/secrets/ntsb.env.example` there and fill in the portal values. From any
 Cascade worktree, dot-source the loader so the variables remain in that terminal:
 
+```dotenv
+AEROLLM_NTSB_API_KEY=<your-private-subscription-key>
+```
+
+The base URL is public configuration in `configs/data/ntsb.toml`. The
+subscription key is the only private value: enter it only in the ignored
+`.secrets/ntsb.env` file. Do not paste it into a chat, command line, tracked config,
+test fixture, log, issue, or commit.
+
 ```powershell
 . .\scripts\import-local-env.ps1 -Name ntsb
 ```

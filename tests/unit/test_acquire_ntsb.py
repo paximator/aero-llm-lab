@@ -16,7 +16,7 @@ def test_acquisition_snapshots_raw_response_and_prints_provider_neutral_record(
     config.write_text(
         f'''source = "ntsb"
 [remote]
-base_url_env = "TEST_NTSB_URL"
+base_url = "https://api.example.test"
 api_key_env = "TEST_NTSB_KEY"
 timeout_seconds = 5
 [snapshot]
@@ -25,7 +25,6 @@ retain_response_headers = ["content-type", "etag"]
 ''',
         encoding="utf-8",
     )
-    monkeypatch.setenv("TEST_NTSB_URL", "https://api.example.test")
     monkeypatch.setenv("TEST_NTSB_KEY", "credential-not-for-artifacts")
 
     def fake_fetch(self, report):
@@ -60,16 +59,16 @@ def test_command_reports_missing_environment_without_credential_value(
     config = tmp_path / "ntsb.toml"
     config.write_text(
         """[remote]
-base_url_env = "ABSENT_NTSB_URL"
+base_url = "https://api.example.test"
 api_key_env = "ABSENT_NTSB_KEY"
 [snapshot]
 root = "ignored"
 """,
         encoding="utf-8",
     )
-    monkeypatch.delenv("ABSENT_NTSB_URL", raising=False)
+    monkeypatch.delenv("ABSENT_NTSB_KEY", raising=False)
     result = acquire_ntsb.main(
         ["--start", "2026-01-01", "--end", "2026-01-01", "--config", str(config)]
     )
     assert result == 2
-    assert "ABSENT_NTSB_URL" in capsys.readouterr().err
+    assert "ABSENT_NTSB_KEY" in capsys.readouterr().err

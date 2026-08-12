@@ -16,7 +16,7 @@ def test_saved_snapshot_normalizes_to_neutral_records_and_manifest(tmp_path) -> 
         source="ntsb",
         source_id="cases-2026-01-01-2026-01-07",
         source_url=(
-            "https://api.example.test/aviation/api/GetCasesByDateRangeV2"
+            "https://api.example.test/Common/v2/GetCasesByDateRange"
             "?startDate=2026-01-01&endDate=2026-01-07"
         ),
         publisher="National Transportation Safety Board",
