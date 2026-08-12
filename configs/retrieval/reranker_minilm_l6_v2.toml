@@ -1,0 +1,9 @@
+model_id = "cross-encoder/ms-marco-MiniLM-L6-v2"
+model_revision = "c5ee24cb16019beea0893ab7796b1df96625c6b8"
+max_length = 512
+batch_size = 32
+selection_split = "development"
+selection_metric = "mrr_at_10"
+selection_grid_candidate_k = [20, 50, 100]
+selected_candidate_k = 20
+selected_index_id = "rerank_6dfb22c3877396c832e4a51675ba52581cf0b5394dd85a6ea2a14f15bc1811f8"
