@@ -83,6 +83,16 @@ def test_document_without_text_is_rejected() -> None:
         chunk_document(_document(("",)), ChunkingConfig())
 
 
+def test_repeated_ntsb_page_header_is_not_a_standalone_chunk() -> None:
+    document = _document(("Useful report content.", "NTSB\n\nSubstantive transcript content."))
+
+    manifest = chunk_document(document, ChunkingConfig())
+
+    assert [chunk.text for chunk in manifest.chunks] == [
+        "Useful report content.", "Substantive transcript content.",
+    ]
+
+
 def test_short_boundary_chunk_does_not_advance_one_character_at_a_time() -> None:
     prefix = "A useful sentence. " * 90
     text = prefix + "Probable Cause" + "." * 120 + " 42\n" + ("Next section. " * 90)

@@ -140,12 +140,22 @@ def _chunk_page(document: Document, page: PageSpan, config: ChunkingConfig) -> l
         start = _skip_whitespace(text, cursor, page_end)
         if start >= page_end:
             break
+        header_boundary = _PARAGRAPH_BOUNDARY.search(text, start, min(start + 32, page_end))
+        if (
+            header_boundary is not None
+            and _is_header_only_boilerplate(text[start : header_boundary.start()])
+        ):
+            cursor = header_boundary.end()
+            continue
         desired = min(start + config.target_characters, page_end)
         end = _choose_end(text, start, desired, page_end, config)
         end = _trim_end(text, start, end)
         if end <= start:
             break
         chunk_text = text[start:end]
+        if _is_header_only_boilerplate(chunk_text):
+            cursor = end
+            continue
         result.append(
             Chunk.create(
                 document_id=document.document_id,
@@ -211,3 +221,7 @@ def _content_kind(text: str) -> ContentKind:
     if lines and sum("  " in line or "|" in line for line in lines) / len(lines) >= 0.4:
         return ContentKind.TABLE
     return ContentKind.TEXT
+
+
+def _is_header_only_boilerplate(text: str) -> bool:
+    return text.strip().casefold() == "ntsb"
