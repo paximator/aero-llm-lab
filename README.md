@@ -126,6 +126,19 @@ uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
   --target-reports 19
 ```
 
+Freeze the independently approved retrieval test packet and validate it against the
+held-out corpus source:
+
+```powershell
+uv run aerollm-freeze-retrieval-test
+uv run aerollm-validate-corpus artifacts/corpora/ntsb-pilot-v1.json `
+  data/evaluation/retrieval_test_v1.json
+```
+
+The freeze command records `data/evaluation/retrieval_test_v1.sha256`, is idempotent
+for identical content, and refuses to overwrite different bytes. Test questions,
+answers, evidence, failures, and metrics are excluded from training and tuning.
+
 Do not pass `--refresh-plan` during materialization: that flag intentionally
 replaces the reviewed selection. Generated source snapshots, parsed documents,
 chunks, failure reports, and corpora are stored under ignored `artifacts/` paths.

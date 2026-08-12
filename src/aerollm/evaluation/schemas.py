@@ -146,9 +146,6 @@ class GroundedQAExample:
             raise ValueError("an unanswerable example cannot have an answer or evidence")
         if not self.reference_answer and not self.rubric:
             raise ValueError("an example requires a reference answer or rubric")
-        chunk_ids = [span.chunk_id for span in self.evidence]
-        if len(set(chunk_ids)) != len(chunk_ids):
-            raise ValueError("evidence chunk_ids must be unique")
 
     def to_dict(self) -> dict[str, object]:
         return {

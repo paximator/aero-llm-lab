@@ -14,16 +14,18 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Froze data-pipeline v1 from the available official aviation reports.
 - Audited extraction and content labels; removed confirmed header-only chunks and
   quarantined the unreliable table heuristic from retrieval features.
+- Independently reviewed and froze retrieval test set v1: 10 grounded questions with
+  exact corpus evidence and an immutable digest.
 
 ## Current milestone
 
-Review the evidence-linked test packet, then freeze and run the first test retrieval
-benchmark without tuning against the test split. The untuned development BM25
-baseline is recorded for diagnostics.
+Run the first locked BM25 retrieval benchmark against retrieval test set v1 without
+tuning against the test split. The development BM25 baseline remains the only source
+for retrieval design decisions.
 
 ## Next milestones
 
-1. BM25 retrieval evaluation and error analysis.
+1. Locked BM25 test retrieval evaluation and error analysis (report only; do not tune).
 2. Dense retrieval and measured comparison with BM25.
 3. Reranking only if baseline failures justify it.
 4. Base, prompted, and RAG generation comparisons on the frozen task suite.

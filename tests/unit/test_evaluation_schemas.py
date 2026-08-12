@@ -125,3 +125,27 @@ def test_deserialization_rejects_unknown_fields() -> None:
 
     with pytest.raises(ValueError, match="unknown dataset fields: judge_model"):
         EvaluationDataset.from_dict(payload)
+
+
+def test_multiple_evidence_spans_may_share_a_chunk() -> None:
+    record = example()
+    repeated_chunk_evidence = (
+        EvidenceSpan("chunk-1", "first exact span"),
+        EvidenceSpan("chunk-1", "second exact span"),
+    )
+
+    duplicated = GroundedQAExample(
+        example_id=record.example_id,
+        question=record.question,
+        report_id=record.report_id,
+        event_id=record.event_id,
+        event_family_id=record.event_family_id,
+        split=record.split,
+        answerable=True,
+        reference_answer=record.reference_answer,
+        rubric=record.rubric,
+        evidence=repeated_chunk_evidence,
+        provenance=record.provenance,
+    )
+
+    assert len(duplicated.evidence) == 2

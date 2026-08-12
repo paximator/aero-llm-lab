@@ -109,7 +109,7 @@ class RetrievalReport:
 
 
 def _score(example: GroundedQAExample, result: RetrievalResult) -> RetrievalExampleScore:
-    relevant = tuple(span.chunk_id for span in example.evidence)
+    relevant = tuple(dict.fromkeys(span.chunk_id for span in example.evidence))
     if not relevant:
         return RetrievalExampleScore(example.example_id, relevant, result, None, None, None)
     ranks = {hit.chunk_id: hit.rank for hit in result.hits}

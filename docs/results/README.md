@@ -8,6 +8,7 @@ artifacts; they should not be edited independently of those records.
 |---|---|---|---|
 | Data pipeline v1 | Complete with source limitations | 16 reports, 2,017 pages, 6,897 chunks | [Report](data-pipeline-v1.md) |
 | Extraction audit v1 | Complete | Table label quarantined; header-only chunks removed | [Report](extraction-audit-v1.md) |
+| Retrieval test set v1 | Frozen | 10 independently reviewed test examples | [Report](retrieval-test-v1.md) |
 | BM25 development v1 | Draft baseline | Recall@10 0.722; MRR@10 0.276 | [Report](bm25-development-v1.md) |
 | Dense retrieval v1 | Pending | — | — |
 | Reranking v1 | Pending | — | — |

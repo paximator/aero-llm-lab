@@ -34,13 +34,19 @@ with model assistance. Frozen test examples require an independent human reviewe
 
 ```powershell
 uv run aerollm-build-retrieval-dataset
+uv run aerollm-freeze-retrieval-test
+uv run aerollm-validate-corpus artifacts/corpora/ntsb-pilot-v1.json `
+  data/evaluation/retrieval_test_v1.json
 uv run aerollm-retrieve artifacts/corpora/ntsb-pilot-v1.json `
   data/evaluation/retrieval_dev_v1.json --k 10 `
   --json-output artifacts/runs/bm25-dev-v1/report.json `
   --markdown-output artifacts/runs/bm25-dev-v1/report.md
 ```
 
-The current development set is model-assisted and must be manually sampled before
-its metrics are used in portfolio claims. The test split remains unscored until its
-10 drafts receive independent human review.
-
+The development set is model-assisted and must be manually sampled before its
+metrics are used in portfolio claims. The test set was independently reviewed and
+frozen as version `1.0.0`. The freeze command requires every example to be approved,
+resolves cleaned PDF-layout whitespace back to exact corpus spans, verifies report,
+page, chunk, event-family, and test-split provenance, and refuses to replace a frozen
+artifact with different bytes. Never use test questions, answers, evidence, retrieved
+failures, or metrics to select training examples, prompts, retrievers, or hyperparameters.
