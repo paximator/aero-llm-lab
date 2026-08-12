@@ -1,0 +1,6 @@
+schema_version = 1
+target_characters = 1600
+overlap_characters = 256
+minimum_characters = 320
+boundary_search_characters = 400
+

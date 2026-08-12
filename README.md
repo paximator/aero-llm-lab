@@ -41,6 +41,16 @@ tool-use support, hardware constraints, and reproducible availability.
 
 ## Current status
 
-Phase 0: project design. The repository currently defines boundaries, artifacts,
-and milestone gates. Implementation begins only after the initial task contract
-and evaluation specification are fixed.
+The first end-to-end data slice is operational: NTSB API discovery, aviation case
+metadata, formal report download, PDF parsing, and deterministic page-aware
+chunking. Tests use recorded or synthetic inputs; live API calls remain explicit.
+
+Create a reproducible chunk manifest from a parsed report with:
+
+```powershell
+uv run aerollm-chunk-document artifacts/parsed/ntsb/<prefix>/<digest>.json
+```
+
+Chunking parameters live in `configs/data/chunking.toml`. Manifests retain exact
+source offsets, page provenance, content type, section metadata, and a configuration
+fingerprint so retrieval experiments can be reproduced and audited.
