@@ -202,6 +202,19 @@ The dense retrieval baseline uses the pinned `intfloat/e5-small-v2` revision in
 `configs/retrieval/dense_e5_small_v2.toml`. Model weights, persistent embeddings,
 and raw run reports remain under ignored `artifacts/` paths.
 
+Generate the metadata-only corpus-v2 event review packet from verified cached NTSB
+snapshots (add `--discover` after loading the ignored NTSB environment when more
+metadata is required):
+
+```powershell
+uv run aerollm-select-corpus-v2 `
+  --source-corpus artifacts/corpora/ntsb-pilot-v1.json
+```
+
+Review `artifacts/pilot/corpus_v2_selection.review.json` using
+`docs/evaluation/corpus-v2-selection-review-guide.md`. This stage does not download
+PDFs or draft evaluation questions.
+
 Do not pass `--refresh-plan` during materialization: that flag intentionally
 replaces the reviewed selection. Generated source snapshots, parsed documents,
 chunks, failure reports, and corpora are stored under ignored `artifacts/` paths.

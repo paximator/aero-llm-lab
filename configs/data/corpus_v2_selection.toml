@@ -1,0 +1,26 @@
+schema_version = 1
+selection_id = "ntsb-corpus-v2-candidates"
+seed = "aerollm-corpus-v2-selection-2026"
+target_event_families = 16
+source_snapshot_root = "artifacts/source-snapshots/ntsb"
+review_output = "artifacts/pilot/corpus_v2_selection.review.json"
+discovery_start = "2010-01-01"
+discovery_end = "2017-12-31"
+max_discovery_requests = 100
+discovery_window_days = 31
+
+[split_quotas]
+train = 8
+development = 3
+test = 5
+
+[review]
+allowed_statuses = ["draft", "approved", "needs_changes", "rejected"]
+initial_status = "draft"
+require_all_approved_before_freeze = true
+
+[diversity]
+feature_fields = ["year", "severity", "event_type", "weather", "report_type", "country"]
+minimum_distinct_years = 4
+minimum_distinct_severities = 2
+minimum_distinct_weather_categories = 2
