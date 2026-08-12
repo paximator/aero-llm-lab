@@ -47,21 +47,26 @@ class SnapshotStore:
         if body_path.exists() and body_path.read_bytes() != response.body:
             raise RuntimeError(f"digest collision at {body_path}")
         if not body_path.exists():
-            self._atomic_write(body_path, response.body)
+            atomic_write(body_path, response.body)
 
         safe_headers = self._filtered_headers(response.headers)
         metadata = {
             "source": source,
             "source_id": source_id,
             "source_url": source_url,
+            "publisher": publisher,
             "retrieved_at": timestamp.astimezone(UTC).isoformat(),
             "sha256": digest,
             "content_type": response.content_type,
             "response_headers": safe_headers,
             "request_parameters": dict(sorted((request_parameters or {}).items())),
         }
+        if event_id is not None:
+            metadata["event_id"] = event_id
+        if usage_note is not None:
+            metadata["usage_note"] = usage_note
         if not metadata_path.exists():
-            self._atomic_write(
+            atomic_write(
                 metadata_path,
                 (json.dumps(metadata, indent=2, sort_keys=True) + "\n").encode(),
             )
@@ -85,16 +90,40 @@ class SnapshotStore:
             name.casefold(): value for name, value in headers.items() if name.casefold() in allowed
         }
 
-    @staticmethod
-    def _atomic_write(path: Path, content: bytes) -> None:
-        """Publish complete files only; temporary files never escape the snapshot directory."""
-        descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
-        temporary_path = Path(temporary_name)
-        try:
-            with os.fdopen(descriptor, "wb") as stream:
-                stream.write(content)
-                stream.flush()
-                os.fsync(stream.fileno())
-            os.replace(temporary_path, path)
-        finally:
-            temporary_path.unlink(missing_ok=True)
+
+def atomic_write(path: Path, content: bytes) -> None:
+    """Publish complete files only; temporary files never escape the target directory."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    temporary_path = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary_path, path)
+    finally:
+        temporary_path.unlink(missing_ok=True)
+
+
+def load_snapshot(metadata_path: Path) -> SourceDocument:
+    """Reconstruct a neutral source record from a snapshot sidecar."""
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    digest = metadata["sha256"]
+    body_path = metadata_path.with_name(f"{digest}.bin")
+    timestamp = datetime.fromisoformat(metadata["retrieved_at"])
+    return SourceDocument(
+        source=metadata["source"],
+        source_id=metadata["source_id"],
+        source_url=metadata["source_url"],
+        publisher=metadata.get("publisher", str(metadata["source"]).upper()),
+        retrieved_at=timestamp,
+        sha256=digest,
+        artifact_path=body_path.as_posix(),
+        event_id=metadata.get("event_id"),
+        usage_note=metadata.get("usage_note"),
+        metadata={
+            "content_type": metadata["content_type"],
+            "response_headers": metadata.get("response_headers", {}),
+        },
+    )

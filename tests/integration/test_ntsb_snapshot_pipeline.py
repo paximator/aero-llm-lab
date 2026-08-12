@@ -29,8 +29,11 @@ def test_saved_snapshot_normalizes_to_neutral_records_and_manifest(tmp_path) -> 
     assert [record.source_id for record in records] == ["CEN26FA001", "ERA26LA002"]
     assert records[0].occurred_on.isoformat() == "2026-01-02"
     assert records[0].attributes == {"event_type": "Accident", "status": "Completed"}
+    assert records[0].documents[0].source_url == "https://example.test/reports/CEN26FA001"
     assert "providerOnlyField" not in records[0].attributes
+    assert records[0].source_url == snapshot.source_url
     assert records[1].source_url == snapshot.source_url
+    assert records[1].documents == ()
     assert records[1].attributes == {
         "country": "United States",
         "event_type": "Incident",

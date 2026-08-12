@@ -45,6 +45,42 @@ class SourceDocument:
 
 
 @dataclass(frozen=True, slots=True)
+class PageSpan:
+    page_number: int
+    start_offset: int
+    end_offset: int
+
+    def __post_init__(self) -> None:
+        if self.page_number < 1 or self.start_offset < 0 or self.end_offset < self.start_offset:
+            raise ValueError("invalid page span")
+
+
+@dataclass(frozen=True, slots=True)
+class Document:
+    """Provider-neutral parsed document with page-addressable text."""
+
+    document_id: str
+    source_sha256: str
+    text: str
+    pages: tuple[PageSpan, ...]
+    parser: str
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.document_id or not self.parser:
+            raise ValueError("document_id and parser are required")
+        if len(self.source_sha256) != 64 or any(
+            character not in "0123456789abcdef" for character in self.source_sha256
+        ):
+            raise ValueError("source_sha256 must be a SHA-256 digest")
+        if any(page.end_offset > len(self.text) for page in self.pages):
+            raise ValueError("page span exceeds document text")
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True, slots=True)
 class EvidenceSpan:
     chunk_id: str
     quote: str

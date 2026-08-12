@@ -13,11 +13,40 @@ from aerollm.common.schemas import SourceDocument
 
 
 @dataclass(frozen=True, slots=True)
+class DerivedArtifact:
+    artifact_id: str
+    kind: str
+    sha256: str
+    artifact_path: str
+
+    def __post_init__(self) -> None:
+        if not self.artifact_id or not self.kind or not self.artifact_path:
+            raise ValueError("derived artifact identity, kind, and path are required")
+        if len(self.sha256) != 64 or any(
+            character not in "0123456789abcdef" for character in self.sha256
+        ):
+            raise ValueError("derived artifact sha256 must be a SHA-256 digest")
+
+
+@dataclass(frozen=True, slots=True)
+class ArtifactLink:
+    parent_sha256: str
+    child_sha256: str
+    relationship: str
+
+    def __post_init__(self) -> None:
+        if not self.relationship:
+            raise ValueError("artifact relationship is required")
+
+
+@dataclass(frozen=True, slots=True)
 class SourceManifest:
     source: str
     created_at: datetime
     snapshots: tuple[SourceDocument, ...]
-    schema_version: int = 1
+    derived_artifacts: tuple[DerivedArtifact, ...] = ()
+    links: tuple[ArtifactLink, ...] = ()
+    schema_version: int = 2
 
     def __post_init__(self) -> None:
         if self.created_at.tzinfo is None:
@@ -29,9 +58,20 @@ class SourceManifest:
         digests = [snapshot.sha256 for snapshot in self.snapshots]
         if len(digests) != len(set(digests)):
             raise ValueError("a manifest cannot contain duplicate snapshot digests")
+        all_digests = set(digests) | {artifact.sha256 for artifact in self.derived_artifacts}
+        if any(
+            link.parent_sha256 not in all_digests or link.child_sha256 not in all_digests
+            for link in self.links
+        ):
+            raise ValueError("manifest links must reference included artifacts")
 
     def to_dict(self) -> dict[str, object]:
         snapshots = sorted(self.snapshots, key=lambda item: (item.sha256, item.source_id))
+        derived = sorted(self.derived_artifacts, key=lambda item: (item.sha256, item.artifact_id))
+        links = sorted(
+            self.links,
+            key=lambda item: (item.parent_sha256, item.child_sha256, item.relationship),
+        )
         return {
             "schema_version": self.schema_version,
             "source": self.source,
@@ -45,6 +85,23 @@ class SourceManifest:
                     "retrieved_at": snapshot.retrieved_at.astimezone(UTC).isoformat(),
                 }
                 for snapshot in snapshots
+            ],
+            "derived_artifacts": [
+                {
+                    "artifact_id": artifact.artifact_id,
+                    "kind": artifact.kind,
+                    "sha256": artifact.sha256,
+                    "artifact_path": artifact.artifact_path,
+                }
+                for artifact in derived
+            ],
+            "links": [
+                {
+                    "parent_sha256": link.parent_sha256,
+                    "child_sha256": link.child_sha256,
+                    "relationship": link.relationship,
+                }
+                for link in links
             ],
         }
 

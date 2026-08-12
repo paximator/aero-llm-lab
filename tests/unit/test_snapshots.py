@@ -2,7 +2,7 @@ import hashlib
 import json
 from datetime import UTC, datetime
 
-from aerollm.data.snapshots import SnapshotStore
+from aerollm.data.snapshots import SnapshotStore, load_snapshot
 from aerollm.data.sources import RemoteResponse
 
 
@@ -33,6 +33,9 @@ def test_snapshot_is_content_addressed_and_redacts_unlisted_headers(tmp_path) ->
     assert sidecar["response_headers"] == {"etag": "abc"}
     assert sidecar["request_parameters"]["startDate"] == "2026-08-01"
     assert "secret" not in json.dumps(sidecar)
+
+    loaded = load_snapshot(tmp_path / "ntsb" / digest[:2] / f"{digest}.json")
+    assert loaded == record
 
 
 def test_saving_same_body_is_idempotent(tmp_path) -> None:

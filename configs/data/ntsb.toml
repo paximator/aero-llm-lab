@@ -13,3 +13,9 @@ timeout_seconds = 30
 root = "artifacts/source-snapshots/ntsb"
 retain_response_headers = ["content-type", "etag", "last-modified"]
 redact_request_headers = ["authorization", "x-api-key"]
+
+[reports]
+allowed_hosts = ["www.ntsb.gov", "data.ntsb.gov"]
+timeout_seconds = 30
+max_bytes = 26214400
+parsed_root = "artifacts/parsed/ntsb"

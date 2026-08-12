@@ -57,6 +57,26 @@ paths, retrieval times, and digests required to reproduce a dataset build. It do
 not serialize arbitrary snapshot metadata, keeping credentials and provider-only
 response details outside manifests.
 
+### Bounded report PDF pipeline
+
+Given the metadata sidecar from a case-range snapshot, the report command resolves
+only PDF links already present in that verified snapshot. It downloads at most 20
+reports per invocation, permits only HTTPS URLs on configured NTSB hosts, limits
+redirects to the same allowlist, and enforces a hard 50 MiB ceiling per response.
+
+```powershell
+uv run aerollm-acquire-ntsb-reports `
+  --snapshot-metadata artifacts/source-snapshots/ntsb/ab/<digest>.json `
+  --max-reports 5
+```
+
+Each response must have a PDF-compatible content type and `%PDF-` signature. The
+raw bytes are content-addressed before parsing. Parsing then rechecks the digest,
+rejects encrypted or malformed PDFs, and uses `pypdf` layout extraction to produce
+provider-neutral `Document` JSON with page-numbered character spans. The resulting
+manifest links the case snapshot to each PDF snapshot and each PDF snapshot to its
+parsed artifact. Parsed files and manifests default to ignored `artifacts/` paths.
+
 This separates convenience from reproducibility: an API can refresh the corpus,
 but a historical experiment always resolves to the exact bytes it consumed.
 
