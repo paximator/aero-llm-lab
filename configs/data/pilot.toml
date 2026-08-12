@@ -1,6 +1,6 @@
 schema_version = 1
 seed = "aerollm-pilot-2026"
-target_reports = 20
+target_reports = 19
 max_discovery_requests = 96
 discovery_window_days = 31
 plan_path = "artifacts/pilot/plan.json"

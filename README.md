@@ -70,7 +70,7 @@ Plan a diverse, bounded set of reports before downloading PDFs:
 
 ```powershell
 uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
-  --target-reports 20 --dry-run
+  --target-reports 19 --dry-run
 ```
 
 The dry run makes bounded NTSB discovery requests and freezes the selected report
