@@ -16,14 +16,14 @@ rather than weakening acquisition or parsing safeguards.
 | Materialized reports | 16 |
 | Source availability | 84.2% |
 | Pages | 2,017 |
-| Chunks | 6,903 |
+| Chunks | 6,897 |
 | Validation errors | 0 |
-| Validation warnings | 6 |
+| Validation warnings | 0 |
 | Train / development / test reports | 13 / 2 / 1 |
 
-Chunk length in source characters: minimum 4, median
+Chunk length in source characters: minimum 103, median
 1480, p95 1854, maximum 1996. Content labels:
-table=5,679, text=1,224.
+table=5,679, text=1,218.
 
 ## Source failures
 
@@ -48,22 +48,23 @@ uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
 $manifests = Get-ChildItem artifacts/manifests/pilot -Filter *.json |
   Sort-Object Name | ForEach-Object FullName
 uv run aerollm-build-corpus @manifests
-uv run aerollm-report-data-pipeline --code-revision e0a25ce
+uv run aerollm-report-data-pipeline --code-revision 9abcd77
 ```
 
 ## Provenance
 
 - Corpus version: `ntsb-pilot-v1`
-- Corpus SHA-256: `a0949e1f1fd548d6c14d89614dd9c13feb25f7a6981603d7f1ccc3925f1dcd57`
+- Corpus SHA-256: `37aa9ed77c3476b149ed8f4d455a7e8680e9c0359edf323117c422d4a765ac6d`
 - Corpus configuration: `sha256:8493da349eae666a43cec42dbd12a6d59bd8ef6fe48bef9dd284527545f93a03`
-- Data-producing code revision: `e0a25ce`
+- Data-producing code revision: `9abcd77`
 - Machine-readable metrics: [`data-pipeline-v1.metrics.json`](data-pipeline-v1.metrics.json)
 
 ## Limitations and decision
 
 This is a small pilot dominated by fatal investigations and is not representative
 of all aviation events. PDF text extraction quality has not yet received a sampled
-human audit. Six tiny chunks remain flagged for retrieval error analysis. The
+human audit. An extraction audit removed six confirmed header-only chunks; the
+rebuilt corpus has 0 validation warnings. The
 layout-spacing heuristic labels 5,679 chunks
 as tables; this unexpectedly high share is treated as a suspected classification
 error until manual sampling validates or replaces the heuristic.

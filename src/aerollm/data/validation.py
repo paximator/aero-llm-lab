@@ -67,4 +67,3 @@ def validate_built_corpus(
     return CorpusValidationReport(
         len(corpus.documents), len(corpus.chunks), tuple(errors), tuple(warnings)
     )
-

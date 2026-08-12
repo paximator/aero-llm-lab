@@ -12,6 +12,8 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Implemented verified PDF acquisition, parsing, deterministic chunking, event-level
   corpus splits, validation, and resumable pilot orchestration.
 - Froze data-pipeline v1 from the available official aviation reports.
+- Audited extraction and content labels; removed confirmed header-only chunks and
+  quarantined the unreliable table heuristic from retrieval features.
 
 ## Current milestone
 
@@ -25,4 +27,3 @@ baseline over the frozen corpus without tuning against the test split.
 3. Reranking only if baseline failures justify it.
 4. Base, prompted, and RAG generation comparisons on the frozen task suite.
 5. QLoRA SFT on the documented local hardware budget.
-

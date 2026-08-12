@@ -140,7 +140,8 @@ uv run aerollm-report-data-pipeline --code-revision {metrics['code_revision']}
 
 This is a small pilot dominated by fatal investigations and is not representative
 of all aviation events. PDF text extraction quality has not yet received a sampled
-human audit. Six tiny chunks remain flagged for retrieval error analysis. The
+human audit. An extraction audit removed six confirmed header-only chunks; the
+rebuilt corpus has {metrics['validation_warnings']} validation warnings. The
 layout-spacing heuristic labels {metrics['content_kinds'].get('table', 0):,} chunks
 as tables; this unexpectedly high share is treated as a suspected classification
 error until manual sampling validates or replaces the heuristic.

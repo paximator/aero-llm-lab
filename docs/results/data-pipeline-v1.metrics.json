@@ -2,17 +2,17 @@
   "chunk_characters": {
     "maximum": 1996,
     "median": 1480,
-    "minimum": 4,
+    "minimum": 103,
     "p95": 1854
   },
-  "chunks": 6903,
-  "code_revision": "e0a25ce",
+  "chunks": 6897,
+  "code_revision": "9abcd77",
   "config_fingerprint": "sha256:8493da349eae666a43cec42dbd12a6d59bd8ef6fe48bef9dd284527545f93a03",
   "content_kinds": {
     "table": 5679,
-    "text": 1224
+    "text": 1218
   },
-  "corpus_sha256": "a0949e1f1fd548d6c14d89614dd9c13feb25f7a6981603d7f1ccc3925f1dcd57",
+  "corpus_sha256": "37aa9ed77c3476b149ed8f4d455a7e8680e9c0359edf323117c422d4a765ac6d",
   "corpus_version": "ntsb-pilot-v1",
   "failed_reports": 3,
   "failure_categories": {
@@ -31,5 +31,5 @@
     "train": 13
   },
   "validation_errors": 0,
-  "validation_warnings": 6
+  "validation_warnings": 0
 }
