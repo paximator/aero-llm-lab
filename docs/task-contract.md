@@ -30,6 +30,15 @@ One example contains a question, report/event identity, reference answer or rubr
 verified evidence spans, answerability, provenance, and split. Splits are assigned
 at event-family level before chunks or examples are derived.
 
+The frozen test partition accepts only human-authored examples with at least one
+independent human reviewer. Synthetic examples are prohibited there. Dataset
+validation rejects any event family appearing in more than one split; deriving
+multiple reports, chunks, or questions from an event never changes its split.
+
+This initial schema records deterministic, human-verifiable gold data only. It has
+no model-judge fields or integration; model-judge evaluation remains a later,
+separately reported capability.
+
 Primary measures are answer correctness, citation precision/recall, citation span
 validity, unsupported-claim rate, and abstention precision/recall. Results are also
 sliced by answerability, report length, table/OCR content, and retrieval difficulty.
