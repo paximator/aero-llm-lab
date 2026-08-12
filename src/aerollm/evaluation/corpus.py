@@ -7,8 +7,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import ClassVar
 
-from aerollm.common.documents import Chunk, Document
-from aerollm.common.schemas import Split
+from aerollm.common.documents import Chunk
+from aerollm.common.schemas import Document, Split
 from aerollm.evaluation.schemas import EvaluationDataset
 
 
@@ -81,7 +81,8 @@ class CorpusManifest:
             raise ValueError("documents must contain Document records")
         if not all(isinstance(item, Chunk) for item in self.chunks):
             raise ValueError("chunks must contain Chunk records")
-        sources = _unique(self.sources, "source_document_id", "source")
+        _unique(self.sources, "source_document_id", "source")
+        sources_by_digest = _unique(self.sources, "sha256", "source digest")
         documents = _unique(self.documents, "document_id", "document")
         _unique(self.chunks, "chunk_id", "chunk")
         family_splits: dict[str, Split] = {}
@@ -90,17 +91,11 @@ class CorpusManifest:
             if previous is not source.split:
                 raise ValueError(f"event family {source.event_family_id!r} crosses source splits")
         for document in self.documents:
-            source = sources.get(document.source_document_id)
+            source = sources_by_digest.get(document.source_sha256)
             if source is None:
                 raise ValueError(
-                    f"document references unknown source {document.source_document_id!r}"
+                    f"document references unknown source digest {document.source_sha256!r}"
                 )
-            if (document.event_id, document.event_family_id, document.split) != (
-                source.event_id,
-                source.event_family_id,
-                source.split,
-            ):
-                raise ValueError("document event identity or split differs from its source")
         for chunk in self.chunks:
             document = documents.get(chunk.document_id)
             if document is None:
@@ -108,9 +103,9 @@ class CorpusManifest:
             if document.text[chunk.start : chunk.end] != chunk.text:
                 raise ValueError(f"chunk {chunk.chunk_id!r} does not match document offsets")
             covered_pages = [
-                page.page
+                page.page_number
                 for page in document.pages
-                if page.start < chunk.end and page.end > chunk.start
+                if page.start_offset < chunk.end and page.end_offset > chunk.start
             ]
             if not covered_pages or (min(covered_pages), max(covered_pages)) != (
                 chunk.page_start,
@@ -120,6 +115,7 @@ class CorpusManifest:
 
     def validate_dataset(self, dataset: EvaluationDataset) -> None:
         sources = {item.source_document_id: item for item in self.sources}
+        sources_by_digest = {item.sha256: item for item in self.sources}
         documents = {item.document_id: item for item in self.documents}
         chunks = {item.chunk_id: item for item in self.chunks}
         for example in dataset.examples:
@@ -143,7 +139,8 @@ class CorpusManifest:
                 if chunk is None:
                     raise ValueError(f"evidence references unknown chunk {evidence.chunk_id!r}")
                 document = documents[chunk.document_id]
-                if document.source_document_id not in declared_sources:
+                source = sources_by_digest[document.source_sha256]
+                if source.source_document_id not in declared_sources:
                     raise ValueError("evidence chunk is not from an example provenance source")
                 if evidence.quote not in chunk.text:
                     raise ValueError(

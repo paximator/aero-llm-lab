@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from aerollm.common.documents import Chunk, ContentKind, Document, PageSpan
-from aerollm.common.schemas import EvidenceSpan, Split
+from aerollm.common.documents import Chunk, ContentKind
+from aerollm.common.schemas import Document, EvidenceSpan, PageSpan, Split
 from aerollm.evaluation.corpus import CorpusManifest, SourceManifestEntry
 from aerollm.evaluation.schemas import EvaluationDataset, ExampleProvenance, GroundedQAExample
 from aerollm.evaluation.validate_cli import main
@@ -24,14 +24,12 @@ def records(
         split=split,
         sha256=hashlib.sha256(text.encode()).hexdigest(),
     )
-    document = Document.create(
-        source_document_id=source.source_document_id,
-        event_id=source.event_id,
-        event_family_id=source.event_family_id,
-        split=split,
-        parser_version="fixture-parser-v1",
+    document = Document(
+        document_id=f"doc-{source.sha256}",
+        source_sha256=source.sha256,
         text=text,
-        pages=(PageSpan(page=1, start=0, end=len(text)),),
+        pages=(PageSpan(page_number=1, start_offset=0, end_offset=len(text)),),
+        parser="fixture-parser-v1",
     )
     chunk = Chunk.create(
         document_id=document.document_id,
@@ -79,7 +77,7 @@ def test_text_table_and_ocr_chunks_validate(kind: ContentKind) -> None:
 def test_document_and_chunk_ids_are_content_derived() -> None:
     _, document, chunk = records()
     document_data, chunk_data = document.to_dict(), chunk.to_dict()
-    document_data["text"] = "tampered"
+    document_data["source_sha256"] = "0" * 64
     chunk_data["text"] = "tampered"
 
     with pytest.raises(ValueError, match="document_id"):

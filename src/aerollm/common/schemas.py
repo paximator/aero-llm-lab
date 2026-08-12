@@ -54,6 +54,13 @@ class PageSpan:
         if self.page_number < 1 or self.start_offset < 0 or self.end_offset < self.start_offset:
             raise ValueError("invalid page span")
 
+    @classmethod
+    def from_dict(cls, value: dict[str, Any]) -> PageSpan:
+        expected = {"page_number", "start_offset", "end_offset"}
+        if not isinstance(value, dict) or set(value) != expected:
+            raise ValueError("invalid page span fields")
+        return cls(**value)
+
 
 @dataclass(frozen=True, slots=True)
 class Document:
@@ -75,9 +82,42 @@ class Document:
             raise ValueError("source_sha256 must be a SHA-256 digest")
         if any(page.end_offset > len(self.text) for page in self.pages):
             raise ValueError("page span exceeds document text")
+        if self.document_id != f"doc-{self.source_sha256}":
+            raise ValueError("document_id does not match source digest")
+        cursor = 0
+        for page in self.pages:
+            if page.start_offset != cursor:
+                raise ValueError("page spans must be ordered and contiguous")
+            cursor = page.end_offset
+        if self.pages and cursor != len(self.text):
+            raise ValueError("page spans must cover the complete document text")
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {
+            "document_id": self.document_id,
+            "source_sha256": self.source_sha256,
+            "text": self.text,
+            "pages": [asdict(page) for page in self.pages],
+            "parser": self.parser,
+            "metadata": self.metadata,
+        }
+
+    @classmethod
+    def from_dict(cls, value: dict[str, Any]) -> Document:
+        expected = {"document_id", "source_sha256", "text", "pages", "parser", "metadata"}
+        if not isinstance(value, dict) or set(value) != expected:
+            raise ValueError("invalid document fields")
+        pages = value["pages"]
+        if not isinstance(pages, list):
+            raise ValueError("document pages must be a list")
+        return cls(
+            document_id=value["document_id"],
+            source_sha256=value["source_sha256"],
+            text=value["text"],
+            pages=tuple(PageSpan.from_dict(page) for page in pages),
+            parser=value["parser"],
+            metadata=value["metadata"],
+        )
 
 
 @dataclass(frozen=True, slots=True)

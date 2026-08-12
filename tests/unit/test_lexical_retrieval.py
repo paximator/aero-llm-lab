@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from aerollm.common.documents import Chunk, ContentKind, Document, PageSpan
-from aerollm.common.schemas import EvidenceSpan, Split
+from aerollm.common.documents import Chunk, ContentKind
+from aerollm.common.schemas import Document, EvidenceSpan, PageSpan, Split
 from aerollm.evaluation.corpus import CorpusManifest, SourceManifestEntry
 from aerollm.evaluation.schemas import EvaluationDataset, ExampleProvenance, GroundedQAExample
 from aerollm.retrieval.bm25 import BM25Index, IndexManifest, tokenize
@@ -31,14 +31,12 @@ def corpus_and_dataset(*, split: Split = Split.TEST) -> tuple[CorpusManifest, Ev
             split,
             hashlib.sha256(text.encode()).hexdigest(),
         )
-        document = Document.create(
-            source_document_id=source.source_document_id,
-            event_id=source.event_id,
-            event_family_id=source.event_family_id,
-            split=split,
-            parser_version="fixture-v1",
+        document = Document(
+            document_id=f"doc-{source.sha256}",
+            source_sha256=source.sha256,
             text=text,
             pages=(PageSpan(1, 0, len(text)),),
+            parser="fixture-v1",
         )
         chunk = Chunk.create(
             document_id=document.document_id,

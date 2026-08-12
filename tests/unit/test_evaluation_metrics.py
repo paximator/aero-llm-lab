@@ -84,7 +84,9 @@ def test_fixture_evaluation_has_perfect_scores_and_slices() -> None:
 
 def test_frozen_fixture_matches_manifest_digest() -> None:
     manifest = json.loads((FIXTURES / "manifest_v1.json").read_text(encoding="utf-8"))
-    dataset_bytes = (FIXTURES / manifest["path"]).read_bytes()
+    # Git may materialize text fixtures with CRLF on Windows. The frozen digest is
+    # defined over canonical LF bytes so it remains stable across checkout platforms.
+    dataset_bytes = (FIXTURES / manifest["path"]).read_bytes().replace(b"\r\n", b"\n")
 
     assert manifest["frozen"] is True
     assert hashlib.sha256(dataset_bytes).hexdigest() == manifest["sha256"]
