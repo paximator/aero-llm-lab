@@ -37,6 +37,7 @@ tool-use support, hardware constraints, and reproducible availability.
 
 - [Repository architecture](docs/architecture.md)
 - [Implementation roadmap](docs/roadmap.md)
+- [Local hardware profile](docs/hardware-profile.md)
 
 ## Current status
 

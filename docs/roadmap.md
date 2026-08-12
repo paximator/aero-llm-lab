@@ -11,7 +11,8 @@ and evaluation are trustworthy.
 - Choose one or two initial task contracts and define valid outputs.
 - Identify candidate public report sources and document usage constraints.
 - Write evaluation rubrics, dataset schemas, and an experiment manifest schema.
-- Select the initial open-weight Mistral checkpoint and hardware budget.
+- Use Ministral 3 3B as the primary local checkpoint family under the documented
+  8 GB VRAM / 64 GB RAM hardware budget; pin an exact revision before the first run.
 - Add Python packaging, linting, tests, and a reproducible command interface.
 
 **Exit gate:** a reviewer can tell what success means, what data may be used, what

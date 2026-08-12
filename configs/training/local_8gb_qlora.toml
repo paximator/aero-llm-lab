@@ -1,0 +1,38 @@
+# Planning defaults for the first memory smoke test. The training implementation
+# must validate these fields and write the resolved values to its run manifest.
+
+[model]
+id = "mistralai/Ministral-3-3B-Base-2512"
+revision = "PIN_EXACT_REVISION_BEFORE_RUN"
+trust_remote_code = false
+
+[quantization]
+bits = 4
+scheme = "nf4"
+double_quantization = true
+compute_dtype = "bf16"
+
+[lora]
+rank = 16
+alpha = 32
+dropout = 0.05
+target_modules = ["q_proj", "k_proj", "v_proj", "o_proj"]
+
+[training]
+max_sequence_length = 1024
+micro_batch_size = 1
+gradient_accumulation_steps = 16
+gradient_checkpointing = true
+optimizer = "paged_adamw_8bit"
+seed = 42
+
+[hardware]
+profile = "rtx4070_laptop_8gb"
+allow_cpu_offload = true
+minimum_free_vram_mib = 7168
+system_ram_gib = 64
+
+[gates]
+require_memory_smoke_test = true
+require_tiny_overfit_test = true
+maximum_peak_vram_mib = 8000
