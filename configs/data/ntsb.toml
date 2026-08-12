@@ -5,8 +5,12 @@ mode = "snapshot"
 # Public API location is tracked; only the subscription key remains local.
 base_url = "https://api.ntsb.gov/public/api"
 api_key_env = "AEROLLM_NTSB_API_KEY"
-endpoint_path = "Common/v2/GetCasesByDateRange"
+endpoint_path = "Common/v2/GetCasesByDateRange/"
 timeout_seconds = 30
+
+[remote.reference_paths]
+version = "getversion"
+aviation_data_dictionary = "Aviation/v1/GetAviationDataDictionary"
 
 [snapshot]
 root = "artifacts/source-snapshots/ntsb"

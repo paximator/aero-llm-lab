@@ -24,7 +24,7 @@ def test_ntsb_source_builds_concrete_date_range_request_without_leaking_key() ->
 
     url, headers, timeout = calls[0]
     assert url == (
-        "https://api.example.test/root/Common/v2/GetCasesByDateRange"
+        "https://api.example.test/root/Common/v2/GetCasesByDateRange/"
         "?startDate=2026-01-02&endDate=2026-01-03"
     )
     assert headers["Ocp-Apim-Subscription-Key"] == "top-secret"
@@ -37,6 +37,36 @@ def test_ntsb_source_rejects_invalid_ranges() -> None:
     source = NTSBSource("https://api.example.test", "key")
     with pytest.raises(ValueError, match="end date"):
         next(source.list_reports(date(2026, 1, 2), date(2026, 1, 1)))
+
+
+def test_v2_pagination_parameters_are_explicit_and_marker_identity_is_safe() -> None:
+    source = NTSBSource("https://api.example.test", "key")
+    report = next(
+        source.list_reports(
+            date(2026, 1, 1), date(2026, 1, 2), mode="aviation", marker="opaque marker"
+        )
+    )
+
+    assert "mode=aviation" in report.source_url
+    assert "marker=opaque+marker" in report.source_url
+    assert "opaque marker" not in report.source_id
+
+
+def test_reference_fetch_uses_relative_path_and_subscription_header() -> None:
+    calls = []
+
+    def transport(url, headers, timeout):
+        calls.append((url, headers, timeout))
+        return RemoteResponse(b'{"version":"1"}', "application/json")
+
+    source = NTSBSource("https://api.example.test/public/api", "top-secret", transport=transport)
+    response = source.fetch_reference("getversion")
+
+    assert response.body == b'{"version":"1"}'
+    assert calls[0][0] == "https://api.example.test/public/api/getversion"
+    assert calls[0][1]["Ocp-Apim-Subscription-Key"] == "top-secret"
+    with pytest.raises(ValueError, match="relative"):
+        source.fetch_reference("https://untrusted.example/version")
 
 
 def test_ntsb_request_error_does_not_include_credentials(monkeypatch) -> None:

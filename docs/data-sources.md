@@ -57,6 +57,18 @@ prints variable names only. It never prints values.
 uv run aerollm-acquire-ntsb --start 2026-01-01 --end 2026-01-07
 ```
 
+The command targets the V2 route. A response records `hasMore` and `nextMarker`;
+pass the returned marker explicitly with `--marker` to snapshot the next page. The
+optional provider `mode` can be supplied with `--mode`. Each page receives a
+distinct source identity and remains an immutable artifact.
+
+Snapshot the API version and aviation field dictionary independently:
+
+```powershell
+uv run aerollm-acquire-ntsb-reference version
+uv run aerollm-acquire-ntsb-reference aviation_data_dictionary
+```
+
 The base URL and subscription key are required environment variables. The command
 sends the key only in the `Ocp-Apim-Subscription-Key` request header, prints a
 provider-neutral `SourceDocument`, and writes the raw body plus a metadata sidecar
