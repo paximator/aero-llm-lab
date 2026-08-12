@@ -1,0 +1,36 @@
+{
+  "code_revision": "7bc3a94e",
+  "corpus_sha256": "37aa9ed77c3476b149ed8f4d455a7e8680e9c0359edf323117c422d4a765ac6d",
+  "dense_development": {
+    "index_id": "dense_db60dac669cd0bcdf005ffd21804f8487f93e5ae55471b414b8198b8eb7b8b1c",
+    "mrr_at_10": 0.426543209876543,
+    "ndcg_at_10": 0.483648075761362,
+    "recall_at_10": 0.666666666666667
+  },
+  "development_dataset_sha256": "a294b0c38b89058b9447f9ccd076ae487c4636944161e1e6f7b69d13f0fdcdd1",
+  "embedding_model": {
+    "dimension": 384,
+    "id": "intfloat/e5-small-v2",
+    "revision": "f9611f088d69fc3157ff1878217feee72bda0145"
+  },
+  "hybrid": {
+    "candidate_k": 100,
+    "dense_weight": 0.75,
+    "index_id": "hybrid_198904b79b5eebe8155a510169a0586e0133b0dfe66570881fac1f85cf0bf3ea",
+    "lexical_weight": 0.25,
+    "rrf_constant": 60
+  },
+  "hybrid_development": {
+    "mrr_at_10": 0.47098765432098766,
+    "ndcg_at_10": 0.5295126072603347,
+    "recall_at_10": 0.7222222222222222
+  },
+  "hybrid_test": {
+    "mrr_at_10": 0.3476190476190476,
+    "ndcg_at_10": 0.43256162030515766,
+    "recall_at_10": 0.7
+  },
+  "test_dataset_sha256": "c095f7bd656f0dfebfdd7ea4cb221c7a11d76c7a6aef1df3ebd9cf952e044723",
+  "vector_file_bytes": 10593792,
+  "vector_file_sha256": "21e505c91806f16f3de25db6f7396081ba5546dc69ad8e4ba5400834ffad85ec"
+}

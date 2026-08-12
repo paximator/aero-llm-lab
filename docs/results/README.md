@@ -11,7 +11,7 @@ artifacts; they should not be edited independently of those records.
 | Retrieval test set v1 | Frozen | 10 independently reviewed test examples | [Report](retrieval-test-v1.md) |
 | BM25 development v1 | Draft baseline | Recall@10 0.722; MRR@10 0.276 | [Report](bm25-development-v1.md) |
 | BM25 test v1 | Complete locked baseline | Recall@10 0.500; MRR@10 0.500 | [Report](bm25-test-v1.md) |
-| Dense retrieval v1 | Pending | — | — |
+| Dense + hybrid retrieval v1 | Complete | Hybrid test Recall@10 0.700 | [Report](dense-hybrid-retrieval-v1.md) |
 | Reranking v1 | Pending | — | — |
 | Generation baselines v1 | Pending | — | — |
 | QLoRA SFT v1 | Pending | — | — |
