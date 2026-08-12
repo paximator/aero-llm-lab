@@ -53,6 +53,13 @@ unknown provenance sources, and evidence that is not an exact span of its declar
 chunk. Document IDs bind source ID, parser version, and canonical text; chunk IDs
 bind document ID, offsets, content kind, and text.
 
+The initial retrieval baseline is dependency-free BM25 over validated chunks. Its
+index identity binds the corpus digest, sorted chunk IDs, tokenizer version, and
+BM25 parameters. Retrieval reports contain ranked chunk IDs, scores, latency,
+Recall@k, MRR, and nDCG@k with answerability, split, content-kind, and query-kind
+slices. Examples without gold evidence are shown but excluded from relevance-based
+aggregate metrics; training examples cannot enter retrieval evaluation.
+
 Primary measures are answer correctness, citation precision/recall, citation span
 validity, unsupported-claim rate, and abstention precision/recall. Results are also
 sliced by answerability, report length, table/OCR content, and retrieval difficulty.

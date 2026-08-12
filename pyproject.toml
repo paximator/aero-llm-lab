@@ -20,6 +20,7 @@ aerollm-acquire-ntsb-reports = "aerollm.data.acquire_ntsb_reports:main"
 [project.scripts]
 aerollm-evaluate = "aerollm.evaluation.cli:main"
 aerollm-validate-corpus = "aerollm.evaluation.validate_cli:main"
+aerollm-retrieve = "aerollm.retrieval.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3", "ruff>=0.9"]
