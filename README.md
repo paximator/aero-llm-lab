@@ -145,6 +145,22 @@ Install the local Transformers stack with the platform-pinned CUDA build of Torc
 uv sync --extra transformers
 ```
 
+Run the pinned Ministral 3 3B FP8 feasibility benchmark after downloading the
+model snapshot to the ignored path shown below:
+
+```powershell
+uv run aerollm-generation-smoke artifacts/models/ministral-3-3b-instruct-2512 `
+  --model-id mistralai/Ministral-3-3B-Instruct-2512 `
+  --model-revision b35d4dfe56c142746f54dbd64f579faab2744308 `
+  --fp8-kernel-revision 7cdb05d472d6c954c7d03182ed836ebfd4610df0 `
+  --prompt "Explain why accident reports separate facts from analysis." `
+  --max-new-tokens 64 `
+  --output artifacts/benchmarks/generation/smoke.json
+```
+
+The first invocation includes Triton compilation. Run the identical command again
+to measure a warm kernel cache, and keep both artifacts distinct.
+
 The dense retrieval baseline uses the pinned `intfloat/e5-small-v2` revision in
 `configs/retrieval/dense_e5_small_v2.toml`. Model weights, persistent embeddings,
 and raw run reports remain under ignored `artifacts/` paths.

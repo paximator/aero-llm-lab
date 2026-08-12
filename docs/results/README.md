@@ -16,6 +16,7 @@ artifacts; they should not be edited independently of those records.
 | Generation baselines v1 | Pending | — | — |
 | QLoRA SFT v1 | Pending | — | — |
 | SFT + RAG v1 | Pending | — | — |
+| Generation smoke v1 | Complete feasibility baseline | 4.96 GB peak VRAM; 1.12 token/s warm | [Report](generation-smoke-v1.md) |
 | Inference benchmark v1 | Pending | — | — |
 
 Every report must identify its dataset/corpus digest, code revision, configuration,

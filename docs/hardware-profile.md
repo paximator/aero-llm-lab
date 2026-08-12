@@ -62,9 +62,11 @@ Linux under WSL2 is the preferred training and vLLM environment because the core
 CUDA LLM ecosystem targets Linux. Windows remains the host and repository-control
 environment. Python environments and commands use uv in both contexts.
 
-On native Windows, the `transformers` dependency group resolves Torch 2.6.0 from
-the CUDA 12.6 PyTorch index. Linux resolves the matching CUDA 12.4 build. This
-platform mapping is pinned in `pyproject.toml` and `uv.lock`; verify it with
+On native Windows and Linux, the `transformers` dependency group resolves Torch
+2.7.1 from the CUDA 12.8 PyTorch index. Native Windows additionally pins
+`triton-windows` 3.7.1 because the official Ministral 3 FP8 checkpoint requires
+UE8M0 support and the v4 fine-grained FP8 kernel. This platform mapping is pinned
+in `pyproject.toml` and `uv.lock`; verify it with
 `torch.cuda.is_available()` before recording GPU measurements.
 
 CPU offload may use the 64 GB system RAM to make constrained experiments possible,

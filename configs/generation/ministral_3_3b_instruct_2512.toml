@@ -1,0 +1,9 @@
+model_id = "mistralai/Ministral-3-3B-Instruct-2512"
+model_revision = "b35d4dfe56c142746f54dbd64f579faab2744308"
+fp8_kernel_revision = "7cdb05d472d6c954c7d03182ed836ebfd4610df0"
+license = "Apache-2.0"
+weight_format = "FP8"
+max_input_tokens_smoke = 1024
+max_new_tokens_smoke = 128
+device = "cuda"
+dtype = "auto"

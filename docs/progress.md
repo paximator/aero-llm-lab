@@ -23,6 +23,9 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Added development-selected MiniLM cross-encoder reranking. On locked test it raised
   hybrid MRR@10 from 0.348 to 0.483, while top-20 candidate recall limited Recall@10
   to 0.600.
+- Proved native-Windows generation feasibility for the pinned official Ministral 3
+  3B Instruct FP8 checkpoint: 4.96 GB peak allocated VRAM and 1.12 generated
+  tokens/second on the detected 45 W RTX 4070 Laptop GPU after kernel caching.
 
 ## Current milestone
 
