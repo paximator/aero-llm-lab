@@ -1,6 +1,6 @@
 import base64
 import json
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -10,6 +10,7 @@ from aerollm.data.pilot import (
     PilotCandidate,
     PilotConfig,
     PilotPlan,
+    _cached_snapshot,
     _candidates_from_snapshot,
     discovery_windows,
     materialize_plan,
@@ -23,13 +24,15 @@ PDF_FIXTURE = Path(__file__).parents[1] / "fixtures" / "ntsb" / "synthetic-repor
 
 def test_discovery_windows_are_bounded_and_span_requested_dates() -> None:
     windows = discovery_windows(
-        date(2018, 1, 1), date(2025, 12, 31), requests=24, window_days=31
+        date(2018, 1, 1), date(2025, 12, 31), requests=96, window_days=31
     )
 
-    assert len(windows) == 24
+    assert len(windows) == 96
     assert windows[0][0] == date(2018, 1, 1)
     assert windows[-1][0] == date(2025, 12, 31)
     assert all(1 <= (end - start).days + 1 <= 31 for start, end in windows)
+    pairs = zip(windows, windows[1:], strict=False)
+    assert all(right[0] <= left[1] + timedelta(days=1) for left, right in pairs)
 
 
 def test_diverse_selection_is_stable_and_prefers_unseen_features() -> None:
@@ -156,6 +159,30 @@ def test_pilot_configuration_rejects_unbounded_requests(tmp_path: Path) -> None:
             "fixed", 1, 101, 31, tmp_path / "p", tmp_path / "m",
             tmp_path / "c", tmp_path / "f",
         )
+
+
+def test_cached_snapshot_requires_matching_request_parameters(tmp_path: Path) -> None:
+    store = SnapshotStore(tmp_path)
+    saved = store.save(
+        source="ntsb", source_id="cases-window", source_url="https://api.test/cases",
+        publisher="NTSB", response=RemoteResponse(b'{"data": []}', "application/json"),
+        request_parameters={
+            "startDate": "2020-01-01", "endDate": "2020-01-31", "mode": "Aviation"
+        },
+        retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
+    )
+
+    found = _cached_snapshot(
+        tmp_path, "cases-window",
+        {"startDate": "2020-01-01", "endDate": "2020-01-31", "mode": "Aviation"},
+    )
+    missing = _cached_snapshot(
+        tmp_path, "cases-window",
+        {"startDate": "2020-01-01", "endDate": "2020-01-31"},
+    )
+
+    assert found == saved
+    assert missing is None
 
 
 def _candidate(source_id: str, year: int, **attributes: str) -> PilotCandidate:

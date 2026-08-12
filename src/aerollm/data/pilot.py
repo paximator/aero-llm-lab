@@ -199,13 +199,16 @@ def discover_plan(
         window_days=pilot.discovery_window_days,
     ):
         metadata = next(source.list_reports(window_start, window_end, mode="Aviation"))
-        response = source.fetch_report(metadata)
-        saved = store.save(
-            source=source.name, source_id=metadata.source_id, source_url=metadata.source_url,
-            publisher="National Transportation Safety Board", response=response,
-            request_parameters=metadata.attributes,
-            usage_note="Pilot-corpus NTSB discovery snapshot",
-        )
+        saved = _cached_snapshot(store.root, metadata.source_id, metadata.attributes)
+        if saved is None:
+            response = source.fetch_report(metadata)
+            saved = store.save(
+                source=source.name, source_id=metadata.source_id,
+                source_url=metadata.source_url,
+                publisher="National Transportation Safety Board", response=response,
+                request_parameters=metadata.attributes,
+                usage_note="Pilot-corpus NTSB discovery snapshot",
+            )
         candidates.extend(_candidates_from_snapshot(saved))
     selected = select_diverse(candidates, target=pilot.target_reports, seed=pilot.seed)
     if len(selected) < pilot.target_reports:
@@ -325,3 +328,26 @@ def _candidate(
 
 def _stable_key(seed: str, value: str) -> str:
     return hashlib.sha256(f"{seed}\0{value}".encode()).hexdigest()
+
+
+def _cached_snapshot(
+    root: Path, source_id: str, request_parameters: Mapping[str, str]
+) -> SourceDocument | None:
+    source_root = root / "ntsb"
+    if not source_root.exists():
+        return None
+    for metadata_path in source_root.glob("*/*.json"):
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if (
+            metadata.get("source_id") == source_id
+            and metadata.get("request_parameters") == dict(sorted(request_parameters.items()))
+        ):
+            snapshot = load_snapshot(metadata_path)
+            body = Path(snapshot.artifact_path).read_bytes()
+            if hashlib.sha256(body).hexdigest() != snapshot.sha256:
+                raise ValueError(f"cached discovery snapshot digest mismatch: {metadata_path}")
+            return snapshot
+    return None
