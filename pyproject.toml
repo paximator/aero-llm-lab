@@ -9,10 +9,21 @@ description = "Evaluation-first aviation LLM engineering laboratory"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 dependencies = [
     "cryptography>=45.0",
     "pypdf>=6.15.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/paximator/aero-llm-lab"
+Documentation = "https://github.com/paximator/aero-llm-lab/tree/main/docs"
 
 [project.scripts]
 aerollm-acquire-ntsb = "aerollm.data.acquire_ntsb:main"
@@ -31,19 +42,34 @@ aerollm-retrieve = "aerollm.retrieval.cli:main"
 aerollm-dense-retrieve = "aerollm.retrieval.dense_cli:main"
 aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
 aerollm-generation-smoke = "aerollm.generation.smoke:main"
+aerollm-doctor = "aerollm.doctor:main"
 
 [project.optional-dependencies]
+# `dev` is CPU-only. It is sufficient for lint, unit tests, and most data work.
 dev = ["pytest>=8.3", "ruff>=0.9"]
+# `transformers` is the reproducible local NVIDIA path. Install it with uv, not
+# bare pip: `[tool.uv.sources]` below is what selects the matching CUDA wheel.
 transformers = [
     "accelerate>=1.10,<2",
     "kernels>=0.16,<0.17",
     "mistral-common>=1.8.6",
     "torch==2.7.1",
     "transformers>=5.15,<6",
+    # The official Ministral 3 FP8 checkpoint uses a Hub kernel whose recent API
+    # requires this Windows Triton build. Linux receives Triton through Torch.
     "triton-windows==3.7.1.post27; sys_platform == 'win32'",
 ]
 
+[tool.uv]
+# Keep lock-file semantics stable for contributors and CI. Newer uv releases must
+# be adopted deliberately together with a reviewed uv.lock update.
+required-version = ">=0.8.0,<0.9.0"
+
 [tool.uv.sources]
+# Torch is intentionally sourced from PyTorch's CUDA index on Windows and Linux.
+# macOS can install the core/dev environment but is not a supported CUDA benchmark
+# target. The lock records platform markers; contributors must not hand-install a
+# different Torch wheel into `.venv`.
 torch = [
     { index = "pytorch-cu128", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
 ]

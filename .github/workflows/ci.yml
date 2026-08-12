@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    name: core / ${{ matrix.os }} / py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.12"
+          enable-cache: true
+      - name: Install locked core and development dependencies
+        run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
+      - name: Verify environment
+        run: uv run --locked aerollm-doctor
+      - name: Lint
+        run: uv run --locked ruff check .
+      - name: Test
+        run: uv run --locked python -m pytest

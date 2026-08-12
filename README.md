@@ -50,7 +50,23 @@ locked development environment:
 
 ```powershell
 uv sync --extra dev
+uv run aerollm-doctor
 ```
+
+`uv.lock` is authoritative: do not install Torch or Triton manually with `pip`.
+The core/dev profile works without a GPU. For NVIDIA retrieval and generation on
+Windows or Linux, install and verify the separately pinned CUDA profile:
+
+```powershell
+uv sync --extra dev --extra transformers
+uv run aerollm-doctor --transformers
+```
+
+The doctor prints every relevant version and an actionable error when the CUDA
+wheel, driver, FP8 dtype, or Windows Triton runtime is wrong. Native Windows and
+Linux NVIDIA systems are supported for Transformers experiments; WSL2/Linux is
+the intended vLLM and training environment. macOS remains suitable for core data,
+evaluation, and unit-test work, not the CUDA benchmark path.
 
 Create an account in the [NTSB Developer Portal](https://developer.ntsb.gov/) and
 subscribe to the public API product to obtain a subscription key. Copy the tracked
