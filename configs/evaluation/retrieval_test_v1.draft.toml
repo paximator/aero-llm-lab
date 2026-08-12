@@ -71,4 +71,7 @@ id = "test-dca-crew-qualification"
 question = "What did the NTSB find about the qualification of both flight crews?"
 answer = "The flight 5342 pilots and the PAT25 pilot, instructor pilot, and crew chief were qualified."
 chunk_id = "chk_c6b3a74aa16605bb78971e555b6880ef5b3f1467d570e2686c9e6021aea80621"
-quote = "The pilots of flight 5342 were certificated and qualified"
+quotes = [
+  "The pilots of flight 5342 were certificated and qualified in accordance with federal regulations",
+  "The pilot, instructor pilot , and crew chief onboard PAT25 were qualified and current in their positions as designated by the unit commander in accordance with Army regulations",
+]

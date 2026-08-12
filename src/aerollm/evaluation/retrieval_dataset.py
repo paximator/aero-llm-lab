@@ -103,18 +103,21 @@ def build_test_review_packet(corpus: CorpusManifest, config_path: Path) -> dict[
         chunk = chunks.get(_required(spec, "chunk_id"))
         if chunk is None or documents[chunk.document_id].source_sha256 != source.sha256:
             raise ValueError("test draft evidence crosses report boundary")
-        quote = _exact_quote(chunk.text, _required(spec, "quote"))
-        if quote is None:
+        configured_quotes = _configured_quotes(spec)
+        quotes = [_exact_quote(chunk.text, quote) for quote in configured_quotes]
+        if any(quote is None for quote in quotes):
             raise ValueError(f"test draft quote is not exact: {spec['id']}")
-        items.append(
-            {
-                "example_id": _required(spec, "id"),
-                "question": _required(spec, "question"),
-                "reference_answer": _required(spec, "answer"),
-                "chunk_id": chunk.chunk_id, "page": chunk.page_start,
-                "quote": quote, "review_status": "pending-human-review",
-            }
+        item = {
+            "example_id": _required(spec, "id"),
+            "question": _required(spec, "question"),
+            "reference_answer": _required(spec, "answer"),
+            "chunk_id": chunk.chunk_id, "page": chunk.page_start,
+            "review_status": "pending-human-review",
+        }
+        item["quote" if len(quotes) == 1 else "quotes"] = (
+            quotes[0] if len(quotes) == 1 else quotes
         )
+        items.append(item)
     return {
         "schema_version": 1, "dataset_id": config["dataset_id"],
         "version": config["version"], "author": config["author"],
@@ -128,6 +131,20 @@ def _required(value: Mapping[str, Any], name: str) -> str:
     if not isinstance(item, str) or not item.strip():
         raise ValueError(f"{name} must be a non-empty string")
     return item
+
+
+def _configured_quotes(value: Mapping[str, Any]) -> tuple[str, ...]:
+    quote = value.get("quote")
+    quotes = value.get("quotes")
+    if quote is not None and quotes is not None:
+        raise ValueError("use either quote or quotes, not both")
+    if quote is not None:
+        return (_required(value, "quote"),)
+    if not isinstance(quotes, list) or len(quotes) < 2:
+        raise ValueError("quotes must contain at least two evidence strings")
+    if any(not isinstance(item, str) or not item.strip() for item in quotes):
+        raise ValueError("quotes must contain non-empty strings")
+    return tuple(quotes)
 
 
 def _exact_quote(text: str, normalized_quote: str) -> str | None:

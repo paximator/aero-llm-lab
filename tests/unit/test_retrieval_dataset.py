@@ -6,7 +6,10 @@ import pytest
 from aerollm.common.documents import Chunk
 from aerollm.common.schemas import Document, PageSpan, Split
 from aerollm.evaluation.corpus import CorpusManifest, SourceManifestEntry
-from aerollm.evaluation.retrieval_dataset import build_development_dataset
+from aerollm.evaluation.retrieval_dataset import (
+    build_development_dataset,
+    build_test_review_packet,
+)
 
 
 def test_builder_resolves_layout_whitespace_to_exact_quote(tmp_path: Path) -> None:
@@ -33,6 +36,42 @@ def test_builder_rejects_evidence_from_another_report(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="not a development report"):
         build_development_dataset(corpus, config)
+
+
+def test_review_packet_supports_multiple_quotes(tmp_path: Path) -> None:
+    corpus, chunk = _corpus()
+    source = corpus.sources[0]
+    test_corpus = CorpusManifest(
+        corpus.version,
+        (
+            SourceManifestEntry(
+                "case:report", source.event_id, source.event_family_id,
+                Split.TEST, source.sha256,
+            ),
+        ),
+        corpus.documents,
+        corpus.chunks,
+    )
+    config = tmp_path / "test-draft.toml"
+    config.write_text(
+        "\n".join(
+            (
+                'dataset_id = "fixture"', 'version = "1-draft"',
+                'author = "author"', 'report_id = "case:report"',
+                "[[examples]]", 'id = "question-1"',
+                'question = "What appears?"', 'answer = "Evidence appears."',
+                f'chunk_id = "{chunk.chunk_id}"',
+                'quotes = ["exact evidence", "phrase appears here"]',
+            )
+        ),
+        encoding="utf-8",
+    )
+
+    packet = build_test_review_packet(test_corpus, config)
+
+    assert packet["examples"][0]["quotes"] == [
+        "exact   evidence", "phrase appears here",
+    ]
 
 
 def _corpus() -> tuple[CorpusManifest, Chunk]:
@@ -68,4 +107,3 @@ def _config(
         encoding="utf-8",
     )
     return path
-
