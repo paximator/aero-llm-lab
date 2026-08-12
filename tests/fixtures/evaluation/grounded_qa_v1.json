@@ -1,0 +1,42 @@
+{
+  "dataset_id": "grounded-qa-fixture",
+  "version": "1.0.0",
+  "examples": [
+    {
+      "example_id": "qa-answerable",
+      "question": "During which phase of flight did the event occur?",
+      "report_id": "report-001",
+      "event_id": "event-001",
+      "event_family_id": "family-001",
+      "split": "test",
+      "answerable": true,
+      "reference_answer": "The event occurred during landing.",
+      "rubric": ["Identifies landing."],
+      "evidence": [{"chunk_id": "report-001:p2", "quote": "occurred during landing"}],
+      "provenance": {
+        "author": "fixture-author",
+        "reviewers": ["fixture-reviewer"],
+        "source_document_ids": ["report-001"],
+        "is_synthetic": false
+      }
+    },
+    {
+      "example_id": "qa-unanswerable",
+      "question": "What motive did the report assign?",
+      "report_id": "report-002",
+      "event_id": "event-002",
+      "event_family_id": "family-002",
+      "split": "test",
+      "answerable": false,
+      "reference_answer": null,
+      "rubric": ["Abstains because motive is not stated."],
+      "evidence": [],
+      "provenance": {
+        "author": "fixture-author",
+        "reviewers": ["fixture-reviewer"],
+        "source_document_ids": ["report-002"],
+        "is_synthetic": false
+      }
+    }
+  ]
+}

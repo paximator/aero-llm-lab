@@ -39,6 +39,13 @@ This initial schema records deterministic, human-verifiable gold data only. It h
 no model-judge fields or integration; model-judge evaluation remains a later,
 separately reported capability.
 
+The first evaluator uses normalized exact match for reference answers, exact gold
+span matching for citation precision/recall, and literal quote containment in the
+identified retrieved chunk for span validity. Rubric text is retained for human
+review but is not converted into an automatic score. Reports bind the dataset ID,
+version, and SHA-256 digest and include per-example failure labels plus answerability
+and split slices.
+
 Primary measures are answer correctness, citation precision/recall, citation span
 validity, unsupported-claim rate, and abstention precision/recall. Results are also
 sliced by answerability, report length, table/OCR content, and retrieval difficulty.

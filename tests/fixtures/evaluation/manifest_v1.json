@@ -1,0 +1,7 @@
+{
+  "dataset_id": "grounded-qa-fixture",
+  "version": "1.0.0",
+  "path": "grounded_qa_v1.json",
+  "sha256": "4b1249f5cf8d40c77d21202299d0353ba9ddaef9508ca49e472a31bbfa1fd648",
+  "frozen": true
+}

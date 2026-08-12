@@ -1,0 +1,22 @@
+[
+  {
+    "example_id": "qa-answerable",
+    "output": {
+      "answer": "The event occurred during landing.",
+      "citations": [{"chunk_id": "report-001:p2", "quote": "occurred during landing"}],
+      "abstained": false,
+      "abstention_reason": null
+    },
+    "chunks": {"report-001:p2": "The event occurred during landing in gusty conditions."}
+  },
+  {
+    "example_id": "qa-unanswerable",
+    "output": {
+      "answer": null,
+      "citations": [],
+      "abstained": true,
+      "abstention_reason": "The supplied passage does not state a motive."
+    },
+    "chunks": {"report-002:p1": "The report describes the sequence of events."}
+  }
+]

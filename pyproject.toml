@@ -17,6 +17,9 @@ dependencies = [
 aerollm-acquire-ntsb = "aerollm.data.acquire_ntsb:main"
 aerollm-acquire-ntsb-reports = "aerollm.data.acquire_ntsb_reports:main"
 
+[project.scripts]
+aerollm-evaluate = "aerollm.evaluation.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8.3", "ruff>=0.9"]
 
