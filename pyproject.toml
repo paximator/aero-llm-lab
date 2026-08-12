@@ -19,8 +19,6 @@ aerollm-acquire-ntsb-reports = "aerollm.data.acquire_ntsb_reports:main"
 aerollm-evaluate = "aerollm.evaluation.cli:main"
 aerollm-validate-corpus = "aerollm.evaluation.validate_cli:main"
 aerollm-retrieve = "aerollm.retrieval.cli:main"
-
-[project.scripts]
 aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
 
 [project.optional-dependencies]
