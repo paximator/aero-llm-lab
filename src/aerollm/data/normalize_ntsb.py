@@ -127,6 +127,10 @@ def _attributes(values: Mapping[str, Any]) -> dict[str, str]:
         "status": ("status", "investigationstatus"),
         "location": ("location", "eventlocation"),
         "country": ("eventcountry", "country"),
+        "severity": ("highestinjurylevel",),
+        "weather": ("weatherconditions",),
+        "report_type": ("reporttype",),
+        "mode": ("mode", "topicmode"),
     }
     return {
         output_name: value

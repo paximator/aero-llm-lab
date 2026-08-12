@@ -65,3 +65,17 @@ The corpus builder verifies immutable artifact hashes, keeps complete NTSB event
 one deterministic train/development/test split, checks page coverage and chunk
 quality, and writes a companion build manifest. Pilot settings are versioned in
 `configs/data/corpus.toml`; generated corpora remain ignored local artifacts.
+
+Plan a diverse, bounded set of reports before downloading PDFs:
+
+```powershell
+uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
+  --target-reports 20 --dry-run
+```
+
+The dry run makes bounded NTSB discovery requests and freezes the selected report
+list in `artifacts/pilot/plan.json`; it does not download report PDFs. Review that
+plan, then repeat the command without `--dry-run`. Completed reports are skipped on
+retry, failures are isolated in `artifacts/pilot/failures.json`, and the final run
+builds the frozen corpus. Use `--refresh-plan` only when intentionally replacing an
+existing selection.
