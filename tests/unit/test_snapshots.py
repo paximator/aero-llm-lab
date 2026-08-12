@@ -20,6 +20,7 @@ def test_snapshot_is_content_addressed_and_redacts_unlisted_headers(tmp_path) ->
             headers={"ETag": "abc", "Authorization": "secret", "X-Api-Key": "secret"},
         ),
         retrieved_at=datetime(2026, 8, 12, tzinfo=UTC),
+        request_parameters={"startDate": "2026-08-01", "endDate": "2026-08-12"},
     )
 
     digest = hashlib.sha256(body).hexdigest()
@@ -30,6 +31,7 @@ def test_snapshot_is_content_addressed_and_redacts_unlisted_headers(tmp_path) ->
         (tmp_path / "ntsb" / digest[:2] / f"{digest}.json").read_text(encoding="utf-8")
     )
     assert sidecar["response_headers"] == {"etag": "abc"}
+    assert sidecar["request_parameters"]["startDate"] == "2026-08-01"
     assert "secret" not in json.dumps(sidecar)
 
 

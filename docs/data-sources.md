@@ -26,6 +26,24 @@ code. The source adapter maps remote records into stable internal records.
 5. Parse only immutable snapshots; never train or evaluate directly from a live call.
 6. Pin each dataset build to a source manifest containing snapshot digests.
 
+### Bounded acquisition command
+
+The initial command intentionally acquires exactly one API response for an inclusive
+date range of at most 31 days. It does not paginate, normalize cases, or build a
+dataset; those operations must read the resulting immutable snapshot.
+
+```powershell
+$env:AEROLLM_NTSB_BASE_URL = "https://<endpoint-from-the-developer-portal>"
+$env:AEROLLM_NTSB_API_KEY = "<subscription-key>"
+uv run aerollm-acquire-ntsb --start 2026-01-01 --end 2026-01-07
+```
+
+The base URL and subscription key are required environment variables. The command
+sends the key only in the `Ocp-Apim-Subscription-Key` request header, prints a
+provider-neutral `SourceDocument`, and writes the raw body plus a metadata sidecar
+under the ignored `artifacts/` directory. Request credentials and non-allowlisted
+response headers are never persisted.
+
 This separates convenience from reproducibility: an API can refresh the corpus,
 but a historical experiment always resolves to the exact bytes it consumed.
 

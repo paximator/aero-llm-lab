@@ -6,6 +6,7 @@ mode = "snapshot"
 # committed. Obtain them from the official NTSB Developer Portal.
 base_url_env = "AEROLLM_NTSB_BASE_URL"
 api_key_env = "AEROLLM_NTSB_API_KEY"
+endpoint_path = "aviation/api/GetCasesByDateRangeV2"
 timeout_seconds = 30
 
 [snapshot]
