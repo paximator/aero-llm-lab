@@ -96,6 +96,20 @@ def render_training_prompt(messages: list[dict[str, str]]) -> str:
     return render_training_chat(messages[:-1] + [{"role": "assistant", "content": ""}])
 
 
+def training_order(record_count: int, steps: int, seed: int) -> list[int]:
+    """Shuffle each epoch deterministically to avoid task-order recency collapse."""
+    if record_count < 1 or steps < 1:
+        raise ValueError("training order dimensions must be positive")
+    order: list[int] = []
+    epoch = 0
+    while len(order) < steps:
+        indices = list(range(record_count))
+        random.Random(seed + epoch).shuffle(indices)
+        order.extend(indices)
+        epoch += 1
+    return order[:steps]
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
     """Train, save, reload, and return an auditable run manifest."""
     import torch
@@ -161,8 +175,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         lr=config.learning_rate,
     )
     losses: list[float] = []
-    for step in range(args.steps):
-        item = messages[step % len(messages)]
+    order = training_order(len(messages), args.steps, config.seed)
+    for step, record_index in enumerate(order):
+        item = messages[record_index]
         text = render_training_chat(item)
         prompt = render_training_prompt(item)
         encoded = tokenizer(
@@ -218,6 +233,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "records": args.records,
         "steps": args.steps,
         "losses": losses,
+        "sampling": "deterministic_epoch_shuffle_v1",
         "loss_decreased": losses[-1] < losses[0] if len(losses) > 1 else None,
         "adapter_sha256": tree_sha256(output),
         "adapter_reload_passed": isinstance(reloaded, PeftModel),

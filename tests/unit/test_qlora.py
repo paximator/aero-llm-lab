@@ -8,6 +8,7 @@ from aerollm.training.qlora import (
     load_training_messages,
     render_training_chat,
     render_training_prompt,
+    training_order,
     tree_sha256,
 )
 
@@ -56,3 +57,12 @@ def test_base_model_chat_rendering_is_explicit() -> None:
         '[SYSTEM]\nGround answers.\n\n[USER]\nQuestion\n\n[ASSISTANT]\n{"answer":"Fact"}'
     )
     assert render_training_prompt(messages).endswith("[ASSISTANT]\n")
+
+
+def test_training_order_is_deterministic_and_epoch_shuffled() -> None:
+    order = training_order(5, 10, 42)
+
+    assert order == training_order(5, 10, 42)
+    assert sorted(order[:5]) == list(range(5))
+    assert sorted(order[5:]) == list(range(5))
+    assert order[:5] != order[5:]
