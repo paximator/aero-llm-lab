@@ -19,6 +19,19 @@ _PUBLIC_TEST_FIELDS = (
     "task_type",
     "scoring_strategy",
 )
+_BLANK_TEST_FIELDS: dict[str, object] = {
+    "question": "",
+    "reference_answer": None,
+    "required_key_facts": [],
+    "structured_target": None,
+    "evidence": [],
+    "unanswerable_search_note": None,
+    "author": None,
+    "reviewers": [],
+    "review_status": "authoring_required",
+    "is_synthetic": False,
+    "review_notes": "",
+}
 
 
 def build_suite_v2_review(
@@ -145,17 +158,45 @@ def validate_public_test_manifest(manifest: Mapping[str, object]) -> None:
             raise ValueError("public test manifest fields must be non-empty strings")
 
 
+def build_public_test_authoring_template(
+    packet: Mapping[str, object],
+) -> dict[str, object]:
+    """Expose the complete annotation shape while proving all test gold is blank."""
+    examples = packet.get("examples")
+    if not isinstance(examples, list):
+        raise ValueError("suite v2 review examples must be a list")
+    test = [
+        dict(item) for item in examples if isinstance(item, Mapping) and item.get("split") == "test"
+    ]
+    if not test:
+        raise ValueError("suite v2 review must contain test records")
+    for item in test:
+        for field, blank in _BLANK_TEST_FIELDS.items():
+            if item.get(field) != blank:
+                raise ValueError(f"public test authoring template contains gold field: {field}")
+    return {
+        "schema_version": packet["schema_version"],
+        "dataset_id": packet["dataset_id"],
+        "version": packet["version"],
+        "status": "blank_public_authoring_template",
+        "instructions": packet.get("instructions"),
+        "examples": test,
+    }
+
+
 def write_suite_v2_public_bundle(
     packet: Mapping[str, object],
     directory: Path,
 ) -> None:
     """Write the tracked, label-safe portion of a suite-v2 review workbook."""
     coverage, development, test_manifest = split_suite_v2_review(packet)
+    test_template = build_public_test_authoring_template(packet)
     directory.mkdir(parents=True, exist_ok=True)
     for name, value in (
         ("coverage_manifest.json", coverage),
         ("development.json", development),
         ("test_manifest.json", test_manifest),
+        ("test_authoring_template.json", test_template),
     ):
         (directory / name).write_text(
             json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n",

@@ -8,8 +8,9 @@ Open the ignored local workbook at
 The tracked public boundary is under `data/evaluation/v2/`: approved development
 records are in `development.json`, aggregate coverage is in
 `coverage_manifest.json`, and `test_manifest.json` contains only label-free slot
-metadata. Never copy test questions, answers, evidence, or review data into the
-public manifest.
+metadata. The public `test_authoring_template.json` shows the complete workflow and
+all fields still to fill; validation requires every gold-bearing field in that
+template to remain blank. Never commit the filled version.
 
 The workbook contains 72 quota-controlled slots across eight untouched event
 families:

@@ -30,8 +30,9 @@ evaluation data.
 
 The public/private boundary is now enforced in the repository. Public development
 data and label-free test metadata live under `data/evaluation/v2/`; the complete
-test-authoring workbook lives under the ignored `artifacts/private_evaluation/`
-path. Future test gold must remain outside Git.
+blank authoring template is published there as a pedagogical record of the intended
+workflow. The filled test-gold workbook belongs under the ignored
+`artifacts/private_evaluation/` path. Future test gold must remain outside Git.
 
 This is therefore a completed development scaffold, not a completed evaluation
 suite. The 27 approved development records can support workflow development and
@@ -71,6 +72,7 @@ Until those steps are complete, the correct top-level status is
 - Coverage decision: `configs/evaluation/evaluation_suite_v2.proposal.toml`
 - Public development set: `data/evaluation/v2/development.json`
 - Public label-free test manifest: `data/evaluation/v2/test_manifest.json`
+- Public blank authoring template: `data/evaluation/v2/test_authoring_template.json`
 - Private local workbook: `artifacts/private_evaluation/evaluation_suite_v2_test_gold.json`
 - Annotation procedure: `docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`
 - Corpus selection procedure: `docs/evaluation/corpus-v2-selection-review-guide.md`

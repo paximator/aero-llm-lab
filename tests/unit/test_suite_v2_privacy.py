@@ -1,6 +1,7 @@
 import pytest
 
 from aerollm.evaluation.suite_v2_review import (
+    build_public_test_authoring_template,
     split_suite_v2_review,
     validate_public_test_manifest,
 )
@@ -35,7 +36,14 @@ def _packet() -> dict[str, object]:
                 "question": "",
                 "reference_answer": None,
                 "evidence": [],
+                "required_key_facts": [],
+                "structured_target": None,
+                "unanswerable_search_note": None,
+                "author": None,
+                "reviewers": [],
                 "review_status": "authoring_required",
+                "is_synthetic": False,
+                "review_notes": "",
             },
         ],
     }
@@ -65,3 +73,21 @@ def test_public_test_validation_rejects_a_gold_field() -> None:
 
     with pytest.raises(ValueError, match="non-public fields"):
         validate_public_test_manifest(manifest)
+
+
+def test_public_authoring_template_exposes_blank_workflow_fields() -> None:
+    template = build_public_test_authoring_template(_packet())
+    example = template["examples"][0]  # type: ignore[index]
+
+    assert template["status"] == "blank_public_authoring_template"
+    assert example["question"] == ""
+    assert example["review_status"] == "authoring_required"
+    assert example["structured_target"] is None
+
+
+def test_public_authoring_template_rejects_filled_gold() -> None:
+    packet = _packet()
+    packet["examples"][1]["question"] = "A leaked test question"  # type: ignore[index]
+
+    with pytest.raises(ValueError, match="contains gold field: question"):
+        build_public_test_authoring_template(packet)
