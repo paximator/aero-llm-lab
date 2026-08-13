@@ -38,7 +38,11 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "tolerance": 0,
+        "unit": "people",
+        "value": 9
+      },
       "task_type": "numeric",
       "unanswerable_search_note": null
     },
@@ -75,7 +79,11 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "tolerance": 50,
+        "unit": "ft_msl",
+        "value": 2700
+      },
       "task_type": "numeric",
       "unanswerable_search_note": null
     },
@@ -112,7 +120,12 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "approximate": true,
+        "date": "2015-11-10",
+        "local_time": "14:53",
+        "timezone_label": "EST"
+      },
       "task_type": "date_time",
       "unanswerable_search_note": null
     },
@@ -152,7 +165,13 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "required": [
+          "British Aerospace HS 125-700A",
+          "Hawker 700A",
+          "N237WR"
+        ]
+      },
       "task_type": "entity_identifier",
       "unanswerable_search_note": null
     },
@@ -188,7 +207,9 @@
         "single_evidence"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "label": "yes"
+      },
       "task_type": "categorical_yes_no",
       "unanswerable_search_note": null
     },
@@ -213,8 +234,8 @@
       "report_id": "CEN16MA036:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [
-        "the flaps were improperly configured at 45°",
-        "the airspeed was low"
+        "improper 45° flap configuration",
+        "low airspeed"
       ],
       "review_notes": "",
       "review_status": "approved",
@@ -258,9 +279,8 @@
       "report_id": "CEN16MA036:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [
-        "the minimum required airspeed was 124 knots",
-        "the actual airspeed was 11 knots below the minimum",
-        "the flaps were configured improperly at 45°"
+        "11 knots below the 124-knot minimum",
+        "configured with 45° flaps"
       ],
       "review_notes": "",
       "review_status": "approved",
@@ -368,7 +388,11 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "tolerance": 0,
+        "unit": "people",
+        "value": 7
+      },
       "task_type": "numeric",
       "unanswerable_search_note": null
     },
@@ -405,7 +429,12 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "approximate": true,
+        "date": "2013-04-29",
+        "local_time": "15:27",
+        "timezone_label": "local"
+      },
       "task_type": "date_time",
       "unanswerable_search_note": null
     },
@@ -442,7 +471,12 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "required": [
+          "Boeing 747-400 BCF",
+          "N949CA"
+        ]
+      },
       "task_type": "entity_identifier",
       "unanswerable_search_note": null
     },
@@ -479,7 +513,12 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "required": [
+          "two 12-ton M-ATVs",
+          "three 18-ton Cougars"
+        ]
+      },
       "task_type": "entity_identifier",
       "unanswerable_search_note": null
     },
@@ -515,7 +554,9 @@
         "single_evidence"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "label": "yes"
+      },
       "task_type": "categorical_yes_no",
       "unanswerable_search_note": null
     },
@@ -540,7 +581,7 @@
       "report_id": "DCA13MA081:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [
-        "the cargo was not properly restrained"
+        "not properly restrained"
       ],
       "review_notes": "",
       "review_status": "approved",
@@ -577,7 +618,9 @@
       "reference_answer": "National Airlines had inadequate procedures for restraining special cargo loads.",
       "report_id": "DCA13MA081:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "National Airlines had inadequate procedures for restraining special cargo loads"
+      ],
       "review_notes": "",
       "review_status": "approved",
       "reviewers": [
@@ -620,9 +663,9 @@
       "report_id": "DCA13MA081:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [
-        "the rear M-ATV moved into the tail",
-        "the rear M-ATV damaged the hydraulic system",
-        "the rear M-ATV damaged some horizontal stabilizer components"
+        "moved aft into the tail",
+        "damaged hydraulic systems",
+        "horizontal stabilizer components"
       ],
       "review_notes": "",
       "review_status": "approved",
@@ -706,7 +749,11 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "tolerance": 0,
+        "unit": "people",
+        "value": 7
+      },
       "task_type": "numeric",
       "unanswerable_search_note": null
     },
@@ -743,7 +790,12 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "approximate": true,
+        "date": "2014-05-31",
+        "local_time": "21:40",
+        "timezone_label": "EDT"
+      },
       "task_type": "date_time",
       "unanswerable_search_note": null
     },
@@ -780,7 +832,12 @@
         "identifier_heavy"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "required": [
+          "Gulfstream Aerospace Corporation G-IV",
+          "N121JM"
+        ]
+      },
       "task_type": "entity_identifier",
       "unanswerable_search_note": null
     },
@@ -816,7 +873,9 @@
         "single_evidence"
       ],
       "split": "development",
-      "structured_target": null,
+      "structured_target": {
+        "label": "yes"
+      },
       "task_type": "categorical_yes_no",
       "unanswerable_search_note": null
     },
@@ -847,8 +906,8 @@
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [
-        "the crew did not disengage the airplane's gust lock system",
-        "the crew did not perform a flight control check"
+        "did not disengage the gust lock",
+        "did not perform a flight control check"
       ],
       "review_notes": "",
       "review_status": "approved",
@@ -885,7 +944,10 @@
       "reference_answer": "They had omitted complete flight-control checks before 98% of their previous 175 takeoffs.",
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "omitted complete flight-control checks",
+        "98% of their previous 175 takeoffs"
+      ],
       "review_notes": "spacing problem on quotes fixed, synthetized both quotes into a single one since they are following",
       "review_status": "approved",
       "reviewers": [
@@ -934,9 +996,9 @@
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [
-        "about 11 seconds after the first lock warning, the airplane could have been stopped on the paved surface",
-        "the braking was delayed about 10 seconds",
-        "the power reduction was delayed about 4 seconds"
+        "delayed braking about 10 seconds",
+        "power reduction another 4 seconds",
+        "stopped on pavement up to about 11 seconds"
       ],
       "review_notes": "add to add way more context to the first quote",
       "review_status": "approved",

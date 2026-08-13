@@ -13,6 +13,7 @@ benchmark announcement.
 | Development examples | Complete for this stage | 27 model-assisted question/answer records have been reviewed and approved. |
 | Test examples | Public structure ready; private content outstanding | 45 quota-controlled slots expose only their report, event family, task type, and scoring strategy; labels require independent human authoring in an ignored local workbook. |
 | Suite freeze | Not ready | The suite remains `2.0.0-draft` with status `human_review_and_test_authoring_required`. |
+| Task-specific development scoring | Ready | All 27 development records satisfy a deterministic target contract and reports can be sliced by task type. |
 
 ## Deliberate scope choice
 
@@ -75,4 +76,5 @@ Until those steps are complete, the correct top-level status is
 - Public blank authoring template: `data/evaluation/v2/test_authoring_template.json`
 - Private local workbook: `artifacts/private_evaluation/evaluation_suite_v2_test_gold.json`
 - Annotation procedure: `docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`
+- Task-scoring contract: `docs/evaluation/evaluation-suite-v2-scoring.md`
 - Corpus selection procedure: `docs/evaluation/corpus-v2-selection-review-guide.md`

@@ -1,0 +1,70 @@
+schema_version = 1
+
+[targets.dev-cen16-fatalities]
+value = 9
+unit = "people"
+tolerance = 0
+
+[targets.dev-cen16-faf-altitude]
+value = 2700
+unit = "ft_msl"
+tolerance = 50
+
+[targets.dev-cen16-when]
+date = "2015-11-10"
+local_time = "14:53"
+timezone_label = "EST"
+approximate = true
+
+[targets.dev-cen16-aircraft]
+required = ["British Aerospace HS 125-700A", "Hawker 700A", "N237WR"]
+
+[targets.dev-cen16-imc]
+label = "yes"
+
+[targets.dev-dca13-fatalities]
+value = 7
+unit = "people"
+tolerance = 0
+
+[targets.dev-dca13-when]
+date = "2013-04-29"
+local_time = "15:27"
+timezone_label = "local"
+approximate = true
+
+[targets.dev-dca13-aircraft]
+required = ["Boeing 747-400 BCF", "N949CA"]
+
+[targets.dev-dca13-cargo]
+required = ["two 12-ton M-ATVs", "three 18-ton Cougars"]
+
+[targets.dev-dca13-all-crew]
+label = "yes"
+
+[targets.dev-era14-fatalities]
+value = 7
+unit = "people"
+tolerance = 0
+
+[targets.dev-era14-when]
+date = "2014-05-31"
+local_time = "21:40"
+timezone_label = "EDT"
+approximate = true
+
+[targets.dev-era14-aircraft]
+required = ["Gulfstream Aerospace Corporation G-IV", "N121JM"]
+
+[targets.dev-era14-vmc]
+label = "yes"
+
+[required_key_facts]
+dev-cen16-stall = ["improper 45° flap configuration", "low airspeed"]
+dev-cen16-unstable = ["11 knots below the 124-knot minimum", "configured with 45° flaps"]
+dev-dca13-restraint = ["not properly restrained"]
+dev-dca13-probable-cause = ["National Airlines had inadequate procedures for restraining special cargo loads"]
+dev-dca13-damage-sequence = ["moved aft into the tail", "damaged hydraulic systems", "horizontal stabilizer components"]
+dev-era14-gust-lock = ["did not disengage the gust lock", "did not perform a flight control check"]
+dev-era14-check-history = ["omitted complete flight-control checks", "98% of their previous 175 takeoffs"]
+dev-era14-reject-delay = ["delayed braking about 10 seconds", "power reduction another 4 seconds", "stopped on pavement up to about 11 seconds"]
