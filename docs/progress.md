@@ -48,11 +48,14 @@ This page is the narrative milestone log. Reproducible measurements live in
   745-chunk corpus and ran the complete RAG versus SFT+RAG path. Retrieval hit an
   annotated gold chunk at top 3 for 63.0%, but both generators failed closed on all
   examples; this is retained as a negative development result.
+- Classified the retrieved-context failures and rejected two five-example fixes:
+  Base remains non-JSON, while SFT starts the schema but truncates or cites an
+  invalid span. Canonical prompt and full-context defaults remain unchanged.
 
 ## Current milestone
 
-Classify the retrieved-context contract failures exposed by the SFT+RAG development
-run before spending time on another adapter training experiment.
+Build a small retrieved-context training gate with concise complete JSON, distractor
+chunks, and explicit sequence termination before spending time on another full run.
 
 Evaluation-suite v2 currently has 27 approved development examples and 45
 ready-to-fill test slots that still require independent human authoring and review.

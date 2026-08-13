@@ -6,13 +6,14 @@ import argparse
 import gc
 import hashlib
 import json
+import re
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from aerollm.common.documents import Chunk
 from aerollm.evaluation.corpus import CorpusManifest
-from aerollm.evaluation.sft_comparison import _generate_variant, aggregate
+from aerollm.evaluation.sft_comparison import _generate_variant, aggregate, failure_counts
 from aerollm.evaluation.task_scoring import validate_task_annotation
 from aerollm.retrieval.bm25 import BM25Index
 from aerollm.retrieval.dense import DenseIndex
@@ -22,6 +23,37 @@ from aerollm.retrieval.rerank import RerankedIndex
 from aerollm.retrieval.rerank_transformers import TransformersCrossEncoder
 from aerollm.retrieval.schemas import RetrievalHit
 from aerollm.training.qlora import tree_sha256
+
+_WORD = re.compile(r"[A-Za-z0-9]{3,}")
+_SENTENCE = re.compile(r"(?<=[.!?])\s+")
+_STOP_WORDS = {
+    "and",
+    "did",
+    "for",
+    "from",
+    "how",
+    "the",
+    "was",
+    "were",
+    "what",
+    "when",
+    "which",
+    "who",
+}
+
+
+def select_context_passage(question: str, text: str, *, max_chars: int = 420) -> str:
+    """Select one short, exact, query-relevant passage from a retrieved chunk."""
+    terms = {word.casefold() for word in _WORD.findall(question)} - _STOP_WORDS
+    candidates = [item.strip() for item in _SENTENCE.split(text) if item.strip()]
+    if not candidates:
+        return text[:max_chars].strip()
+    scored = [
+        (len(terms.intersection(word.casefold() for word in _WORD.findall(sentence))), -index)
+        for index, sentence in enumerate(candidates)
+    ]
+    best = candidates[max(range(len(candidates)), key=scored.__getitem__)]
+    return best[:max_chars].strip()
 
 
 def _retrieved_examples(args, examples, corpus, corpus_sha256):  # type: ignore[no-untyped-def]
@@ -62,7 +94,7 @@ def _retrieved_examples(args, examples, corpus, corpus_sha256):  # type: ignore[
     retrieval_rows = []
     for example in examples:
         hits = reranked.search(example["question"], k=3).hits
-        item, row = prepare_retrieved_example(example, hits, chunks)
+        item, row = prepare_retrieved_example(example, hits, chunks, context_mode=args.context_mode)
         prepared.append(item)
         retrieval_rows.append(row)
     del reranked, scorer, hybrid, dense, encoder
@@ -74,12 +106,24 @@ def prepare_retrieved_example(
     example: Mapping[str, Any],
     hits: Sequence[RetrievalHit],
     chunks: Mapping[str, Chunk],
+    *,
+    context_mode: str = "full",
 ) -> tuple[dict[str, Any], dict[str, object]]:
     """Replace gold evidence with retrieved context and retain retrieval diagnostics."""
     retrieved = [hit.chunk_id for hit in hits]
+    if context_mode not in {"full", "passage"}:
+        raise ValueError(f"unknown context mode: {context_mode}")
     item = dict(example)
     item["evidence"] = [
-        {"chunk_id": chunk_id, "quote": chunks[chunk_id].text} for chunk_id in retrieved
+        {
+            "chunk_id": chunk_id,
+            "quote": (
+                chunks[chunk_id].text
+                if context_mode == "full"
+                else select_context_passage(str(example["question"]), chunks[chunk_id].text)
+            ),
+        }
+        for chunk_id in retrieved
     ]
     gold = {evidence["chunk_id"] for evidence in example["evidence"]}
     return item, {
@@ -101,6 +145,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--max-new-tokens", type=int, default=192)
+    parser.add_argument("--limit", type=int)
+    parser.add_argument("--prompt-version", choices=("v1", "concise-v2"), default="v1")
+    parser.add_argument("--context-mode", choices=("full", "passage"), default="full")
     args = parser.parse_args(argv)
 
     import torch
@@ -109,6 +156,10 @@ def main(argv: list[str] | None = None) -> int:
 
     dataset_bytes = args.dataset.read_bytes()
     examples = json.loads(dataset_bytes)["examples"]
+    if args.limit is not None:
+        if args.limit < 1:
+            parser.error("--limit must be positive")
+        examples = examples[: args.limit]
     for example in examples:
         validate_task_annotation(example)
     corpus_bytes = args.corpus.read_bytes()
@@ -143,6 +194,7 @@ def main(argv: list[str] | None = None) -> int:
         "rag",
         batch_size=args.batch_size,
         max_new_tokens=args.max_new_tokens,
+        prompt_version=args.prompt_version,
     )
     model = PeftModel.from_pretrained(model, args.adapter, is_trainable=False)
     model.eval()
@@ -153,6 +205,7 @@ def main(argv: list[str] | None = None) -> int:
         "sft_rag",
         batch_size=args.batch_size,
         max_new_tokens=args.max_new_tokens,
+        prompt_version=args.prompt_version,
     )
     report = {
         "schema_version": 1,
@@ -160,12 +213,22 @@ def main(argv: list[str] | None = None) -> int:
         "dataset_sha256": hashlib.sha256(dataset_bytes).hexdigest(),
         "corpus_sha256": hashlib.sha256(corpus_bytes).hexdigest(),
         "adapter_sha256": tree_sha256(args.adapter),
+        "generation_config": {
+            "prompt_version": args.prompt_version,
+            "context_mode": args.context_mode,
+            "max_new_tokens": args.max_new_tokens,
+            "limit": args.limit,
+        },
         "retrieval": {
             "gold_hit_at_3": sum(row["gold_hit_at_3"] for row in retrieval_rows)
             / len(retrieval_rows),
             "examples": retrieval_rows,
         },
         "aggregates": {"rag": aggregate(rag), "sft_rag": aggregate(sft_rag)},
+        "failure_analysis": {
+            "rag": failure_counts(rag, max_new_tokens=args.max_new_tokens),
+            "sft_rag": failure_counts(sft_rag, max_new_tokens=args.max_new_tokens),
+        },
         "predictions": [*rag, *sft_rag],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

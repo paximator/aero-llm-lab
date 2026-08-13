@@ -1,4 +1,9 @@
-from aerollm.evaluation.sft_comparison import aggregate, build_messages
+from aerollm.evaluation.sft_comparison import (
+    aggregate,
+    build_messages,
+    classify_failure,
+    failure_counts,
+)
 
 
 def test_comparison_prompt_uses_reviewed_evidence() -> None:
@@ -52,3 +57,23 @@ def test_comparison_merges_quotes_from_the_same_chunk() -> None:
 
     assert len(evidence) == 1
     assert evidence[0].text == "First fact.\nSecond fact."
+
+
+def test_comparison_classifies_truncated_json_separately_from_plain_text() -> None:
+    truncated = {
+        "raw_output": '{"answer":"unfinished',
+        "warnings": ["invalid_json"],
+        "completion_tokens": 192,
+    }
+    plain = {
+        "raw_output": "A plain answer.",
+        "warnings": ["invalid_json"],
+        "completion_tokens": 12,
+    }
+
+    assert classify_failure(truncated, max_new_tokens=192) == "generation_truncation"
+    assert classify_failure(plain, max_new_tokens=192) == "non_json_output"
+    assert failure_counts([truncated, plain], max_new_tokens=192) == {
+        "generation_truncation": 1,
+        "non_json_output": 1,
+    }
