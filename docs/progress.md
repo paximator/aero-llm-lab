@@ -32,6 +32,9 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Completed and froze the serving-v1 prototype after aligning its versioned JSON
   prompt, chunk-aware context, and fail-closed `PostprocessorV1` behavior with the
   offline grounded pipeline. Advanced serving performance work remains deferred.
+- Built the first 50-record train-only, evidence-linked SFT validation dataset over
+  13 event families, with leakage, provenance, duplicate, schema, citation, and
+  token-budget validation. Independent owner sampling remains pending before QLoRA.
 
 ## Current milestone
 
@@ -48,9 +51,9 @@ for the explicit delivery boundary.
 
 1. Evaluation-suite v2: 50–100 reviewed examples across independent event families.
 2. Task-specific scoring and a shared failure taxonomy.
-3. Evidence-linked, leakage-checked SFT dataset (50-record validation stage).
+3. Repository-owner sample review of the 50-record SFT validation dataset.
 4. QLoRA memory smoke, tiny overfit, adapter save/reload, then first real run.
-5. Minimal-instruct/prompted/RAG/SFT/SFT+RAG frozen comparison.
+5. Expand to reviewed SFT data and run the frozen five-system comparison.
 
 The detailed priority gates and explicit deferred scope are maintained in
 [`docs/roadmap.md`](roadmap.md).

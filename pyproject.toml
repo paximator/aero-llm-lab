@@ -46,6 +46,7 @@ aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
 aerollm-generation-smoke = "aerollm.generation.smoke:main"
 aerollm-evaluate-generation = "aerollm.evaluation.generation_cli:main"
 aerollm-evaluate-tasks-v2 = "aerollm.evaluation.task_scoring_cli:main"
+aerollm-build-sft-data = "aerollm.training.sft_data_cli:main"
 aerollm-doctor = "aerollm.doctor:main"
 
 [project.optional-dependencies]
