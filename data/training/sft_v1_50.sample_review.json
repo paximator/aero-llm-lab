@@ -1,27 +1,33 @@
 {
   "dataset_id": "ntsb-evidence-linked-sft-v1-validation",
-  "review_kind": "distributed_model_assisted_sample",
+  "review_kind": "first_10_model_assisted_pre_review",
   "reviewed_by": "openai-codex-assisted",
-  "status": "passed_with_documented_scope_limit",
-  "sample_size": 5,
-  "sampling_rule": "records at zero-based indexes 0, 10, 20, 30, and 40",
+  "status": "passed_with_one_low_value_caveat",
+  "sample_size": 10,
+  "sampling_rule": "first 10 records after deterministic quality filtering",
   "criteria": [
     "train provenance is present",
-    "answer is a coherent aviation-report statement",
+    "answer is a complete and coherent aviation-report statement",
     "citation is an exact normalized span",
     "assistant output follows grounded-json-v1",
-    "no obvious table, list, or severe OCR fragment is selected"
+    "context excludes merged headings, page fragments, and detectable OCR splits",
+    "record has useful post-training value"
   ],
   "reviews": [
     {"record_id": "sft-3da25ea25fb5d3df", "status": "accepted"},
-    {"record_id": "sft-de3019ab0aa4aa6e", "status": "accepted"},
+    {"record_id": "sft-0a60e7b1e1eb4106", "status": "accepted"},
+    {"record_id": "sft-f3c096e90e7e047d", "status": "accepted"},
+    {"record_id": "sft-9ba033ce49f2d53d", "status": "accepted"},
+    {"record_id": "sft-456c5c9c3c4ea721", "status": "accepted"},
+    {"record_id": "sft-641bca946f9ee95a", "status": "accepted"},
+    {"record_id": "sft-93238154609b25dd", "status": "accepted"},
     {
       "record_id": "sft-aff46751b844f158",
       "status": "accepted_with_caveat",
-      "note": "Useful for schema/citation adherence but lower semantic value because it extracts a document cross-reference."
+      "note": "Schema/citation-valid but lower semantic value because it extracts a document cross-reference."
     },
-    {"record_id": "sft-e1ad44816b37f327", "status": "accepted"},
-    {"record_id": "sft-0a60e7b1e1eb4106", "status": "accepted"}
+    {"record_id": "sft-466590eeb435b039", "status": "accepted"},
+    {"record_id": "sft-625384f778f16fa7", "status": "accepted"}
   ],
-  "limitation": "This is not an independent human quality review. A repository owner should review a sample before QLoRA training."
+  "limitation": "This pre-review is model-assisted. Repository-owner approval remains required before QLoRA training."
 }

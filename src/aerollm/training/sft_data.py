@@ -30,6 +30,20 @@ _AVIATION_TERMS = (
     "runway",
     "takeoff",
 )
+_BOILERPLATE_PREFIXES = (
+    "aviation accident report",
+    "aviation investigation report",
+    "national transportation safety board",
+    "ntsb aircraft accident report",
+)
+_SECTION_HEADING = re.compile(r"\b\d+(?:\.\d+){1,3}\s+[A-Z][A-Za-z]")
+_BROKEN_WORD = re.compile(r"\b[bcdefghijklmnopqrstuvwxyz]\s+[a-z]{2,}\b")
+_BROKEN_PUNCTUATION = re.compile(r"\s+[.,)]|[,.)][A-Za-z]")
+_MERGED_OCR_WORDS = ("theneed", "thefaa", "theaircraft", "thepilot")
+_BROKEN_HYPHEN = re.compile(r"\b[A-Za-z0-9]{2,}\s+-\s*[A-Za-z0-9]|\b[A-Za-z0-9]{2,}-\s+[A-Za-z0-9]")
+_MERGED_CASE = re.compile(r"\b[a-z]{2,}[A-Z]{2,}\b")
+_KNOWN_SPLIT_WORDS = re.compile(r"\b(?:affect|imp|devel|bottl|haza)\s+[a-z]{2,}\b")
+_BROKEN_CAPITALS = re.compile(r"\b[A-Z]\s+[A-Z][A-Za-z]?\b|\b(?:[A-Z]-){2,}\s*[A-Z]\b")
 _SYSTEM = (
     "You answer aviation-report questions using only the supplied excerpt. "
     f"Return the {GROUNDED_RAG_PROMPT_VERSION} JSON object and cite an exact span."
@@ -189,7 +203,8 @@ def _record(  # type: ignore[no-untyped-def]
     page_start: int,
     page_end: int,
 ) -> dict[str, object]:
-    excerpt = _SPACE.sub(" ", chunk_text).strip()
+    del chunk_text
+    excerpt = sentence
     user = (
         f"Extract one aviation-safety fact from this report excerpt for event "
         f'{source.event_id}.\n\n<chunk id="{chunk_id}">\n{excerpt}\n</chunk>'
@@ -238,11 +253,28 @@ def _best_sentence(text: str) -> str | None:
             continue
         if not (sentence[0].isupper() or sentence[0].isdigit()):
             continue
+        if re.match(r"^\d+\s+[A-Z]", sentence):
+            continue
         if "•" in sentence or re.search(r"\b\d\s+\d\b", sentence):
             continue
-        if lowered.startswith(("figure ", "table ")) or "http" in lowered:
+        if lowered.startswith(("exemplar ", "figure ", "table ", *_BOILERPLATE_PREFIXES)):
             continue
-        if len(re.findall(r"\b[A-Z]\s+[a-z]{3,}\b", sentence)) > 1:
+        if "http" in lowered or _SECTION_HEADING.search(sentence):
+            continue
+        if _BROKEN_WORD.search(sentence) or re.search(r"\ba\s+re\b", lowered):
+            continue
+        if _BROKEN_PUNCTUATION.search(sentence):
+            continue
+        if any(fragment in lowered for fragment in _MERGED_OCR_WORDS):
+            continue
+        if sentence.count("“") != sentence.count("”") or sentence.count('"') % 2:
+            continue
+        if (
+            _BROKEN_HYPHEN.search(sentence)
+            or _MERGED_CASE.search(sentence)
+            or _KNOWN_SPLIT_WORDS.search(lowered)
+            or _BROKEN_CAPITALS.search(sentence)
+        ):
             continue
         letters = sum(character.isalpha() for character in sentence)
         if letters / len(sentence) < 0.65:

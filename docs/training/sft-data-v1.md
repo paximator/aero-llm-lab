@@ -27,22 +27,25 @@ uv run aerollm-build-sft-data artifacts/corpora/ntsb-pilot-v1.json `
 
 ## Deliberate limitation
 
-The 50 records teach grounded extraction and output-schema adherence by selecting a
-coherent sentence from a supplied report excerpt. They do not yet provide diverse,
+The 50 records teach grounded extraction and output-schema adherence by presenting
+the selected evidence sentence as the bounded report excerpt. The builder rejects
+merged section headings, page/list fragments, broken punctuation, and detectable
+OCR word splits. They do not yet provide diverse,
 human-authored numeric, causal, abstention, or multi-evidence instructions. This is
 appropriate for the QLoRA memory and tiny-overfit gates, but insufficient for the
 first meaningful SFT quality claim.
 
-Five distributed records received a model-assisted qualitative sample review in
-`data/training/sft_v1_50.sample_review.json`. That review found the records usable
-for pipeline validation and identified one lower-value document cross-reference.
+The first ten records received a model-assisted qualitative pre-review in
+`data/training/sft_v1_50.sample_review.json`. The review drove stricter deterministic
+filters and context bounding, then accepted nine records and retained one valid but
+lower-value document cross-reference with an explicit caveat.
 It is explicitly not a substitute for repository-owner sampling before training.
 
 Inspect one record without joining corpus internals manually:
 
 ```powershell
 uv run aerollm-review-sft-data data/training/sft_v1_50.json `
-  --record sft-3da25ea25fb5d3df
+  --record RECORD_ID
 ```
 
 The command prints the official investigation page, the PDF page number(s), the

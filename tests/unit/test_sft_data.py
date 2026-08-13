@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import json
 from pathlib import Path
 
 import pytest
@@ -92,8 +93,6 @@ def test_validator_rejects_duplicate_messages() -> None:
 
 
 def test_repository_dataset_has_expected_validation_stage_shape() -> None:
-    import json
-
     root = Path(__file__).parents[2]
     dataset = json.loads((root / "data/training/sft_v1_50.json").read_text(encoding="utf-8"))
 
@@ -103,18 +102,23 @@ def test_repository_dataset_has_expected_validation_stage_shape() -> None:
     review = json.loads(
         (root / "data/training/sft_v1_50.sample_review.json").read_text(encoding="utf-8")
     )
-    record_ids = {record["record_id"] for record in dataset["records"]}
-    assert {item["record_id"] for item in review["reviews"]} <= record_ids
+    assert review["sample_size"] == 10
+    assert [item["record_id"] for item in review["reviews"]] == [
+        record["record_id"] for record in dataset["records"][:10]
+    ]
 
 
 def test_review_cli_shows_official_url_pages_and_expected_answer(capsys) -> None:  # type: ignore[no-untyped-def]
     root = Path(__file__).parents[2]
+    dataset_path = root / "data/training/sft_v1_50.json"
+    dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
+    record_id = dataset["records"][0]["record_id"]
 
     result = review_main(
         [
-            str(root / "data/training/sft_v1_50.json"),
+            str(dataset_path),
             "--record",
-            "sft-3da25ea25fb5d3df",
+            record_id,
         ]
     )
 
@@ -123,3 +127,18 @@ def test_review_cli_shows_official_url_pages_and_expected_answer(capsys) -> None
     assert "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx" in output
     assert "PDF page(s):" in output
     assert "Expected answer:" in output
+
+
+@pytest.mark.parametrize(
+    "bad_text",
+    [
+        "NTSB Aircraft Accident Report 1.2.2 Certificate History The pilot landed safely.",
+        "Aviation Accident Report variable for the landing configuration was reverse power.",
+        "The flight crew found that theneed for training was important after the accident.",
+        "The operator stated that we a re concerned about the aircraft controls.",
+    ],
+)
+def test_builder_rejects_boilerplate_and_obvious_ocr_fragments(bad_text: str) -> None:
+    from aerollm.training.sft_data import _best_sentence
+
+    assert _best_sentence(bad_text) is None
