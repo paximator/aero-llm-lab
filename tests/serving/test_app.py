@@ -9,7 +9,12 @@ from fastapi.testclient import TestClient
 
 from aerollm.serving.app import create_app
 from aerollm.serving.config import ServingConfig
-from aerollm.serving.contracts import BackendAnswer, RetrievedPassage, ServingDependencies
+from aerollm.serving.contracts import (
+    BackendAnswer,
+    RetrievedPassage,
+    ScopeValidationError,
+    ServingDependencies,
+)
 from aerollm.serving.fakes import FakeAnswerBackend, FakeRetriever, IdentityPostprocessor
 
 
@@ -47,8 +52,8 @@ def test_dependencies_are_injected_through_protocol_boundaries() -> None:
     events: list[object] = []
 
     class Retriever:
-        def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]:
-            events.append((query, top_k))
+        def retrieve(self, query: str, *, top_k: int, **scope) -> tuple[RetrievedPassage, ...]:
+            events.append((query, top_k, scope))
             return (RetrievedPassage("chunk-7", "evidence", 0.75),)
 
     class Backend:
@@ -67,7 +72,9 @@ def test_dependencies_are_injected_through_protocol_boundaries() -> None:
     response = client.post("/v1/answer", json={"question": "Question"})
 
     assert response.json()["answer"] == "raw"
-    assert response.json()["sources"] == [{"chunk_id": "chunk-7", "score": 0.75}]
+    assert response.json()["sources"] == [{
+        "chunk_id": "chunk-7", "score": 0.75, "event_id": None, "report_id": None,
+    }]
     assert len(events) == 3
 
 
@@ -75,7 +82,7 @@ def test_validation_and_backend_failures_do_not_leak_details() -> None:
     invalid = TestClient(create_app()).post("/v1/answer", json={"question": " "})
 
     class FailingRetriever:
-        def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]:
+        def retrieve(self, query: str, *, top_k: int, **scope) -> tuple[RetrievedPassage, ...]:
             raise RuntimeError("secret model path")
 
     failing_client = TestClient(
@@ -159,8 +166,8 @@ def test_question_and_context_limits_are_enforced() -> None:
             return BackendAnswer("answer", "bounded")
 
     class Retriever:
-        def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]:
-            del query, top_k
+        def retrieve(self, query: str, *, top_k: int, **scope) -> tuple[RetrievedPassage, ...]:
+            del query, top_k, scope
             return (
                 RetrievedPassage("one", "abcdef", 1.0),
                 RetrievedPassage("two", "second", 0.5),
@@ -242,3 +249,47 @@ def test_request_log_is_structured_and_excludes_question(caplog) -> None:  # typ
     }
     assert record["latency_ms"] >= 0
     assert "sensitive" not in caplog.records[-1].message
+
+
+def test_scope_is_forwarded_and_source_provenance_is_returned() -> None:
+    class Retriever:
+        def retrieve(
+            self, query: str, *, top_k: int, event_id: str | None = None,
+            report_id: str | None = None,
+        ) -> tuple[RetrievedPassage, ...]:
+            assert (query, top_k, event_id, report_id) == (
+                "Question", 4, "event-7", "report-7",
+            )
+            return (RetrievedPassage(
+                "chunk-7", "evidence", 0.9, "event-7", "report-7",
+            ),)
+
+    response = TestClient(create_app(retriever=Retriever())).post(
+        "/v1/answer",
+        json={"question": "Question", "event_id": "event-7", "report_id": "report-7"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["sources"] == [{
+        "chunk_id": "chunk-7", "score": 0.9,
+        "event_id": "event-7", "report_id": "report-7",
+    }]
+
+
+def test_invalid_scope_returns_safe_validation_error() -> None:
+    class Retriever:
+        def retrieve(self, query: str, **options) -> tuple[RetrievedPassage, ...]:
+            del query, options
+            raise ScopeValidationError("unknown private corpus identifier")
+
+    response = TestClient(create_app(retriever=Retriever())).post(
+        "/v1/answer", json={"question": "Question", "event_id": "unknown"},
+        headers={"x-request-id": "scope-1"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"] == {
+        "code": "invalid_scope", "message": "Event/report scope is invalid",
+        "request_id": "scope-1",
+    }
+    assert "private" not in response.text

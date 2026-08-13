@@ -24,6 +24,7 @@ from aerollm.serving.contracts import (
     Postprocessor,
     RetrievedPassage,
     Retriever,
+    ScopeValidationError,
     ServingDependencies,
 )
 from aerollm.serving.fakes import FakeAnswerBackend, FakeRetriever, IdentityPostprocessor
@@ -142,6 +143,10 @@ def create_app(
     async def too_large_error(request: Request, _error: RequestTooLargeError) -> JSONResponse:
         return _error_response(request, 413, "request_too_large", "Request exceeds service limits")
 
+    @app.exception_handler(ScopeValidationError)
+    async def scope_error(request: Request, _error: ScopeValidationError) -> JSONResponse:
+        return _error_response(request, 422, "invalid_scope", "Event/report scope is invalid")
+
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
         return HealthResponse(service=settings.service_name, version=settings.service_version)
@@ -173,6 +178,8 @@ def create_app(
                     _answer_pipeline,
                     dependencies,
                     payload.question,
+                    payload.event_id,
+                    payload.report_id,
                     request.state.request_id,
                     settings,
                     runtime.concurrency,
@@ -183,7 +190,10 @@ def create_app(
         return AnswerResponse(
             request_id=request.state.request_id,
             answer=final_answer,
-            sources=[Source(chunk_id=item.chunk_id, score=item.score) for item in passages],
+            sources=[Source(
+                chunk_id=item.chunk_id, score=item.score,
+                event_id=item.event_id, report_id=item.report_id,
+            ) for item in passages],
             backend=backend_name,
             latency_ms=(time.perf_counter() - started) * 1_000,
         )
@@ -194,12 +204,16 @@ def create_app(
 def _answer_pipeline(
     dependencies: ServingDependencies,
     question: str,
+    event_id: str | None,
+    report_id: str | None,
     request_id: str,
     settings: ServingConfig,
     concurrency: BoundedSemaphore,
 ) -> tuple[str, str, tuple[RetrievedPassage, ...]]:
     with concurrency:
-        passages = dependencies.retriever.retrieve(question, top_k=settings.top_k)
+        passages = dependencies.retriever.retrieve(
+            question, top_k=settings.top_k, event_id=event_id, report_id=report_id,
+        )
         passages = _bounded_context(passages, settings.max_context_characters)
         generated = dependencies.backend.answer(
             question, passages, request_id=request_id,
@@ -220,7 +234,9 @@ def _bounded_context(
             break
         text = passage.text[:remaining]
         if text:
-            bounded.append(RetrievedPassage(passage.chunk_id, text, passage.score))
+            bounded.append(RetrievedPassage(
+                passage.chunk_id, text, passage.score, passage.event_id, passage.report_id,
+            ))
             remaining -= len(text)
     return tuple(bounded)
 
