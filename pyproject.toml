@@ -48,6 +48,7 @@ aerollm-evaluate-generation = "aerollm.evaluation.generation_cli:main"
 aerollm-evaluate-tasks-v2 = "aerollm.evaluation.task_scoring_cli:main"
 aerollm-build-sft-data = "aerollm.training.sft_data_cli:main"
 aerollm-review-sft-data = "aerollm.training.sft_review_cli:main"
+aerollm-train-qlora = "aerollm.training.qlora:main"
 aerollm-doctor = "aerollm.doctor:main"
 
 [project.optional-dependencies]
@@ -68,6 +69,10 @@ transformers = [
     # The official Ministral 3 FP8 checkpoint uses a Hub kernel whose recent API
     # requires this Windows Triton build. Linux receives Triton through Torch.
     "triton-windows==3.7.1.post27; sys_platform == 'win32'",
+]
+training = [
+    "bitsandbytes>=0.47,<1",
+    "peft>=0.17,<1",
 ]
 
 [tool.uv]
