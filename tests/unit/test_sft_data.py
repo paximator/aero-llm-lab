@@ -8,7 +8,11 @@ import pytest
 from aerollm.common.documents import Chunk
 from aerollm.common.schemas import Document, PageSpan, Split
 from aerollm.evaluation.corpus import CorpusManifest, SourceManifestEntry
-from aerollm.training.sft_data import build_sft_dataset, validate_sft_dataset
+from aerollm.training.sft_data import (
+    _quality_rejection_reason,
+    build_sft_dataset,
+    validate_sft_dataset,
+)
 from aerollm.training.sft_review_cli import main as review_main
 
 
@@ -88,7 +92,7 @@ def test_validator_rejects_duplicate_messages() -> None:
     duplicate["records"][1] = copy.deepcopy(duplicate["records"][0])
     duplicate["records"][1]["record_id"] = duplicate_record_id
 
-    with pytest.raises(ValueError, match="duplicate SFT messages"):
+    with pytest.raises(ValueError, match="duplicate SFT answers"):
         validate_sft_dataset(duplicate, corpus)
 
 
@@ -136,9 +140,29 @@ def test_review_cli_shows_official_url_pages_and_expected_answer(capsys) -> None
         "Aviation Accident Report variable for the landing configuration was reverse power.",
         "The flight crew found that theneed for training was important after the accident.",
         "The operator stated that we a re concerned about the aircraft controls.",
+        "11:17:04 RDO-1 okay could you have medical personnel meet us on the runway.",
+        "The airplane touched down on 2 A circular bright spot can be seen on the flap.",
+        "It was comprehensive. We reviewed the pilot history and administered a test.",
+        "A-24-9 Require retrofit of cockpit voice recorders on transport airplanes.",
+        "Departure from Controlled Flight, Trans-Pacific Air Charter, Learjet 35A, New Jersey.",
+        "Workforce manufacturing 83 The FAA grounded the Boeing aircraft after the accident.",
+        "Continue the takeoff normally when runway congestion prevents an engine run-up.",
+        "The airplane had accumulated 15,104total flight hours before the accident flight.",
+        "The pilot entered reduced visibility at tour altitude s and the accident occurred.",
+        "The operator trained employees to identify signs of imp airment in passengers.",
+        "The report cited StatGear 2019 and Benchmade2019 while describing the airplane.",
     ],
 )
 def test_builder_rejects_boilerplate_and_obvious_ocr_fragments(bad_text: str) -> None:
     from aerollm.training.sft_data import _best_sentence
 
     assert _best_sentence(bad_text) is None
+
+
+def test_validator_quality_gate_uses_the_same_rules_as_selection() -> None:
+    assert (
+        _quality_rejection_reason(
+            "The accident airplane landed safely after the flight crew reported an engine warning."
+        )
+        is None
+    )

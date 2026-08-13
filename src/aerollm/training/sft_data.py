@@ -38,12 +38,30 @@ _BOILERPLATE_PREFIXES = (
 )
 _SECTION_HEADING = re.compile(r"\b\d+(?:\.\d+){1,3}\s+[A-Z][A-Za-z]")
 _BROKEN_WORD = re.compile(r"\b[bcdefghijklmnopqrstuvwxyz]\s+[a-z]{2,}\b")
-_BROKEN_PUNCTUATION = re.compile(r"\s+[.,)]|[,.)][A-Za-z]")
-_MERGED_OCR_WORDS = ("theneed", "thefaa", "theaircraft", "thepilot")
+_BROKEN_PUNCTUATION = re.compile(r"\s+[.,;)]|[,.)][A-Za-z]")
+_MERGED_OCR_WORDS = ("garmin650", "theneed", "thefaa", "theaircraft", "thepilot")
 _BROKEN_HYPHEN = re.compile(r"\b[A-Za-z0-9]{2,}\s+-\s*[A-Za-z0-9]|\b[A-Za-z0-9]{2,}-\s+[A-Za-z0-9]")
 _MERGED_CASE = re.compile(r"\b[a-z]{2,}[A-Z]{2,}\b")
-_KNOWN_SPLIT_WORDS = re.compile(r"\b(?:affect|imp|devel|bottl|haza)\s+[a-z]{2,}\b")
+_MERGED_NUMBER_WORD = re.compile(r"\d{2,}[a-z]{3,}\b")
+_MERGED_REFERENCE_YEAR = re.compile(r"\b[A-Z][A-Za-z]{3,}\d{4}\b")
+_KNOWN_SPLIT_WORDS = re.compile(
+    r"\b(?:affect|altitude|bottl|devel|haza|occur|th)\s+[a-z]{1,4}\b|\bimp\s+airment\b"
+)
 _BROKEN_CAPITALS = re.compile(r"\b[A-Z]\s+[A-Z][A-Za-z]?\b|\b(?:[A-Z]-){2,}\s*[A-Z]\b")
+_TRANSCRIPT = re.compile(r"^\d{1,2}:\d{2}:\d{2}\b|\b(?:CAM|CTR|RDO)-\d\b")
+_INLINE_FOOTNOTE = re.compile(r"\b\d+\s+(?:A|An|The)\s+[a-z]")
+_FUSED_SENTENCES = re.compile(
+    r"[.!?][”\"]?\s+(?:A|According|An|As|At|He|In|It|On|She|That|The|They|This|We)\s"
+)
+_LOW_VALUE_PREFIXES = (
+    "accident airplane ",
+    "departure from controlled flight,",
+    "information that addresses the requirements",
+    "for more detailed background information",
+    "statutory language prohibits",
+    "workforce manufacturing ",
+)
+_OPERATIONAL_IMPERATIVE = re.compile(r"^(?:If .+?,\s+)?(?:continue|do|ensure|maintain)\b", re.I)
 _SYSTEM = (
     "You answer aviation-report questions using only the supplied excerpt. "
     f"Return the {GROUNDED_RAG_PROMPT_VERSION} JSON object and cite an exact span."
@@ -80,14 +98,27 @@ def build_sft_dataset(
 
     selected: list[dict[str, object]] = []
     families = sorted(candidates)
-    for ordinal in range(max_records_per_family):
+    cursors: defaultdict[str, int] = defaultdict(int)
+    family_counts: defaultdict[str, int] = defaultdict(int)
+    answer_digests: set[str] = set()
+    while len(selected) < target_records:
+        progress = False
         for family in families:
-            if len(selected) == target_records:
+            if len(selected) == target_records or family_counts[family] >= max_records_per_family:
+                continue
+            while cursors[family] < len(candidates[family]):
+                record = candidates[family][cursors[family]]
+                cursors[family] += 1
+                answer = _assistant_answer(record["messages"])
+                digest = hashlib.sha256(_SPACE.sub(" ", answer).casefold().encode()).hexdigest()
+                if digest in answer_digests:
+                    continue
+                selected.append(record)
+                answer_digests.add(digest)
+                family_counts[family] += 1
+                progress = True
                 break
-            family_records = candidates[family]
-            if ordinal < len(family_records):
-                selected.append(family_records[ordinal])
-        if len(selected) == target_records:
+        if not progress:
             break
     if len(selected) != target_records:
         raise ValueError(f"only {len(selected)} eligible train records for target {target_records}")
@@ -121,6 +152,7 @@ def validate_sft_dataset(
     chunks = {chunk.chunk_id: chunk for chunk in corpus.chunks}
     record_ids: set[str] = set()
     message_digests: set[str] = set()
+    answer_digests: set[str] = set()
     for record in records:
         if not isinstance(record, Mapping):
             raise ValueError("SFT records must be objects")
@@ -176,7 +208,14 @@ def validate_sft_dataset(
                 raise ValueError("SFT evidence chunk crosses report provenance")
             evidence_text.append(chunk.text)
         messages = record["messages"]
-        _validate_messages(messages, evidence_text)
+        answer = _validate_messages(messages, evidence_text)
+        rejection = _quality_rejection_reason(answer)
+        if rejection is not None:
+            raise ValueError(f"SFT answer failed quality gate: {rejection}")
+        answer_digest = hashlib.sha256(_SPACE.sub(" ", answer).casefold().encode()).hexdigest()
+        if answer_digest in answer_digests:
+            raise ValueError("duplicate SFT answers")
+        answer_digests.add(answer_digest)
         canonical = json.dumps(messages, ensure_ascii=False, sort_keys=True)
         digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         if digest in message_digests:
@@ -249,32 +288,7 @@ def _best_sentence(text: str) -> str | None:
     for sentence in _SENTENCE.split(normalized):
         sentence = sentence.strip()
         lowered = sentence.casefold()
-        if not 80 <= len(sentence) <= 320 or not sentence.endswith((".", "!", "?")):
-            continue
-        if not (sentence[0].isupper() or sentence[0].isdigit()):
-            continue
-        if re.match(r"^\d+\s+[A-Z]", sentence):
-            continue
-        if "•" in sentence or re.search(r"\b\d\s+\d\b", sentence):
-            continue
-        if lowered.startswith(("exemplar ", "figure ", "table ", *_BOILERPLATE_PREFIXES)):
-            continue
-        if "http" in lowered or _SECTION_HEADING.search(sentence):
-            continue
-        if _BROKEN_WORD.search(sentence) or re.search(r"\ba\s+re\b", lowered):
-            continue
-        if _BROKEN_PUNCTUATION.search(sentence):
-            continue
-        if any(fragment in lowered for fragment in _MERGED_OCR_WORDS):
-            continue
-        if sentence.count("“") != sentence.count("”") or sentence.count('"') % 2:
-            continue
-        if (
-            _BROKEN_HYPHEN.search(sentence)
-            or _MERGED_CASE.search(sentence)
-            or _KNOWN_SPLIT_WORDS.search(lowered)
-            or _BROKEN_CAPITALS.search(sentence)
-        ):
+        if _quality_rejection_reason(sentence) is not None:
             continue
         letters = sum(character.isalpha() for character in sentence)
         if letters / len(sentence) < 0.65:
@@ -285,7 +299,7 @@ def _best_sentence(text: str) -> str | None:
     return max(candidates, default=None)[2] if candidates else None
 
 
-def _validate_messages(messages: object, evidence_text: list[str]) -> None:
+def _validate_messages(messages: object, evidence_text: list[str]) -> str:
     if not isinstance(messages, list) or len(messages) != 3:
         raise ValueError("SFT messages must contain system, user, and assistant")
     if [message.get("role") for message in messages if isinstance(message, Mapping)] != [
@@ -307,6 +321,61 @@ def _validate_messages(messages: object, evidence_text: list[str]) -> None:
         normalized_evidence = _SPACE.sub(" ", "\n".join(evidence_text)).strip()
         if normalized_quote not in normalized_evidence:
             raise ValueError("SFT citation is not an exact evidence span")
+    return _string(assistant["answer"], "assistant answer")
+
+
+def _assistant_answer(messages: object) -> str:
+    if not isinstance(messages, list) or len(messages) != 3:
+        raise ValueError("SFT messages must contain system, user, and assistant")
+    assistant_message = messages[2]
+    if not isinstance(assistant_message, Mapping):
+        raise ValueError("SFT assistant message must be an object")
+    payload = json.loads(_string(assistant_message.get("content"), "assistant content"))
+    return _string(payload.get("answer"), "assistant answer")
+
+
+def _quality_rejection_reason(sentence: str) -> str | None:
+    lowered = sentence.casefold()
+    if not 80 <= len(sentence) <= 320 or not sentence.endswith((".", "!", "?")):
+        return "length_or_termination"
+    if not (sentence[0].isupper() or sentence[0].isdigit()):
+        return "sentence_fragment"
+    if re.match(r"^\d+\s+[A-Z]", sentence) or _INLINE_FOOTNOTE.search(sentence):
+        return "footnote_fragment"
+    if "•" in sentence or re.search(r"\b\d\s+\d\b", sentence):
+        return "list_or_page_fragment"
+    if lowered.startswith(("exemplar ", "figure ", "table ", *_BOILERPLATE_PREFIXES)):
+        return "document_boilerplate"
+    if lowered.startswith(_LOW_VALUE_PREFIXES) or re.match(r"^[A-Z]-\d", sentence):
+        return "reference_or_heading"
+    if "section " in lowered and re.search(r"\bsection\s+\d", lowered):
+        return "section_cross_reference"
+    if _TRANSCRIPT.search(sentence):
+        return "transcript_fragment"
+    if _FUSED_SENTENCES.search(sentence):
+        return "fused_sentences"
+    if _OPERATIONAL_IMPERATIVE.search(sentence):
+        return "isolated_operational_instruction"
+    if "http" in lowered or _SECTION_HEADING.search(sentence):
+        return "heading_or_url"
+    if _BROKEN_WORD.search(sentence) or re.search(r"\ba\s+re\b", lowered):
+        return "split_word"
+    if _BROKEN_PUNCTUATION.search(sentence):
+        return "broken_punctuation"
+    if any(fragment in lowered for fragment in _MERGED_OCR_WORDS):
+        return "merged_word"
+    if sentence.count("“") != sentence.count("”") or sentence.count('"') % 2:
+        return "unbalanced_quote"
+    if (
+        _BROKEN_HYPHEN.search(sentence)
+        or _MERGED_CASE.search(sentence)
+        or _MERGED_NUMBER_WORD.search(sentence)
+        or _MERGED_REFERENCE_YEAR.search(sentence)
+        or _KNOWN_SPLIT_WORDS.search(lowered)
+        or _BROKEN_CAPITALS.search(sentence)
+    ):
+        return "ocr_fragment"
+    return None
 
 
 def _token_count(messages: list[dict[str, str]]) -> int:
