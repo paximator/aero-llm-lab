@@ -8,20 +8,42 @@ This is not a general-purpose aviation chatbot. The initial product surface is a
 small set of evidence-backed tasks over public aviation safety reports: structured
 fact extraction, cited question answering, and grounded incident summaries.
 
+## Current results — development snapshot
+
+- The data, retrieval, generation, QLoRA, evaluation, and typed FastAPI serving
+  paths are implemented and covered by 233 tests on Windows/Linux CI.
+- Hybrid retrieval reaches Recall@10 `0.700` on the locked historical test set;
+  reranking reaches MRR@10 `0.483`.
+- Pinned local Ministral 3 3B inference and NF4 QLoRA run within the measured RTX
+  4070 Laptop 8 GB envelope.
+- With identical reviewed gold context, QLoRA improves development accuracy from
+  `18.5%` to `44.4%` and valid grounded output from `0%` to `37.0%`.
+- End-to-end SFT+RAG remains a documented negative result: retrieval hit@3 is
+  `63.0%`, but retrieved-context outputs do not yet pass strict grounding gates.
+- Evaluation-suite v2 has 27 reviewed development examples; 45 test records still
+  require independent human authoring and review before the suite can be frozen.
+- Serving v1 provides fail-closed `/health`, `/ready`, and `/v1/answer` boundaries
+  with deterministic CI fakes and lazy local-model initialization.
+
+See the [development review brief](docs/development-review.md) for the claim
+boundary, demo commands, limitations, results, and remaining work.
+
 ## Intended comparison
 
-Every approach is evaluated against the same frozen task suite:
+The target frozen comparison uses one task suite and prediction contract for:
 
-1. base model;
+1. minimal-instruct model;
 2. prompted base model;
 3. retrieval-augmented generation (RAG);
 4. supervised fine-tuning (SFT with LoRA/QLoRA);
 5. SFT plus RAG;
-6. optional preference tuning after the earlier baselines are stable.
+6. optional preference tuning only after the earlier baselines are stable.
 
-The exact open-weight Mistral checkpoint remains a configuration choice until the
-baseline milestone, where it will be selected based on license, context length,
-tool-use support, hardware constraints, and reproducible availability.
+Current local experiments pin `mistralai/Ministral-3-3B-Instruct-2512` for FP8
+inference baselines and `mistralai/Ministral-3-3B-Base-2512` for NF4 QLoRA. Model
+revisions and runtime configuration are recorded in tracked configs and result
+reports. The five-system frozen comparison is not complete: its evaluation-v2 test
+labels and SFT+RAG development gate remain outstanding.
 
 ## Design principles
 
@@ -35,6 +57,9 @@ tool-use support, hardware constraints, and reproducible availability.
 
 ## Documentation
 
+- [Development review brief](docs/development-review.md)
+- [Review presentation and demo script](docs/development-review-presentation.md)
+- [Operational action register](docs/action-register.md)
 - [Repository architecture](docs/architecture.md)
 - [Implementation roadmap](docs/roadmap.md)
 - [Local hardware profile](docs/hardware-profile.md)
@@ -49,8 +74,8 @@ Install [uv](https://docs.astral.sh/uv/), clone the repository, and create the
 locked development environment:
 
 ```powershell
-uv sync --extra dev
-uv run aerollm-doctor
+uv sync --locked --extra dev
+uv run --locked aerollm-doctor
 ```
 
 `uv.lock` is authoritative: do not install Torch or Triton manually with `pip`.
@@ -58,14 +83,15 @@ The core/dev profile works without a GPU. For NVIDIA retrieval and generation on
 Windows or Linux, install and verify the separately pinned CUDA profile:
 
 ```powershell
-uv sync --extra dev --extra transformers
-uv run aerollm-doctor --transformers
+uv sync --locked --extra dev --extra transformers
+uv run --locked aerollm-doctor --transformers
 ```
 
 The doctor prints every relevant version and an actionable error when the CUDA
 wheel, driver, FP8 dtype, or Windows Triton runtime is wrong. Native Windows and
-Linux NVIDIA systems are supported for Transformers experiments; WSL2/Linux is
-the intended vLLM and training environment. macOS remains suitable for core data,
+Linux NVIDIA systems are supported for Transformers experiments. The repository
+does not claim vLLM support; it may be evaluated under WSL2/Linux later only if a
+measured serving requirement justifies it. macOS remains suitable for core data,
 evaluation, and unit-test work, not the CUDA benchmark path.
 
 Create an account in the [NTSB Developer Portal](https://developer.ntsb.gov/) and
@@ -94,11 +120,13 @@ The loader automatically resolves the shared repository root, so the same secret
 works from every Git/Cascade worktree. API configuration and endpoint paths remain
 public in `configs/data/ntsb.toml`.
 
-## Current status
+## Reproduction workflows
 
-The first end-to-end data slice is operational: NTSB API discovery, aviation case
-metadata, formal report download, PDF parsing, and deterministic page-aware
-chunking. Tests use recorded or synthetic inputs; live API calls remain explicit.
+The sections below provide detailed reproduction entry points. The complete
+development vertical slice now extends beyond data preparation through retrieval,
+generation, QLoRA, evaluation, and serving; tracked result reports state which
+gates passed or failed. Tests use recorded, reviewed, or synthetic inputs, and live
+API calls remain explicit.
 
 Create a reproducible chunk manifest from a parsed report with:
 
@@ -158,7 +186,7 @@ answers, evidence, failures, and metrics are excluded from training and tuning.
 Install the local Transformers stack with the platform-pinned CUDA build of Torch:
 
 ```powershell
-uv sync --extra transformers
+uv sync --locked --extra transformers
 ```
 
 Run the pinned Ministral 3 3B FP8 feasibility benchmark after downloading the
@@ -222,9 +250,12 @@ the 72-slot annotation workbook with:
 uv run aerollm-build-suite-v2-review
 ```
 
-Review it using
-`docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`. Development
-questions are drafts; locked-test slots must be independently human-authored.
+The 27 development questions have completed the current model-assisted review
+stage. The 45 label-free test slots and blank public authoring template are tracked
+under `data/evaluation/v2/`; filled test gold belongs only in the ignored private
+workbook and must be independently human-authored and reviewed. Follow
+`docs/evaluation/evaluation-suite-v2-annotation-review-guide.md` and the explicit
+status boundary in `docs/evaluation/evaluation-suite-v2-status.md`.
 
 Do not pass `--refresh-plan` during materialization: that flag intentionally
 replaces the reviewed selection. Generated source snapshots, parsed documents,
