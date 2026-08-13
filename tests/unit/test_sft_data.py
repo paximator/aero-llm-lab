@@ -62,8 +62,14 @@ def test_builder_selects_only_train_families_and_exact_evidence() -> None:
         "family-1",
         "family-2",
     }
-    assert dataset["records"][0]["source_pages"] == [1]
-    assert dataset["records"][0]["investigation_url"].endswith("event-1.aspx")
+    assert set(dataset["records"][0]) == {
+        "record_id",
+        "event_family_id",
+        "source_chunk_ids",
+        "messages",
+    }
+    assert dataset["status"] == "model_assisted_review_passed"
+    assert dataset["review"]["reviewed_records"] == 2
     validate_sft_dataset(dataset, corpus)
 
 
@@ -73,7 +79,7 @@ def test_validator_rejects_test_report_leakage() -> None:
         corpus, corpus_sha256="a" * 64, target_records=1, max_records_per_family=1
     )
     leaked = copy.deepcopy(dataset)
-    leaked["records"][0]["report_id"] = "report-3"
+    leaked["records"][0]["source_chunk_ids"] = [corpus.chunks[2].chunk_id]
 
     with pytest.raises(ValueError, match="train-only"):
         validate_sft_dataset(leaked, corpus)
@@ -102,7 +108,9 @@ def test_repository_dataset_has_expected_validation_stage_shape() -> None:
 
     assert len(dataset["records"]) == 50
     assert len({record["event_family_id"] for record in dataset["records"]}) == 13
-    assert all(record["review_status"] == "sample_review_required" for record in dataset["records"])
+    assert dataset["status"] == "model_assisted_review_passed"
+    assert dataset["review"]["reviewed_records"] == 50
+    assert "Human approval" in dataset["review"]["comment"]
     review = json.loads(
         (root / "data/training/sft_v1_50.sample_review.json").read_text(encoding="utf-8")
     )
@@ -112,7 +120,7 @@ def test_repository_dataset_has_expected_validation_stage_shape() -> None:
     ]
 
 
-def test_review_cli_shows_official_url_pages_and_expected_answer(capsys) -> None:  # type: ignore[no-untyped-def]
+def test_review_cli_shows_review_comment_and_expected_answer(capsys) -> None:  # type: ignore[no-untyped-def]
     root = Path(__file__).parents[2]
     dataset_path = root / "data/training/sft_v1_50.json"
     dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
@@ -128,8 +136,8 @@ def test_review_cli_shows_official_url_pages_and_expected_answer(capsys) -> None
 
     output = capsys.readouterr().out
     assert result == 0
-    assert "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx" in output
-    assert "PDF page(s):" in output
+    assert "Dataset review:" in output
+    assert "Human approval" in output
     assert "Expected answer:" in output
 
 

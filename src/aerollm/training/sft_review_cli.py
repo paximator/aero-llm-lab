@@ -1,4 +1,4 @@
-"""Display one SFT record with its official report-review entry points."""
+"""Display one compact SFT record for qualitative review."""
 
 from __future__ import annotations
 
@@ -19,15 +19,10 @@ def main(argv: list[str] | None = None) -> int:
     record = matches[0]
     messages = {message["role"]: message["content"] for message in record["messages"]}
     assistant = json.loads(messages["assistant"])
-    pages = ", ".join(str(page) for page in record["source_pages"])
     print(f"Record: {record['record_id']}")
-    print(f"Event: {record['event_id']}")
-    print(f"Report: {record['report_id']}")
-    print(f"Official investigation: {record['investigation_url']}")
-    print("PDF: open the Reports section on the official investigation page")
-    print(f"PDF page(s): {pages}")
+    print(f"Event family: {record['event_family_id']}")
     print(f"Chunk(s): {', '.join(record['source_chunk_ids'])}")
-    print(f"Review status: {record['review_status']}")
+    print(f"Dataset review: {dataset['review']['comment']}")
     print("\nInstruction:\n" + messages["user"])
     print("\nExpected answer:\n" + str(assistant["answer"]))
     print("\nExpected citations:")

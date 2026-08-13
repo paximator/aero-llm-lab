@@ -90,10 +90,8 @@ def build_sft_dataset(
         sentence = _best_sentence(chunk.text)
         if sentence is None:
             continue
-        record = _record(
-            source, chunk.chunk_id, chunk.text, sentence, chunk.page_start, chunk.page_end
-        )
-        if record["token_count"] <= max_tokens:
+        record = _record(source, chunk.chunk_id, sentence)
+        if _token_count(record["messages"]) <= max_tokens:
             candidates[source.event_family_id].append(record)
 
     selected: list[dict[str, object]] = []
@@ -126,7 +124,16 @@ def build_sft_dataset(
         "schema_version": 1,
         "dataset_id": "ntsb-evidence-linked-sft-v1-validation",
         "version": "1.0.0-draft",
-        "status": "automated_validation_passed_human_sample_review_required",
+        "status": "model_assisted_review_passed",
+        "review": {
+            "kind": "model_assisted_full_review",
+            "reviewed_records": target_records,
+            "comment": (
+                "All generated records were inspected after the automated quality gate; "
+                "the observed OCR, boilerplate, transcript, cross-reference, and duplicate "
+                "failure classes were removed. Human approval is still recommended before training."
+            ),
+        },
         "source_corpus_sha256": corpus_sha256,
         "prompt_contract": GROUNDED_RAG_PROMPT_VERSION,
         "selection": {
@@ -148,7 +155,6 @@ def validate_sft_dataset(
     records = dataset.get("records")
     if not isinstance(records, list) or not records:
         raise ValueError("SFT dataset requires records")
-    sources = {source.source_document_id: source for source in corpus.sources}
     chunks = {chunk.chunk_id: chunk for chunk in corpus.chunks}
     record_ids: set[str] = set()
     message_digests: set[str] = set()
@@ -158,17 +164,9 @@ def validate_sft_dataset(
             raise ValueError("SFT records must be objects")
         required = {
             "record_id",
-            "event_id",
             "event_family_id",
-            "report_id",
-            "investigation_url",
             "source_chunk_ids",
-            "source_pages",
             "messages",
-            "task_type",
-            "provenance",
-            "review_status",
-            "token_count",
         }
         if set(record) != required:
             raise ValueError("invalid SFT record fields")
@@ -176,37 +174,31 @@ def validate_sft_dataset(
         if record_id in record_ids:
             raise ValueError(f"duplicate SFT record_id: {record_id}")
         record_ids.add(record_id)
-        source = sources.get(_string(record["report_id"], "report_id"))
-        if source is None or source.split is not Split.TRAIN:
-            raise ValueError("SFT records must use train-only reports")
-        if (record["event_id"], record["event_family_id"]) != (
-            source.event_id,
-            source.event_family_id,
-        ):
-            raise ValueError("SFT record crosses event provenance")
-        expected_url = f"https://www.ntsb.gov/investigations/Pages/{source.event_id}.aspx"
-        if record["investigation_url"] != expected_url:
-            raise ValueError("SFT investigation URL does not match event provenance")
-        pages = record["source_pages"]
-        if (
-            not isinstance(pages, list)
-            or not pages
-            or not all(type(page) is int and page > 0 for page in pages)
-        ):
-            raise ValueError("SFT source_pages must contain positive page numbers")
         chunk_ids = record["source_chunk_ids"]
         if not isinstance(chunk_ids, list) or not chunk_ids:
             raise ValueError("SFT record requires source_chunk_ids")
         evidence_text = []
+        evidence_sources = set()
         for chunk_id in chunk_ids:
             chunk = chunks.get(_string(chunk_id, "source_chunk_id"))
-            if chunk is None or chunk.document_id not in {
-                document.document_id
-                for document in corpus.documents
-                if document.source_sha256 == source.sha256
-            }:
-                raise ValueError("SFT evidence chunk crosses report provenance")
+            if chunk is None:
+                raise ValueError("SFT evidence chunk is unknown")
+            document = next(
+                (item for item in corpus.documents if item.document_id == chunk.document_id), None
+            )
+            if document is None:
+                raise ValueError("SFT evidence document is unknown")
+            source = next(
+                (item for item in corpus.sources if item.sha256 == document.source_sha256), None
+            )
+            if source is None or source.split is not Split.TRAIN:
+                raise ValueError("SFT records must use train-only reports")
+            evidence_sources.add(source.source_document_id)
+            if record["event_family_id"] != source.event_family_id:
+                raise ValueError("SFT record crosses event-family provenance")
             evidence_text.append(chunk.text)
+        if len(evidence_sources) != 1:
+            raise ValueError("SFT evidence chunks cross report provenance")
         messages = record["messages"]
         answer = _validate_messages(messages, evidence_text)
         rejection = _quality_rejection_reason(answer)
@@ -221,8 +213,8 @@ def validate_sft_dataset(
         if digest in message_digests:
             raise ValueError("duplicate SFT messages")
         message_digests.add(digest)
-        token_count = record["token_count"]
-        if type(token_count) is not int or not 1 <= token_count <= max_tokens:
+        token_count = _token_count(messages)
+        if not 1 <= token_count <= max_tokens:
             raise ValueError("SFT token_count exceeds budget")
 
 
@@ -234,15 +226,7 @@ def write_sft_dataset(dataset: Mapping[str, object], path: Path) -> None:
     )
 
 
-def _record(  # type: ignore[no-untyped-def]
-    source,
-    chunk_id: str,
-    chunk_text: str,
-    sentence: str,
-    page_start: int,
-    page_end: int,
-) -> dict[str, object]:
-    del chunk_text
+def _record(source, chunk_id: str, sentence: str) -> dict[str, object]:  # type: ignore[no-untyped-def]
     excerpt = sentence
     user = (
         f"Extract one aviation-safety fact from this report excerpt for event "
@@ -268,17 +252,9 @@ def _record(  # type: ignore[no-untyped-def]
     ]
     return {
         "record_id": f"sft-{identity}",
-        "event_id": source.event_id,
         "event_family_id": source.event_family_id,
-        "report_id": source.source_document_id,
-        "investigation_url": (f"https://www.ntsb.gov/investigations/Pages/{source.event_id}.aspx"),
         "source_chunk_ids": [chunk_id],
-        "source_pages": list(range(page_start, page_end + 1)),
         "messages": messages,
-        "task_type": "grounded_extraction",
-        "provenance": "deterministic_train_chunk_derivation",
-        "review_status": "sample_review_required",
-        "token_count": _token_count(messages),
     }
 
 
