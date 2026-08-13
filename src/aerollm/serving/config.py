@@ -1,0 +1,94 @@
+"""Validated serving configuration loaded without runtime side effects."""
+
+from __future__ import annotations
+
+import math
+import tomllib
+from collections.abc import Mapping
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(frozen=True, slots=True)
+class ServingConfig:
+    service_name: str = "aerollm-serving"
+    service_version: str = "v1"
+    top_k: int = 4
+    max_new_tokens: int = 256
+    temperature: float = 0.0
+    prompt_version: str = "grounded-json-v1"
+    request_timeout_seconds: float = 30.0
+    max_concurrency: int = 1
+    max_question_characters: int = 4_000
+    max_context_characters: int = 16_000
+
+    def __post_init__(self) -> None:
+        if not self.service_name.strip() or not self.service_version.strip():
+            raise ValueError("service name and version are required")
+        if type(self.top_k) is not int or self.top_k < 1:
+            raise ValueError("top_k must be a positive integer")
+        if type(self.max_new_tokens) is not int or self.max_new_tokens < 1:
+            raise ValueError("max_new_tokens must be a positive integer")
+        if (
+            type(self.temperature) is not float
+            or not math.isfinite(self.temperature)
+            or self.temperature < 0.0
+        ):
+            raise ValueError("temperature must be a non-negative float")
+        if not self.prompt_version.strip():
+            raise ValueError("prompt_version is required")
+        if (
+            type(self.request_timeout_seconds) is not float
+            or not math.isfinite(self.request_timeout_seconds)
+            or self.request_timeout_seconds <= 0.0
+        ):
+            raise ValueError("request_timeout_seconds must be a positive float")
+        for value, name in (
+            (self.max_concurrency, "max_concurrency"),
+            (self.max_question_characters, "max_question_characters"),
+            (self.max_context_characters, "max_context_characters"),
+        ):
+            if type(value) is not int or value < 1:
+                raise ValueError(f"{name} must be a positive integer")
+
+    @classmethod
+    def from_toml(cls, path: Path) -> ServingConfig:
+        value = tomllib.loads(path.read_text(encoding="utf-8"))
+        if not set(value).issuperset({"service", "answer"}):
+            raise ValueError("missing serving configuration tables")
+        service = _table(value, "service")
+        answer = _table(value, "answer")
+        safety = _table(value, "safety")
+        if set(service) != {"name", "version"} or set(answer) != {
+            "top_k",
+            "max_new_tokens",
+            "temperature",
+            "prompt_version",
+        }:
+            raise ValueError("invalid serving configuration fields")
+        if set(safety) != {
+            "request_timeout_seconds",
+            "max_concurrency",
+            "max_question_characters",
+            "max_context_characters",
+        }:
+            raise ValueError("invalid serving safety configuration fields")
+        return cls(
+            service_name=service["name"],
+            service_version=service["version"],
+            top_k=answer["top_k"],
+            max_new_tokens=answer["max_new_tokens"],
+            temperature=answer["temperature"],
+            prompt_version=answer["prompt_version"],
+            request_timeout_seconds=safety["request_timeout_seconds"],
+            max_concurrency=safety["max_concurrency"],
+            max_question_characters=safety["max_question_characters"],
+            max_context_characters=safety["max_context_characters"],
+        )  # type: ignore[arg-type]
+
+
+def _table(value: Mapping[str, object], name: str) -> Mapping[str, object]:
+    table = value.get(name)
+    if not isinstance(table, Mapping):
+        raise ValueError(f"missing [{name}] serving configuration")
+    return table

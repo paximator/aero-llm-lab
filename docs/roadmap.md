@@ -185,8 +185,11 @@ P0 evaluation quality.
 
 ## P2 — Systems and secondary demonstrations
 
-1. Minimal FastAPI endpoint with typed requests, streaming, and trace IDs.
-2. vLLM under WSL2/Linux when supported; benchmark TTFT, tokens/s, p50/p95,
+1. The minimal non-streaming FastAPI v1 endpoint is complete with typed requests,
+   request IDs, safe errors, injected boundaries, and deterministic fakes. Streaming
+   remains deferred until an inference benchmark justifies it.
+2. Do not claim vLLM support. Evaluate it under WSL2/Linux only if later serving
+   requirements justify the dependency, then benchmark TTFT, tokens/s, p50/p95,
    requests/s, and peak VRAM.
 3. Educational Transformer correctness and profiling: RMSNorm, RoPE, causal/GQA
    attention, autoregressive decoding, KV cache, cached/uncached equivalence, and
@@ -206,15 +209,22 @@ SFT+DPO on the same frozen suite. A documented negative result is acceptable.
 
 ## Immediate execution queue
 
-1. Design evaluation-suite v2 coverage matrix and select new event families.
-2. Extend evaluation records with task type and scoring specification.
-3. Draft and independently review the first new examples; freeze only after the
-   target diversity and evidence gates pass.
-4. Freeze the unified prediction/prompt/manifest schemas.
-5. Build and validate the first 50 evidence-linked SFT records in parallel with
-   annotation review, without using test events.
-6. Run QLoRA memory smoke and tiny-overfit gates.
-7. Scale to the first reviewed SFT dataset and run the five-system comparison.
+Status legend: `NEXT` is immediately actionable, `BLOCKED` has an unmet dependency,
+`GATED` must satisfy a measured criterion, and `DEFERRED` is deliberately outside
+the current milestone.
+
+| ID | Status | Priority | Action | Exit criterion |
+|---|---|---:|---|---|
+| A1 | `NEXT` | P0 | Human-author and independently review the 45 prepared evaluation-v2 test slots. | Every slot has complete gold fields and a reviewer distinct from its author. |
+| A2 | `BLOCKED` by A1 | P0 | Run schema, evidence, leakage, duplicate, target, and coverage gates; freeze the suite. | All gates pass and final bytes plus SHA-256 are recorded. |
+| A3 | `NEXT` in parallel | P0 | Author reviewed train-only retrieved-context records for exact citation copying and balanced abstention. | A reviewed dataset has traceable chunks, no test families, and no automatic-label claim. |
+| A4 | `GATED` by A3 | P0 | Train the next micro-adapter and rerun the five-example SFT+RAG development gate. | At least 4/5 outputs are contract-valid and grounded; otherwise stop. |
+| A5 | `BLOCKED` by A2 and A4 | P0 | Run the frozen five-system comparison, paired failures, and uncertainty analysis. | One immutable suite and evaluator cover all five systems without test-driven tuning. |
+| A6 | `DEFERRED` | P1/P2 | Streaming, vLLM evaluation, DPO, agents, and production serving benchmarks. | Re-prioritized only from a measured requirement after P0. |
+
+Execution details, expected owners, evidence, and hand-off criteria live in the
+[action register](action-register.md). This table is the canonical priority order;
+the longer P0–P3 sections explain intent and acceptance gates.
 
 The evaluation expansion is deliberately bounded: it strengthens claims but must
 not become another framework-building phase that postpones post-training.
@@ -226,9 +236,9 @@ not become another framework-building phase that postpones post-training.
 - [ ] Task-specific deterministic and rubric scoring is versioned.
 - [ ] One prediction schema supports all five system variants.
 - [ ] SFT records are evidence-linked, validated, and test-leakage-free.
-- [ ] QLoRA memory smoke passes.
-- [ ] Tiny-overfit, adapter save, reload, and evaluation pass.
-- [ ] The first real SFT adapter and manifest exist.
+- [x] QLoRA memory smoke passes.
+- [x] Tiny-overfit, adapter save, reload, and development evaluation pass.
+- [x] The first real SFT adapter and manifest exist.
 - [ ] SFT and SFT+RAG run on the same frozen suite as the baselines.
 - [ ] Results include uncertainty, failure categories, examples, and limitations.
 - [ ] README headline metrics link to reproducible reports.

@@ -3,7 +3,7 @@
 
 [model]
 id = "mistralai/Ministral-3-3B-Base-2512"
-revision = "PIN_EXACT_REVISION_BEFORE_RUN"
+revision = "a58f2a5360e75b8249fd7f44508b72ac9d11fe89"
 trust_remote_code = false
 
 [quantization]
@@ -24,6 +24,7 @@ micro_batch_size = 1
 gradient_accumulation_steps = 16
 gradient_checkpointing = true
 optimizer = "paged_adamw_8bit"
+learning_rate = 0.0002
 seed = 42
 
 [hardware]

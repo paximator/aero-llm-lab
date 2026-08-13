@@ -32,6 +32,7 @@ aerollm-acquire-ntsb-reference = "aerollm.data.acquire_ntsb_reference:main"
 aerollm-acquire-ntsb-case = "aerollm.data.acquire_ntsb_case:main"
 aerollm-chunk-document = "aerollm.data.chunk_cli:main"
 aerollm-build-corpus = "aerollm.data.corpus_cli:main"
+aerollm-build-development-corpus = "aerollm.data.development_corpus:main"
 aerollm-build-pilot = "aerollm.data.pilot_cli:main"
 aerollm-select-corpus-v2 = "aerollm.data.corpus_v2_selection_cli:main"
 aerollm-build-suite-v2-review = "aerollm.evaluation.suite_v2_review_cli:main"
@@ -45,11 +46,23 @@ aerollm-dense-retrieve = "aerollm.retrieval.dense_cli:main"
 aerollm-transformers-smoke = "aerollm.generation.transformers_backend:main"
 aerollm-generation-smoke = "aerollm.generation.smoke:main"
 aerollm-evaluate-generation = "aerollm.evaluation.generation_cli:main"
+aerollm-evaluate-tasks-v2 = "aerollm.evaluation.task_scoring_cli:main"
+aerollm-build-sft-data = "aerollm.training.sft_data_cli:main"
+aerollm-build-corrective-sft = "aerollm.training.sft_corrective_cli:main"
+aerollm-build-retrieved-context-sft = "aerollm.training.sft_retrieved_context:main"
+aerollm-review-sft-data = "aerollm.training.sft_review_cli:main"
+aerollm-train-qlora = "aerollm.training.qlora:main"
+aerollm-compare-sft = "aerollm.evaluation.sft_comparison:main"
+aerollm-compare-sft-rag = "aerollm.evaluation.sft_rag_comparison:main"
 aerollm-doctor = "aerollm.doctor:main"
 
 [project.optional-dependencies]
 # `dev` is CPU-only. It is sufficient for lint, unit tests, and most data work.
-dev = ["pytest>=8.3", "ruff>=0.9"]
+dev = ["httpx>=0.27,<1", "pytest>=8.3", "ruff>=0.9"]
+serving = [
+    "fastapi>=0.116,<0.120",
+    "uvicorn>=0.35,<1",
+]
 # `transformers` is the reproducible local NVIDIA path. Install it with uv, not
 # bare pip: `[tool.uv.sources]` below is what selects the matching CUDA wheel.
 transformers = [
@@ -61,6 +74,10 @@ transformers = [
     # The official Ministral 3 FP8 checkpoint uses a Hub kernel whose recent API
     # requires this Windows Triton build. Linux receives Triton through Torch.
     "triton-windows==3.7.1.post27; sys_platform == 'win32'",
+]
+training = [
+    "bitsandbytes>=0.47,<1",
+    "peft>=0.17,<1",
 ]
 
 [tool.uv]

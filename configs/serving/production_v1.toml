@@ -1,0 +1,47 @@
+[service]
+name = "aerollm-serving"
+version = "v1"
+
+[answer]
+top_k = 4
+max_new_tokens = 48
+temperature = 0.0
+prompt_version = "grounded-json-v1"
+
+[safety]
+request_timeout_seconds = 120.0
+max_concurrency = 1
+max_question_characters = 4000
+max_context_characters = 16000
+
+[runtime]
+corpus_path = "artifacts/corpora/ntsb-pilot-v1.json"
+model_path = "artifacts/models/Ministral-3-3B-Instruct-2512"
+dense_index_path = "artifacts/indexes/e5-small-v2"
+dense_model_path = "artifacts/models/e5-small-v2"
+reranker_model_path = "artifacts/models/ms-marco-MiniLM-L6-v2"
+fp8_kernel_path = "artifacts/kernels/finegrained-fp8"
+
+[model]
+id = "mistralai/Ministral-3-3B-Instruct-2512"
+revision = "b35d4dfe56c142746f54dbd64f579faab2744308"
+fp8_kernel_revision = "7cdb05d472d6c954c7d03182ed836ebfd4610df0"
+
+[retrieval]
+mode = "hybrid_reranked"
+lexical_weight = 0.25
+rrf_constant = 60
+hybrid_candidate_k = 100
+reranker_candidate_k = 20
+
+[dense]
+id = "intfloat/e5-small-v2"
+revision = "f9611f088d69fc3157ff1878217feee72bda0145"
+device = "cuda"
+batch_size = 32
+
+[reranker]
+id = "cross-encoder/ms-marco-MiniLM-L6-v2"
+revision = "c5ee24cb16019beea0893ab7796b1df96625c6b8"
+device = "cuda"
+batch_size = 32

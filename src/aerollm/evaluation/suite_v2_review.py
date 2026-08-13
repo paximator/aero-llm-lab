@@ -12,17 +12,38 @@ from typing import Any
 
 from aerollm.evaluation.corpus import CorpusManifest, SourceManifestEntry
 
+_PUBLIC_TEST_FIELDS = (
+    "example_id",
+    "event_family_id",
+    "report_id",
+    "task_type",
+    "scoring_strategy",
+)
+_BLANK_TEST_FIELDS: dict[str, object] = {
+    "question": "",
+    "reference_answer": None,
+    "required_key_facts": [],
+    "structured_target": None,
+    "evidence": [],
+    "unanswerable_search_note": None,
+    "author": None,
+    "reviewers": [],
+    "review_status": "authoring_required",
+    "is_synthetic": False,
+    "review_notes": "",
+}
+
 
 def build_suite_v2_review(
-    corpus: CorpusManifest, proposal_path: Path, development_draft_path: Path,
+    corpus: CorpusManifest,
+    proposal_path: Path,
+    development_draft_path: Path,
     frozen_selection_path: Path,
 ) -> dict[str, object]:
     proposal = tomllib.loads(proposal_path.read_text(encoding="utf-8"))
     draft = tomllib.loads(development_draft_path.read_text(encoding="utf-8"))
     frozen = json.loads(frozen_selection_path.read_text(encoding="utf-8"))
-    report_urls = {
-        item["event_id"]: item["report_url"] for item in frozen["event_families"]
-    }
+    report_urls = {item["event_id"]: item["report_url"] for item in frozen["event_families"]}
     targets = {
         item["task_type"]: int(item["target"])
         for item in proposal["coverage"]["primary_task_types"]
@@ -34,10 +55,7 @@ def build_suite_v2_review(
         for spec in draft["examples"]
     ]
     development_counts = Counter(item["task_type"] for item in examples)
-    remaining = {
-        task: target - development_counts.get(task, 0)
-        for task, target in targets.items()
-    }
+    remaining = {task: target - development_counts.get(task, 0) for task, target in targets.items()}
     if any(count < 0 for count in remaining.values()):
         raise ValueError("development draft exceeds an approved task quota")
     test_sources = sorted(
@@ -86,8 +104,109 @@ def write_suite_v2_review(packet: Mapping[str, object], path: Path) -> None:
     )
 
 
+def split_suite_v2_review(
+    packet: Mapping[str, object],
+) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+    """Create public coverage, development, and label-free test documents."""
+    examples = packet.get("examples")
+    if not isinstance(examples, list) or not all(isinstance(item, Mapping) for item in examples):
+        raise ValueError("suite v2 review examples must be a list of records")
+    development = [dict(item) for item in examples if item.get("split") == "development"]
+    test = [item for item in examples if item.get("split") == "test"]
+    if len(development) + len(test) != len(examples):
+        raise ValueError("suite v2 review contains an unsupported split")
+    if not development or not test:
+        raise ValueError("suite v2 review must contain development and test records")
+
+    shared = {
+        "schema_version": packet["schema_version"],
+        "dataset_id": packet["dataset_id"],
+        "version": packet["version"],
+    }
+    coverage = {
+        **shared,
+        "status": packet["status"],
+        "corpus_version": packet["corpus_version"],
+        "coverage": packet["coverage"],
+        "test_gold_policy": "private_and_ignored",
+    }
+    development_dataset = {
+        **shared,
+        "split": "development",
+        "examples": development,
+    }
+    test_manifest = {
+        **shared,
+        "split": "test",
+        "gold_status": "authoring_required",
+        "examples": [{field: item[field] for field in _PUBLIC_TEST_FIELDS} for item in test],
+    }
+    validate_public_test_manifest(test_manifest)
+    return coverage, development_dataset, test_manifest
+
+
+def validate_public_test_manifest(manifest: Mapping[str, object]) -> None:
+    """Fail closed if a public test manifest contains labels or review data."""
+    examples = manifest.get("examples")
+    if not isinstance(examples, list):
+        raise ValueError("public test manifest examples must be a list")
+    allowed = set(_PUBLIC_TEST_FIELDS)
+    for item in examples:
+        if not isinstance(item, Mapping) or set(item) != allowed:
+            raise ValueError("public test manifest contains non-public fields")
+        if any(not isinstance(item[field], str) or not item[field] for field in allowed):
+            raise ValueError("public test manifest fields must be non-empty strings")
+
+
+def build_public_test_authoring_template(
+    packet: Mapping[str, object],
+) -> dict[str, object]:
+    """Expose the complete annotation shape while proving all test gold is blank."""
+    examples = packet.get("examples")
+    if not isinstance(examples, list):
+        raise ValueError("suite v2 review examples must be a list")
+    test = [
+        dict(item) for item in examples if isinstance(item, Mapping) and item.get("split") == "test"
+    ]
+    if not test:
+        raise ValueError("suite v2 review must contain test records")
+    for item in test:
+        for field, blank in _BLANK_TEST_FIELDS.items():
+            if item.get(field) != blank:
+                raise ValueError(f"public test authoring template contains gold field: {field}")
+    return {
+        "schema_version": packet["schema_version"],
+        "dataset_id": packet["dataset_id"],
+        "version": packet["version"],
+        "status": "blank_public_authoring_template",
+        "instructions": packet.get("instructions"),
+        "examples": test,
+    }
+
+
+def write_suite_v2_public_bundle(
+    packet: Mapping[str, object],
+    directory: Path,
+) -> None:
+    """Write the tracked, label-safe portion of a suite-v2 review workbook."""
+    coverage, development, test_manifest = split_suite_v2_review(packet)
+    test_template = build_public_test_authoring_template(packet)
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, value in (
+        ("coverage_manifest.json", coverage),
+        ("development.json", development),
+        ("test_manifest.json", test_manifest),
+        ("test_authoring_template.json", test_template),
+    ):
+        (directory / name).write_text(
+            json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+
 def _development_item(
-    spec: Mapping[str, Any], draft: Mapping[str, Any],
+    spec: Mapping[str, Any],
+    draft: Mapping[str, Any],
     sources: Mapping[str, SourceManifestEntry],
     chunks_by_source: Mapping[str, list[Mapping[str, Any]]],
     report_urls: Mapping[str, str],
@@ -97,8 +216,7 @@ def _development_item(
         raise ValueError(f"development draft crosses split: {source.event_id}")
     quotes = spec.get("quotes", [])
     evidence = [
-        _resolve_quote(chunks_by_source[source.source_document_id], str(quote))
-        for quote in quotes
+        _resolve_quote(chunks_by_source[source.source_document_id], str(quote)) for quote in quotes
     ]
     answerable = bool(evidence)
     task = str(spec["task_type"])
@@ -132,7 +250,9 @@ def _development_item(
 
 
 def _blank_test_item(
-    source: SourceManifestEntry, task: str, ordinal: int,
+    source: SourceManifestEntry,
+    task: str,
+    ordinal: int,
     report_urls: Mapping[str, str],
 ) -> dict[str, object]:
     return {

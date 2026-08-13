@@ -1,0 +1,29 @@
+{
+  "dataset_id": "ntsb-evidence-linked-sft-v1-validation",
+  "review_kind": "first_10_model_assisted_pre_review",
+  "reviewed_by": "openai-codex-assisted",
+  "status": "passed",
+  "sample_size": 10,
+  "sampling_rule": "first 10 records after deterministic quality filtering",
+  "criteria": [
+    "train provenance is present",
+    "answer is a complete and coherent aviation-report statement",
+    "citation is an exact normalized span",
+    "assistant output follows grounded-json-v1",
+    "context excludes merged headings, page fragments, and detectable OCR splits",
+    "record has useful post-training value"
+  ],
+  "reviews": [
+    {"record_id": "sft-3da25ea25fb5d3df", "status": "accepted"},
+    {"record_id": "sft-c792f28714071198", "status": "accepted"},
+    {"record_id": "sft-f3c096e90e7e047d", "status": "accepted"},
+    {"record_id": "sft-9ba033ce49f2d53d", "status": "accepted"},
+    {"record_id": "sft-456c5c9c3c4ea721", "status": "accepted"},
+    {"record_id": "sft-641bca946f9ee95a", "status": "accepted"},
+    {"record_id": "sft-93238154609b25dd", "status": "accepted"},
+    {"record_id": "sft-67ecbc42eccf0ea5", "status": "accepted"},
+    {"record_id": "sft-466590eeb435b039", "status": "accepted"},
+    {"record_id": "sft-625384f778f16fa7", "status": "accepted"}
+  ],
+  "limitation": "This pre-review is model-assisted. Repository-owner approval remains required before QLoRA training."
+}

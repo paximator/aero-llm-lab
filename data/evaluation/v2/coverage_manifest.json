@@ -1,0 +1,34 @@
+{
+  "corpus_version": "ntsb-corpus-v2",
+  "coverage": {
+    "by_event_family": {
+      "CEN16MA036": 9,
+      "DCA13MA081": 9,
+      "DCA13MA120": 9,
+      "DCA13MA133": 9,
+      "DCA15MA029": 9,
+      "DCA17FA021": 9,
+      "ERA14MA271": 9,
+      "WPR11MA454": 9
+    },
+    "by_split": {
+      "development": 27,
+      "test": 45
+    },
+    "by_task_type": {
+      "categorical_yes_no": 8,
+      "causal_finding": 12,
+      "date_time": 8,
+      "entity_identifier": 12,
+      "multi_evidence_grounded_qa": 10,
+      "numeric": 10,
+      "unanswerable": 12
+    },
+    "total": 72
+  },
+  "dataset_id": "ntsb-grounded-qa-suite-v2",
+  "schema_version": 1,
+  "status": "human_review_and_test_authoring_required",
+  "test_gold_policy": "private_and_ignored",
+  "version": "2.0.0-draft"
+}

@@ -7,7 +7,9 @@ dist/
 build/
 .env
 .secrets/
+artifacts/private_evaluation/
 artifacts/
 data/raw/
 data/processed/
 reports/runs/
+docs/review/
