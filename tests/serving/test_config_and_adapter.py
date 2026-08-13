@@ -49,4 +49,7 @@ def test_repository_production_config_loads_without_loading_model() -> None:
 
     assert config.corpus_path == Path("artifacts/corpora/ntsb-pilot-v1.json")
     assert config.model_id == "mistralai/Ministral-3-3B-Instruct-2512"
+    assert config.retrieval_mode == "hybrid_reranked"
+    assert config.dense_model_id == "intfloat/e5-small-v2"
+    assert config.reranker_candidate_k == 20
     assert "aerollm.generation.ministral_backend" not in sys.modules
