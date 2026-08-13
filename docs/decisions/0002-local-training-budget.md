@@ -6,8 +6,8 @@
 ## Context
 
 Runtime inspection reports an RTX 4070 Laptop GPU with 8,188 MiB VRAM and a 45 W
-power limit. The machine owner reports 64 GB DDR5 system RAM. This differs from the
-initial expectation of a laptop RTX 4090 and must govern reproducible planning.
+power limit. The machine owner reports 64 GB DDR5 system RAM. These detected
+resources govern reproducible planning.
 
 ## Decision
 

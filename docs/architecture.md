@@ -14,6 +14,24 @@ cross-report synthesis, and tool-assisted analysis can follow once this slice is
 reliable. Safety reports are historical evidence, not operational flight guidance;
 the API and demo must state that boundary.
 
+## Implemented v0.1 flow
+
+```text
+NTSB snapshot -> verified PDF -> page-aware Document -> stable Chunk
+                                                        |
+                    event-family split -> frozen Corpus -> retrieval/index
+                                                        |             |
+                                     frozen Examples -> generation -> metrics
+```
+
+Every boundary carries source, report, and event identity plus content hashes.
+Corpus v2 uses version `ntsb-corpus-v2`; its reviewed metadata selection freezes
+whole event families before question authoring. Its suite workbook contains 27
+development drafts awaiting review and 45 deliberately unauthored test slots.
+
+The following layout is the longer-term target, not a claim that every subsystem
+exists in version 0.1.
+
 ## Target layout
 
 ```text
@@ -164,6 +182,9 @@ simulate failures, and compare task success with a non-agentic baseline.
 FastAPI owns transport, validation, health/readiness, and trace IDs; vLLM owns
 batched execution. An engine abstraction keeps local tests small or mocked.
 
+Agent, FastAPI, and vLLM boundaries are planned; they are not implemented version
+0.1 outcomes.
+
 Benchmarks report time to first token, inter-token latency, end-to-end percentiles,
 tokens and requests per second, peak allocated/reserved VRAM, prompt/output lengths,
 concurrency, batching, quantization, hardware, and model revision. Cold and warm
@@ -176,3 +197,6 @@ causal multi-head attention, RoPE, RMSNorm, residual/MLP blocks, autoregressive
 generation, and a preallocated KV cache. Tests compare cached and uncached logits,
 verify masking and RoPE properties, and demonstrate the decoding work saved by the
 cache. It explains production concepts; it is not a custom training framework.
+
+This is a design boundary. The educational Transformer is not complete in version
+0.1.
