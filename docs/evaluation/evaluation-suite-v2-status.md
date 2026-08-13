@@ -11,7 +11,7 @@ benchmark announcement.
 | Coverage plan | Approved | The target is 72 examples with fixed task-type quotas. |
 | Corpus and split assignment | Ready | Eight independent event families are assigned: three to development and five to test. |
 | Development examples | Complete for this stage | 27 model-assisted question/answer records have been reviewed and approved. |
-| Test examples | Structure ready; content outstanding | 45 quota-controlled slots have their report, event family, split, task type, and scoring strategy assigned, but still require independent human authoring. |
+| Test examples | Public structure ready; private content outstanding | 45 quota-controlled slots expose only their report, event family, task type, and scoring strategy; labels require independent human authoring in an ignored local workbook. |
 | Suite freeze | Not ready | The suite remains `2.0.0-draft` with status `human_review_and_test_authoring_required`. |
 
 ## Deliberate scope choice
@@ -27,6 +27,11 @@ evidence, structured targets, required facts, authors, and reviews must be suppl
 through the human workflow. This time-boxed boundary makes the unfinished work
 visible and avoids presenting model-generated test labels as independent human
 evaluation data.
+
+The public/private boundary is now enforced in the repository. Public development
+data and label-free test metadata live under `data/evaluation/v2/`; the complete
+test-authoring workbook lives under the ignored `artifacts/private_evaluation/`
+path. Future test gold must remain outside Git.
 
 This is therefore a completed development scaffold, not a completed evaluation
 suite. The 27 approved development records can support workflow development and
@@ -64,6 +69,8 @@ Until those steps are complete, the correct top-level status is
 ## Review entry points
 
 - Coverage decision: `configs/evaluation/evaluation_suite_v2.proposal.toml`
-- Review workbook: `artifacts/evaluation/evaluation_suite_v2.review.json`
+- Public development set: `data/evaluation/v2/development.json`
+- Public label-free test manifest: `data/evaluation/v2/test_manifest.json`
+- Private local workbook: `artifacts/private_evaluation/evaluation_suite_v2_test_gold.json`
 - Annotation procedure: `docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`
 - Corpus selection procedure: `docs/evaluation/corpus-v2-selection-review-guide.md`

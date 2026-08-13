@@ -2,7 +2,14 @@
 
 ## Review file
 
-Open `artifacts/evaluation/evaluation_suite_v2.review.json`.
+Open the ignored local workbook at
+`artifacts/private_evaluation/evaluation_suite_v2_test_gold.json`.
+
+The tracked public boundary is under `data/evaluation/v2/`: approved development
+records are in `development.json`, aggregate coverage is in
+`coverage_manifest.json`, and `test_manifest.json` contains only label-free slot
+metadata. Never copy test questions, answers, evidence, or review data into the
+public manifest.
 
 The workbook contains 72 quota-controlled slots across eight untouched event
 families:
