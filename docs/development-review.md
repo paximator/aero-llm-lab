@@ -91,6 +91,9 @@ in `production_v1.toml`. The repository does not claim vLLM integration.
 - Evaluation-v2 scope: [`evaluation/evaluation-suite-v2-status.md`](evaluation/evaluation-suite-v2-status.md)
 - Serving implementation: `src/aerollm/serving/`
 - Serving tests: `tests/serving/`
+- Operational work queue: [`action-register.md`](action-register.md)
+- Presentation script and demo checklist:
+  [`development-review-presentation.md`](development-review-presentation.md)
 
 ## Remaining priorities
 

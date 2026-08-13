@@ -209,15 +209,22 @@ SFT+DPO on the same frozen suite. A documented negative result is acceptable.
 
 ## Immediate execution queue
 
-1. Human-author and independently review the 45 prepared evaluation-v2 test slots.
-2. Run the full schema, evidence, leakage, duplicate, target, and coverage gates;
-   freeze the suite only after they pass.
-3. Author reviewed train-only retrieved-context examples that supervise exact
-   citation copying and balanced abstention.
-4. Require the five-example SFT+RAG development gate to pass before another full
-   adapter or 27-example run.
-5. Run the frozen five-system comparison, paired failure analysis, and uncertainty
-   only after the suite and development gate are ready.
+Status legend: `NEXT` is immediately actionable, `BLOCKED` has an unmet dependency,
+`GATED` must satisfy a measured criterion, and `DEFERRED` is deliberately outside
+the current milestone.
+
+| ID | Status | Priority | Action | Exit criterion |
+|---|---|---:|---|---|
+| A1 | `NEXT` | P0 | Human-author and independently review the 45 prepared evaluation-v2 test slots. | Every slot has complete gold fields and a reviewer distinct from its author. |
+| A2 | `BLOCKED` by A1 | P0 | Run schema, evidence, leakage, duplicate, target, and coverage gates; freeze the suite. | All gates pass and final bytes plus SHA-256 are recorded. |
+| A3 | `NEXT` in parallel | P0 | Author reviewed train-only retrieved-context records for exact citation copying and balanced abstention. | A reviewed dataset has traceable chunks, no test families, and no automatic-label claim. |
+| A4 | `GATED` by A3 | P0 | Train the next micro-adapter and rerun the five-example SFT+RAG development gate. | At least 4/5 outputs are contract-valid and grounded; otherwise stop. |
+| A5 | `BLOCKED` by A2 and A4 | P0 | Run the frozen five-system comparison, paired failures, and uncertainty analysis. | One immutable suite and evaluator cover all five systems without test-driven tuning. |
+| A6 | `DEFERRED` | P1/P2 | Streaming, vLLM evaluation, DPO, agents, and production serving benchmarks. | Re-prioritized only from a measured requirement after P0. |
+
+Execution details, expected owners, evidence, and hand-off criteria live in the
+[action register](action-register.md). This table is the canonical priority order;
+the longer P0–P3 sections explain intent and acceptance gates.
 
 The evaluation expansion is deliberately bounded: it strengthens claims but must
 not become another framework-building phase that postpones post-training.
