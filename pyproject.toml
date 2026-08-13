@@ -49,7 +49,11 @@ aerollm-doctor = "aerollm.doctor:main"
 
 [project.optional-dependencies]
 # `dev` is CPU-only. It is sufficient for lint, unit tests, and most data work.
-dev = ["pytest>=8.3", "ruff>=0.9"]
+dev = ["httpx>=0.27,<1", "pytest>=8.3", "ruff>=0.9"]
+serving = [
+    "fastapi>=0.116,<0.120",
+    "uvicorn>=0.35,<1",
+]
 # `transformers` is the reproducible local NVIDIA path. Install it with uv, not
 # bare pip: `[tool.uv.sources]` below is what selects the matching CUDA wheel.
 transformers = [

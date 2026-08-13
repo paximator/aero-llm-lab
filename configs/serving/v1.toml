@@ -1,0 +1,10 @@
+[service]
+name = "aerollm-serving"
+version = "v1"
+
+[answer]
+top_k = 4
+max_new_tokens = 256
+temperature = 0.0
+prompt_version = "serving-v1"
+
