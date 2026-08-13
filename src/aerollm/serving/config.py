@@ -17,6 +17,10 @@ class ServingConfig:
     max_new_tokens: int = 256
     temperature: float = 0.0
     prompt_version: str = "serving-v1"
+    request_timeout_seconds: float = 30.0
+    max_concurrency: int = 1
+    max_question_characters: int = 4_000
+    max_context_characters: int = 16_000
 
     def __post_init__(self) -> None:
         if not self.service_name.strip() or not self.service_version.strip():
@@ -33,6 +37,19 @@ class ServingConfig:
             raise ValueError("temperature must be a non-negative float")
         if not self.prompt_version.strip():
             raise ValueError("prompt_version is required")
+        if (
+            type(self.request_timeout_seconds) is not float
+            or not math.isfinite(self.request_timeout_seconds)
+            or self.request_timeout_seconds <= 0.0
+        ):
+            raise ValueError("request_timeout_seconds must be a positive float")
+        for value, name in (
+            (self.max_concurrency, "max_concurrency"),
+            (self.max_question_characters, "max_question_characters"),
+            (self.max_context_characters, "max_context_characters"),
+        ):
+            if type(value) is not int or value < 1:
+                raise ValueError(f"{name} must be a positive integer")
 
     @classmethod
     def from_toml(cls, path: Path) -> ServingConfig:
@@ -41,14 +58,24 @@ class ServingConfig:
             raise ValueError("missing serving configuration tables")
         service = _table(value, "service")
         answer = _table(value, "answer")
+        safety = _table(value, "safety")
         if set(service) != {"name", "version"} or set(answer) != {
             "top_k", "max_new_tokens", "temperature", "prompt_version",
         }:
             raise ValueError("invalid serving configuration fields")
+        if set(safety) != {
+            "request_timeout_seconds", "max_concurrency", "max_question_characters",
+            "max_context_characters",
+        }:
+            raise ValueError("invalid serving safety configuration fields")
         return cls(
             service_name=service["name"], service_version=service["version"],
             top_k=answer["top_k"], max_new_tokens=answer["max_new_tokens"],
             temperature=answer["temperature"], prompt_version=answer["prompt_version"],
+            request_timeout_seconds=safety["request_timeout_seconds"],
+            max_concurrency=safety["max_concurrency"],
+            max_question_characters=safety["max_question_characters"],
+            max_context_characters=safety["max_context_characters"],
         )  # type: ignore[arg-type]
 
 

@@ -1,4 +1,9 @@
+import json
+import logging
 import re
+import time
+from concurrent.futures import ThreadPoolExecutor
+from threading import Lock
 
 from fastapi.testclient import TestClient
 
@@ -142,3 +147,98 @@ def test_failed_initializer_stays_live_but_unready_without_leaking_error() -> No
         "request_id": "not-ready-1",
     }
     assert "secret" not in answer.text
+
+
+def test_question_and_context_limits_are_enforced() -> None:
+    observed: list[str] = []
+
+    class Backend:
+        def answer(self, question, passages, **options):  # type: ignore[no-untyped-def]
+            del question, options
+            observed.extend(item.text for item in passages)
+            return BackendAnswer("answer", "bounded")
+
+    class Retriever:
+        def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]:
+            del query, top_k
+            return (
+                RetrievedPassage("one", "abcdef", 1.0),
+                RetrievedPassage("two", "second", 0.5),
+            )
+
+    config = ServingConfig(max_question_characters=8, max_context_characters=5)
+    client = TestClient(create_app(config=config, backend=Backend(), retriever=Retriever()))
+
+    accepted = client.post("/v1/answer", json={"question": "question"})
+    rejected = client.post("/v1/answer", json={"question": "too long!"})
+
+    assert accepted.status_code == 200
+    assert observed == ["abcde"]
+    assert rejected.status_code == 413
+    assert rejected.json()["error"]["code"] == "request_too_large"
+
+
+def test_slow_backend_returns_safe_timeout() -> None:
+    class Backend:
+        def answer(self, question, passages, **options):  # type: ignore[no-untyped-def]
+            del question, passages, options
+            time.sleep(0.05)
+            return BackendAnswer("late", "slow")
+
+    config = ServingConfig(request_timeout_seconds=0.01)
+    response = TestClient(create_app(config=config, backend=Backend())).post(
+        "/v1/answer", json={"question": "Question"}, headers={"x-request-id": "timeout-1"},
+    )
+
+    assert response.status_code == 504
+    assert response.json()["error"] == {
+        "code": "timeout", "message": "Request timed out", "request_id": "timeout-1",
+    }
+
+
+def test_backend_concurrency_is_bounded() -> None:
+    lock = Lock()
+    active = 0
+    maximum_active = 0
+
+    class Backend:
+        def answer(self, question, passages, **options):  # type: ignore[no-untyped-def]
+            nonlocal active, maximum_active
+            del question, passages, options
+            with lock:
+                active += 1
+                maximum_active = max(maximum_active, active)
+            time.sleep(0.03)
+            with lock:
+                active -= 1
+            return BackendAnswer("answer", "bounded")
+
+    config = ServingConfig(max_concurrency=1, request_timeout_seconds=1.0)
+    client = TestClient(create_app(config=config, backend=Backend()))
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        responses = list(executor.map(
+            lambda _: client.post("/v1/answer", json={"question": "Question"}), range(2),
+        ))
+
+    assert [response.status_code for response in responses] == [200, 200]
+    assert maximum_active == 1
+
+
+def test_request_log_is_structured_and_excludes_question(caplog) -> None:  # type: ignore[no-untyped-def]
+    caplog.set_level(logging.INFO, logger="aerollm.serving")
+
+    response = TestClient(create_app()).post(
+        "/v1/answer", json={"question": "sensitive question"},
+        headers={"x-request-id": "log-1"},
+    )
+
+    record = json.loads(caplog.records[-1].message)
+    assert response.status_code == 200
+    assert record == {
+        "event": "http_request", "request_id": "log-1", "method": "POST",
+        "path": "/v1/answer", "status_code": 200,
+        "latency_ms": record["latency_ms"],
+    }
+    assert record["latency_ms"] >= 0
+    assert "sensitive" not in caplog.records[-1].message

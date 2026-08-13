@@ -16,6 +16,7 @@ def test_repository_serving_config_loads() -> None:
     assert config.service_version == "v1"
     assert config.top_k == 4
     assert config.temperature == 0.0
+    assert config.max_concurrency == 1
 
 
 def test_existing_mistral_adapter_uses_preconstructed_backend() -> None:
@@ -39,6 +40,8 @@ def test_existing_mistral_adapter_uses_preconstructed_backend() -> None:
 def test_serving_config_rejects_invalid_values() -> None:
     with pytest.raises(ValueError, match="top_k"):
         ServingConfig(top_k=0)
+    with pytest.raises(ValueError, match="request_timeout_seconds"):
+        ServingConfig(request_timeout_seconds=0.0)
 
 
 def test_repository_production_config_loads_without_loading_model() -> None:
