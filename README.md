@@ -1,149 +1,53 @@
 # AeroLLM Lab
 
-AeroLLM Lab is an evaluation-first LLM engineering project for grounded aviation
-analysis. It demonstrates the complete lifecycle of a domain LLM: data provenance,
-retrieval, post-training, evaluation, inference, deployment, and benchmarking.
+AeroLLM Lab implements a provenance-preserving NTSB report pipeline and a measured grounded-QA baseline. Version 0.1 acquires and verifies official reports, preserves page-level citations through parsing and chunking, freezes event-family splits, runs lexical/dense/hybrid retrieval with reranking, and compares base, prompted, and retrieval-augmented generation (RAG) with a pinned local Ministral model.
 
-This is not a general-purpose aviation chatbot. The initial product surface is a
-small set of evidence-backed tasks over public aviation safety reports: structured
-fact extraction, cited question answering, and grounded incident summaries.
+This is a portfolio research release, not an operational aviation assistant.
 
-## Intended comparison
+## Version 0.1 outcomes
 
-Every approach is evaluated against the same frozen task suite:
+- Built NTSB pilot corpus v1: 16 reports, 2,017 pages, and 6,897 chunks.
+- Froze 10 independently reviewed v1 test questions from one held-out event family.
+- Selected hybrid retrieval and a cross-encoder reranker using development data, then performed one locked test measurement.
+- Evaluated base, prompted, and RAG generation with `mistralai/Ministral-3-3B-Instruct-2512` at revision `b35d4dfe56c142746f54dbd64f579faab2744308`.
+- Froze the NTSB provenance selection and event-family split for corpus v2, then produced a 72-slot review workbook. Its 27 development examples are drafts awaiting review; its 45 test slots are intentionally unauthored for independent human authoring.
 
-1. base model;
-2. prompted base model;
-3. retrieval-augmented generation (RAG);
-4. supervised fine-tuning (SFT with LoRA/QLoRA);
-5. SFT plus RAG;
-6. optional preference tuning after the earlier baselines are stable.
+### Measured generation results
 
-The exact open-weight Mistral checkpoint remains a configuration choice until the
-baseline milestone, where it will be selected based on license, context length,
-tool-use support, hardware constraints, and reproducible availability.
+| Split | Variant | Token F1 | Gold evidence coverage | Citation precision |
+|---|---|---:|---:|---:|
+| Development (20 questions) | Base | 0.118 | n/a | n/a |
+| Development (20 questions) | Prompted | 0.237 | n/a | n/a |
+| Development (20 questions) | RAG | 0.335 | 0.778 | 0.778 |
+| Locked test (10 questions) | Base | 0.091 | n/a | n/a |
+| Locked test (10 questions) | Prompted | 0.213 | n/a | n/a |
+| Locked test (10 questions) | RAG | 0.283 | 0.600 | 0.700 |
 
-## Design principles
+Exact match was zero for every variant. RAG is the strongest measured generation baseline, but the locked test exposed a serious retrieval-provenance failure: a fatalities question received context from another accident and the model answered 15 instead of 67. Citation syntax therefore must not be confused with entailment or correct event identity. See the [full result](docs/results/generation-baselines-v1.md).
 
-- Evaluation precedes optimization.
-- Raw source documents are immutable and traceable.
-- Splits are performed by report or event, never by chunk.
-- Generated examples cannot silently enter the test set.
-- Answers requiring evidence expose verifiable citations.
-- Experiments record data, prompt, model, adapter, index, and code versions.
-- Added techniques must justify their complexity through measured improvement.
+The locked retrieval results are similarly mixed: hybrid RRF improved Recall@10 from BM25's 0.500 to 0.700, while reranking improved early ordering (MRR@10 0.483, nDCG@10 0.513) but reduced Recall@10 to 0.600 because a gold chunk fell outside the top-20 candidate pool.
 
-## Documentation
+### Model and hardware context
 
-- [Repository architecture](docs/architecture.md)
-- [Implementation roadmap](docs/roadmap.md)
-- [Local hardware profile](docs/hardware-profile.md)
-- [Data sources, NTSB account, and credential setup](docs/data-sources.md)
-- [Project progress](docs/progress.md)
-- [Experiment results](docs/results/README.md)
-- [Retrieval annotation guide](docs/evaluation/retrieval-annotation-guide.md)
+The pinned model is Ministral 3 3B Instruct 2512 FP8. Development and all checked-in measurements used an RTX 4070 Laptop GPU with 8,188 MiB VRAM and a 45 W power limit. On that system the one-prompt warm smoke run used 4.96 GB peak VRAM and generated 1.12 token/s.
 
-## Local setup
+## Exact quick start
 
-Install [uv](https://docs.astral.sh/uv/), clone the repository, and create the
-locked development environment:
+Prerequisites: Python 3.13 and [uv](https://docs.astral.sh/uv/). From the repository root:
 
 ```powershell
 uv sync --extra dev
 uv run aerollm-doctor
 ```
 
-`uv.lock` is authoritative: do not install Torch or Triton manually with `pip`.
-The core/dev profile works without a GPU. For NVIDIA retrieval and generation on
-Windows or Linux, install and verify the separately pinned CUDA profile:
+For the pinned CUDA/Transformers path:
 
 ```powershell
 uv sync --extra dev --extra transformers
 uv run aerollm-doctor --transformers
 ```
 
-The doctor prints every relevant version and an actionable error when the CUDA
-wheel, driver, FP8 dtype, or Windows Triton runtime is wrong. Native Windows and
-Linux NVIDIA systems are supported for Transformers experiments; WSL2/Linux is
-the intended vLLM and training environment. macOS remains suitable for core data,
-evaluation, and unit-test work, not the CUDA benchmark path.
-
-Create an account in the [NTSB Developer Portal](https://developer.ntsb.gov/) and
-subscribe to the public API product to obtain a subscription key. Copy the tracked
-template to the shared repository-level secrets directory. These commands derive
-the correct location from Git and work from any worktree:
-
-```powershell
-$commonGitDir = git rev-parse --path-format=absolute --git-common-dir
-$repositoryRoot = Split-Path -Parent $commonGitDir
-New-Item -ItemType Directory -Force "$repositoryRoot\.secrets"
-Copy-Item configs\secrets\ntsb.env.example "$repositoryRoot\.secrets\ntsb.env"
-```
-
-Edit `<repository-root>/.secrets/ntsb.env` and replace only the placeholder after
-`AEROLLM_NTSB_API_KEY=`. Never put the key in a tracked TOML file, command argument,
-issue, log, or chat.
-
-Load it into the current PowerShell process without printing its value:
-
-```powershell
-. .\scripts\import-local-env.ps1 -Name ntsb
-```
-
-The loader automatically resolves the shared repository root, so the same secret
-works from every Git/Cascade worktree. API configuration and endpoint paths remain
-public in `configs/data/ntsb.toml`.
-
-## Current status
-
-The first end-to-end data slice is operational: NTSB API discovery, aviation case
-metadata, formal report download, PDF parsing, and deterministic page-aware
-chunking. Tests use recorded or synthetic inputs; live API calls remain explicit.
-
-Create a reproducible chunk manifest from a parsed report with:
-
-```powershell
-uv run aerollm-chunk-document artifacts/parsed/ntsb/<prefix>/<digest>.json
-```
-
-Chunking parameters live in `configs/data/chunking.toml`. Manifests retain exact
-source offsets, page provenance, content type, section metadata, and a configuration
-fingerprint so retrieval experiments can be reproduced and audited.
-
-Build a frozen pilot corpus from one or more report acquisition manifests with:
-
-```powershell
-uv run aerollm-build-corpus artifacts/manifests/ntsb-reports-*.json
-```
-
-The corpus builder verifies immutable artifact hashes, keeps complete NTSB events in
-one deterministic train/development/test split, checks page coverage and chunk
-quality, and writes a companion build manifest. Pilot settings are versioned in
-`configs/data/corpus.toml`; generated corpora remain ignored local artifacts.
-
-Plan a diverse, bounded set of reports before downloading PDFs:
-
-```powershell
-uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
-  --target-reports 19 --dry-run
-```
-
-The dry run makes bounded NTSB discovery requests and freezes the selected report
-list in `artifacts/pilot/plan.json`; it does not download report PDFs. Review that
-plan, then repeat the command without `--dry-run`. Completed reports are skipped on
-retry, failures are isolated in `artifacts/pilot/failures.json`, and the final run
-builds the frozen corpus. Use `--refresh-plan` only when intentionally replacing an
-existing selection.
-
-Materialize the reviewed frozen plan and build the corpus:
-
-```powershell
-uv run aerollm-build-pilot --start-date 2018-01-01 --end-date 2025-12-31 `
-  --target-reports 19
-```
-
-Freeze the independently approved retrieval test packet and validate it against the
-held-out corpus source:
+Validate the frozen v1 test set against a locally materialized pilot corpus:
 
 ```powershell
 uv run aerollm-freeze-retrieval-test
@@ -151,90 +55,54 @@ uv run aerollm-validate-corpus artifacts/corpora/ntsb-pilot-v1.json `
   data/evaluation/retrieval_test_v1.json
 ```
 
-The freeze command records `data/evaluation/retrieval_test_v1.sha256`, is idempotent
-for identical content, and refuses to overwrite different bytes. Test questions,
-answers, evidence, failures, and metrics are excluded from training and tuning.
+Large source snapshots, corpora, indexes, model weights, and raw runs are ignored local artifacts; cloning alone does not recreate them. Acquisition requires an NTSB Developer Portal key configured in [Data sources](docs/data-sources.md).
 
-Install the local Transformers stack with the platform-pinned CUDA build of Torch:
+## Architecture
 
-```powershell
-uv sync --extra transformers
+```text
+official NTSB snapshot -> verified PDF -> page-aware document -> stable chunks
+                                                        |
+                    event-family split -> corpus/index -> retrieve -> rerank
+                                                        |                 |
+                                     frozen examples -> generation -> evaluation
 ```
 
-Run the pinned Ministral 3 3B FP8 feasibility benchmark after downloading the
-model snapshot to the ignored path shown below:
+Immutable hashes connect sources, documents, chunks, corpora, examples, indexes, model revisions, and run configurations. Development data selects configurations; locked test data is measured once and excluded from training and tuning. See [Architecture](docs/architecture.md).
 
-```powershell
-uv run aerollm-generation-smoke artifacts/models/ministral-3-3b-instruct-2512 `
-  --model-id mistralai/Ministral-3-3B-Instruct-2512 `
-  --model-revision b35d4dfe56c142746f54dbd64f579faab2744308 `
-  --fp8-kernel-revision 7cdb05d472d6c954c7d03182ed836ebfd4610df0 `
-  --prompt "Explain why accident reports separate facts from analysis." `
-  --max-new-tokens 64 `
-  --output artifacts/benchmarks/generation/smoke.json
-```
+## Status
 
-The first invocation includes Triton compilation. Run the identical command again
-to measure a warm kernel cache, and keep both artifacts distinct.
+| Capability | v0.1 status |
+|---|---|
+| NTSB acquisition, PDF validation, parsing, chunking | Implemented |
+| Corpus v1 and independently reviewed test v1 | Frozen and measured |
+| BM25, dense, hybrid, cross-encoder reranking | Implemented and measured |
+| Base, prompted, and RAG generation | Implemented and measured |
+| Corpus v2 provenance selection and event-family split | Frozen |
+| Suite v2 | 27 development drafts await review; 45 test slots unauthored |
+| QLoRA / SFT and SFT + RAG | Not complete |
+| vLLM serving and serving benchmarks | Not complete |
+| Tool calling / bounded agents | Not complete |
+| DPO / preference tuning | Not complete |
+| Educational Transformer implementation | Not complete |
 
-Run the development-only base, prompted, and RAG comparison with the pinned local
-artifacts. The command checkpoints after every answer and resumes identical runs:
+## Documentation
 
-```powershell
-uv run aerollm-evaluate-generation `
-  --config configs/evaluation/generation_dev_v1.toml `
-  --dataset data/evaluation/retrieval_dev_v1.json `
-  --corpus artifacts/corpora/ntsb-pilot-v1.json `
-  --dense-index artifacts/indexes/e5-small-v2 `
-  --dense-model artifacts/models/intfloat-e5-small-v2 `
-  --reranker-model artifacts/models/cross-encoder-ms-marco-minilm-l6-v2 `
-  --generation-model artifacts/models/ministral-3-3b-instruct-2512 `
-  --output artifacts/evaluation/generation_dev_v1.json `
-  --review-output artifacts/evaluation/generation_dev_v1.review.json
-```
+- [v0.1 release notes](docs/release/v0.1.0.md)
+- [Release checklist](docs/release/checklist.md)
+- [Project status](docs/progress.md)
+- [Results index](docs/results/README.md)
+- [Hardware profile](docs/hardware-profile.md)
+- [Roadmap](docs/roadmap.md)
 
-The test configuration is digest-locked and additionally requires the explicit
-`--allow-frozen-test` flag. Do not run it while selecting prompts or retrieval
-settings; the exact one-time command and results are documented in
-`docs/results/generation-baselines-v1.md`.
+## Limitations
 
-The dense retrieval baseline uses the pinned `intfloat/e5-small-v2` revision in
-`configs/retrieval/dense_e5_small_v2.toml`. Model weights, persistent embeddings,
-and raw run reports remain under ignored `artifacts/` paths.
+- The locked v1 test set has only 10 answerable questions from one event family.
+- Retrieval can cross event boundaries; the observed wrong-accident answer makes RAG unsuitable for safety-sensitive use.
+- Token F1 under-rewards valid paraphrases, while citation precision does not establish that a citation entails an answer.
+- All checked-in GPU results come from one low-power RTX 4070 Laptop system.
+- Suite v2 is not an evaluation set until independent review and test authoring are complete.
+- QLoRA, vLLM, tool calling, DPO, and the educational Transformer remain planned work, not release outcomes.
 
-Generate the metadata-only corpus-v2 event review packet from verified cached NTSB
-snapshots (add `--discover` after loading the ignored NTSB environment when more
-metadata is required):
+## License
 
-```powershell
-uv run aerollm-select-corpus-v2 `
-  --source-corpus artifacts/corpora/ntsb-pilot-v1.json
-```
-
-Review `artifacts/pilot/corpus_v2_selection.review.json` using
-`docs/evaluation/corpus-v2-selection-review-guide.md`. This stage does not download
-PDFs or draft evaluation questions.
-
-After the reviewed selection has been frozen and corpus v2 materialized, generate
-the 72-slot annotation workbook with:
-
-```powershell
-uv run aerollm-build-suite-v2-review
-```
-
-Review it using
-`docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`. Development
-questions are drafts; locked-test slots must be independently human-authored.
-
-Do not pass `--refresh-plan` during materialization: that flag intentionally
-replaces the reviewed selection. Generated source snapshots, parsed documents,
-chunks, failure reports, and corpora are stored under ignored `artifacts/` paths.
-If an official report URL is unavailable, successful reports remain resumable and
-the sanitized reason is recorded in `artifacts/pilot/failures.json`. After reviewing
-those failures, build a validated corpus from the completed manifests with:
-
-```powershell
-$manifests = Get-ChildItem artifacts/manifests/pilot -Filter *.json |
-  Sort-Object Name | ForEach-Object FullName
-uv run aerollm-build-corpus @manifests
-```
+Code is released under the [MIT License](LICENSE). NTSB source documents retain their own provenance and usage context; large source artifacts are not redistributed here.

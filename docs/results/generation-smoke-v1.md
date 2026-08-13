@@ -41,5 +41,5 @@ prefill and decoding together; it is not time-to-first-token.
 - This is one prompt and one warm repetition, not a statistically stable serving
   benchmark. A later benchmark must add warm-up, repeated prompts, percentiles,
   time-to-first-token, input-token throughput, power/thermal capture, and vLLM.
-- The detected GPU is an RTX 4070 Laptop GPU, not the previously owner-described
-  RTX 4090. All local capacity decisions use runtime-detected hardware.
+- The detected GPU is an RTX 4070 Laptop GPU. All local capacity decisions use
+  runtime-detected hardware.

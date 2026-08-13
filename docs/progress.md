@@ -4,6 +4,21 @@ This page is the narrative milestone log. Reproducible measurements live in
 [`docs/results`](results/README.md); raw run artifacts remain under ignored
 `artifacts/` directories.
 
+## Version 0.1 status
+
+| Area | Status |
+|---|---|
+| NTSB ingestion through page-aware chunks | Implemented |
+| Frozen v1 retrieval test and measured baselines | Complete |
+| Base, prompted, and RAG generation comparison | Complete |
+| Corpus v2 provenance selection and event-family split | Frozen |
+| Suite v2 review | 27 development drafts await review; 45 test slots unauthored |
+| QLoRA, vLLM, tool calling, DPO, educational Transformer | Not complete |
+
+All checked-in GPU measurements were made on the runtime-detected RTX 4070 Laptop
+GPU. See the [v0.1 release notes](release/v0.1.0.md) for the evidence boundary and
+blockers.
+
 ## Completed
 
 - Defined the evaluation-first architecture, task contract, local hardware budget,
