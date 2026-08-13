@@ -77,3 +77,14 @@ def test_comparison_classifies_truncated_json_separately_from_plain_text() -> No
         "generation_truncation": 1,
         "non_json_output": 1,
     }
+
+
+def test_comparison_classifies_warning_free_wrong_abstention() -> None:
+    row = {
+        "raw_output": '{"answer":null}',
+        "warnings": [],
+        "abstained": True,
+        "correct": False,
+    }
+
+    assert classify_failure(row, max_new_tokens=192) == "unexpected_abstention"

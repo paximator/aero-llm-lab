@@ -19,6 +19,7 @@ artifacts; they should not be edited independently of those records.
 | Corrective SFT v2 | Complete negative result | Accuracy regressed to 33.3%; v1 retained | [Report](sft-corrective-v2.md) |
 | SFT + RAG development v1 | Complete negative result | Hit@3 63.0%; both variants 18.5% accuracy and 100% fail-closed | [Report](sft-rag-development-v1.md) |
 | SFT + RAG failure analysis v1 | Complete negative diagnosis | Base non-JSON; SFT truncation; two mini-fixes rejected | [Report](sft-rag-failure-analysis-v1.md) |
+| Retrieved-context micro-SFT v1 | Complete negative gate | EOS removed truncation; valid grounded output remained 0/5 | [Report](sft-rag-micro-v1.md) |
 | Generation smoke v1 | Complete feasibility baseline | 4.96 GB peak VRAM; 1.12 token/s warm | [Report](generation-smoke-v1.md) |
 | Inference benchmark v1 | Pending | — | — |
 

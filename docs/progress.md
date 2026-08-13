@@ -51,11 +51,15 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Classified the retrieved-context failures and rejected two five-example fixes:
   Base remains non-JSON, while SFT starts the schema but truncates or cites an
   invalid span. Canonical prompt and full-context defaults remain unchanged.
+- Trained a 12-record retrieved-context micro-adapter with explicit EOS supervision.
+  It eliminated generation truncation but failed the 4/5 grounding gate at 0/5 due
+  to exact-citation, schema, and unexpected-abstention failures; no larger run was
+  started.
 
 ## Current milestone
 
-Build a small retrieved-context training gate with concise complete JSON, distractor
-chunks, and explicit sequence termination before spending time on another full run.
+Author and independently review retrieved-context examples that explicitly teach
+exact citation copying before considering another adapter run.
 
 Evaluation-suite v2 currently has 27 approved development examples and 45
 ready-to-fill test slots that still require independent human authoring and review.

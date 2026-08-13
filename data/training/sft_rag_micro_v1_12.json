@@ -1,0 +1,291 @@
+{
+  "dataset_id": "ntsb-retrieved-context-sft-micro-v1",
+  "parent_dataset_sha256": "3a6ff82f28d444008199a9f50470fd05de3b5c1d85b8e35f5216262a96ea1f70",
+  "records": [
+    {
+      "event_family_id": "CEN19FA072",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about evening, shift, pilot?\n\n<chunk id=\"chk_0436dc6d4864d7bbc3571816c12ff43dd908a16472e84eb4c6e90b6608193b8d\">\nThe evening shift pilot stated that he did not see any precipitation for the requested route of flight and that he did not remember seeing an AIRMET for icing conditions.\n</chunk>\n\n<chunk id=\"chk_0040c35a5c1c9b60c263e86a2af835c19f3cdcd9510c1b1bd6d78a92937a2353\">\nSix people were killed in the accident, nine people were seriously injured, and one person received minor injuries.\n</chunk>\n\n<chunk id=\"chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842\">\nAbout 1236, the CVR recorded sounds consistent with the flight crew leaving the airplane.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"The evening shift pilot stated that he did not see any precipitation for the requested route of flight and that he did not remember seeing an AIRMET for icing conditions.\",\"citations\":[{\"chunk_id\":\"chk_0436dc6d4864d7bbc3571816c12ff43dd908a16472e84eb4c6e90b6608193b8d\",\"quote\":\"The evening shift pilot stated that he did not see any precipitation for the requested route of flight and that he did not remember seeing an AIRMET for icing conditions.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-612ed2bdf7cdd6c7",
+      "source_chunk_ids": [
+        "chk_0436dc6d4864d7bbc3571816c12ff43dd908a16472e84eb4c6e90b6608193b8d",
+        "chk_0040c35a5c1c9b60c263e86a2af835c19f3cdcd9510c1b1bd6d78a92937a2353",
+        "chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842"
+      ]
+    },
+    {
+      "event_family_id": "CEN19MA141",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about people, killed, accident?\n\n<chunk id=\"chk_0040c35a5c1c9b60c263e86a2af835c19f3cdcd9510c1b1bd6d78a92937a2353\">\nSix people were killed in the accident, nine people were seriously injured, and one person received minor injuries.\n</chunk>\n\n<chunk id=\"chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842\">\nAbout 1236, the CVR recorded sounds consistent with the flight crew leaving the airplane.\n</chunk>\n\n<chunk id=\"chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9\">\nAs of the day of the accident, the airplane had accumulated 91,063 total flight hours with 23,316 total flight cycles.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"Six people were killed in the accident, nine people were seriously injured, and one person received minor injuries.\",\"citations\":[{\"chunk_id\":\"chk_0040c35a5c1c9b60c263e86a2af835c19f3cdcd9510c1b1bd6d78a92937a2353\",\"quote\":\"Six people were killed in the accident, nine people were seriously injured, and one person received minor injuries.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-78213bb0f7bb30b8",
+      "source_chunk_ids": [
+        "chk_0040c35a5c1c9b60c263e86a2af835c19f3cdcd9510c1b1bd6d78a92937a2353",
+        "chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842",
+        "chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9"
+      ]
+    },
+    {
+      "event_family_id": "DCA18MA142",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about recorded, sounds, consistent?\n\n<chunk id=\"chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842\">\nAbout 1236, the CVR recorded sounds consistent with the flight crew leaving the airplane.\n</chunk>\n\n<chunk id=\"chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9\">\nAs of the day of the accident, the airplane had accumulated 91,063 total flight hours with 23,316 total flight cycles.\n</chunk>\n\n<chunk id=\"chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa\">\nAlso, the airplane should have been able to stop on the paved surface near the RSA/blast pad transition point with one antiskid circuit inoperative and both engines operating at ground idle power.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"About 1236, the CVR recorded sounds consistent with the flight crew leaving the airplane.\",\"citations\":[{\"chunk_id\":\"chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842\",\"quote\":\"About 1236, the CVR recorded sounds consistent with the flight crew leaving the airplane.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-1b6322af9acc3f33",
+      "source_chunk_ids": [
+        "chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842",
+        "chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9",
+        "chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa"
+      ]
+    },
+    {
+      "event_family_id": "DCA19MA086",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about accident, accumulated, total?\n\n<chunk id=\"chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9\">\nAs of the day of the accident, the airplane had accumulated 91,063 total flight hours with 23,316 total flight cycles.\n</chunk>\n\n<chunk id=\"chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa\">\nAlso, the airplane should have been able to stop on the paved surface near the RSA/blast pad transition point with one antiskid circuit inoperative and both engines operating at ground idle power.\n</chunk>\n\n<chunk id=\"chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515\">\nIn the months after the accident, the FAA communicated with Boeing officials to ensure expectations were met and to provide oversight of changes to the production system.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"As of the day of the accident, the airplane had accumulated 91,063 total flight hours with 23,316 total flight cycles.\",\"citations\":[{\"chunk_id\":\"chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9\",\"quote\":\"As of the day of the accident, the airplane had accumulated 91,063 total flight hours with 23,316 total flight cycles.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-69ae0ae7fab83f1f",
+      "source_chunk_ids": [
+        "chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9",
+        "chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa",
+        "chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515"
+      ]
+    },
+    {
+      "event_family_id": "DCA20MA002",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about should, paved, surface?\n\n<chunk id=\"chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa\">\nAlso, the airplane should have been able to stop on the paved surface near the RSA/blast pad transition point with one antiskid circuit inoperative and both engines operating at ground idle power.\n</chunk>\n\n<chunk id=\"chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515\">\nIn the months after the accident, the FAA communicated with Boeing officials to ensure expectations were met and to provide oversight of changes to the production system.\n</chunk>\n\n<chunk id=\"chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338\">\nThese types of helmets or visors provide visual simulations of changing weather conditions to enable the pilot to practice weather decision-making and avoidance procedures during training flights in an actual aircraft.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"Also, the airplane should have been able to stop on the paved surface near the RSA/blast pad transition point with one antiskid circuit inoperative and both engines operating at ground idle power.\",\"citations\":[{\"chunk_id\":\"chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa\",\"quote\":\"Also, the airplane should have been able to stop on the paved surface near the RSA/blast pad transition point with one antiskid circuit inoperative and both engines operating at ground idle power.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-1e12bfd81271a327",
+      "source_chunk_ids": [
+        "chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa",
+        "chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515",
+        "chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338"
+      ]
+    },
+    {
+      "event_family_id": "DCA24MA063",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about months, accident, communicated?\n\n<chunk id=\"chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515\">\nIn the months after the accident, the FAA communicated with Boeing officials to ensure expectations were met and to provide oversight of changes to the production system.\n</chunk>\n\n<chunk id=\"chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338\">\nThese types of helmets or visors provide visual simulations of changing weather conditions to enable the pilot to practice weather decision-making and avoidance procedures during training flights in an actual aircraft.\n</chunk>\n\n<chunk id=\"chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd\">\nThe cockpit visibility study also considered whether the geometry of the “blind spots” created by the window supports and other structures could shift based on the position of the pilot in the cockpit.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"In the months after the accident, the FAA communicated with Boeing officials to ensure expectations were met and to provide oversight of changes to the production system.\",\"citations\":[{\"chunk_id\":\"chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515\",\"quote\":\"In the months after the accident, the FAA communicated with Boeing officials to ensure expectations were met and to provide oversight of changes to the production system.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-10f28013a176ed3d",
+      "source_chunk_ids": [
+        "chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515",
+        "chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338",
+        "chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd"
+      ]
+    },
+    {
+      "event_family_id": "ANC20MA010",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about types, helmets, visors?\n\n<chunk id=\"chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338\">\nThese types of helmets or visors provide visual simulations of changing weather conditions to enable the pilot to practice weather decision-making and avoidance procedures during training flights in an actual aircraft.\n</chunk>\n\n<chunk id=\"chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd\">\nThe cockpit visibility study also considered whether the geometry of the “blind spots” created by the window supports and other structures could shift based on the position of the pilot in the cockpit.\n</chunk>\n\n<chunk id=\"chk_06059d030602a2326780c2d7ddfd5f8fe45115276bc86f29885990e607284f5a\">\nAt 1116:15, the captain stated that she wanted to use 5° of flaps for the landing because she did not know how controllable the airplane would be.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"These types of helmets or visors provide visual simulations of changing weather conditions to enable the pilot to practice weather decision-making and avoidance procedures during training flights in an actual aircraft.\",\"citations\":[{\"chunk_id\":\"chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338\",\"quote\":\"These types of helmets or visors provide visual simulations of changing weather conditions to enable the pilot to practice weather decision-making and avoidance procedures during training flights in an actual aircraft.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-0682088463a1d272",
+      "source_chunk_ids": [
+        "chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338",
+        "chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd",
+        "chk_06059d030602a2326780c2d7ddfd5f8fe45115276bc86f29885990e607284f5a"
+      ]
+    },
+    {
+      "event_family_id": "CEN19MA141",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What does the report state about cockpit, visibility, study?\n\n<chunk id=\"chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd\">\nThe cockpit visibility study also considered whether the geometry of the “blind spots” created by the window supports and other structures could shift based on the position of the pilot in the cockpit.\n</chunk>\n\n<chunk id=\"chk_06059d030602a2326780c2d7ddfd5f8fe45115276bc86f29885990e607284f5a\">\nAt 1116:15, the captain stated that she wanted to use 5° of flaps for the landing because she did not know how controllable the airplane would be.\n</chunk>\n\n<chunk id=\"chk_04aa2824a1581ecb663efdf03d5e7d0ed171438385ff3b412e615a462aefa986\">\nThe unit was not located in the wreckage, and FDR data showed that all parameters related to TAWS alerts remained “off” for the entire accident sequence.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":\"The cockpit visibility study also considered whether the geometry of the “blind spots” created by the window supports and other structures could shift based on the position of the pilot in the cockpit.\",\"citations\":[{\"chunk_id\":\"chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd\",\"quote\":\"The cockpit visibility study also considered whether the geometry of the “blind spots” created by the window supports and other structures could shift based on the position of the pilot in the cockpit.\"}],\"abstained\":false,\"abstention_reason\":null}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-c17c2e2a0685ae7d",
+      "source_chunk_ids": [
+        "chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd",
+        "chk_06059d030602a2326780c2d7ddfd5f8fe45115276bc86f29885990e607284f5a",
+        "chk_04aa2824a1581ecb663efdf03d5e7d0ed171438385ff3b412e615a462aefa986"
+      ]
+    },
+    {
+      "event_family_id": "DCA18MA142",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What was the flight attendant's favorite color?\n\n<chunk id=\"chk_06059d030602a2326780c2d7ddfd5f8fe45115276bc86f29885990e607284f5a\">\nAt 1116:15, the captain stated that she wanted to use 5° of flaps for the landing because she did not know how controllable the airplane would be.\n</chunk>\n\n<chunk id=\"chk_04aa2824a1581ecb663efdf03d5e7d0ed171438385ff3b412e615a462aefa986\">\nThe unit was not located in the wreckage, and FDR data showed that all parameters related to TAWS alerts remained “off” for the entire accident sequence.\n</chunk>\n\n<chunk id=\"chk_0361e3e7b75a46a5d6271cf6a012782bcda104949ade9637a19f75fe6a5a452e\">\nThe captain said that he continued to hear (over the interphone) the flight attendants discussing a hole in the cabin, so he wanted to land the airplane as soon as possible.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":null,\"citations\":[],\"abstained\":true,\"abstention_reason\":\"The supplied chunks do not contain that information.\"}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-003ed4577d87a6da",
+      "source_chunk_ids": [
+        "chk_06059d030602a2326780c2d7ddfd5f8fe45115276bc86f29885990e607284f5a",
+        "chk_04aa2824a1581ecb663efdf03d5e7d0ed171438385ff3b412e615a462aefa986",
+        "chk_0361e3e7b75a46a5d6271cf6a012782bcda104949ade9637a19f75fe6a5a452e"
+      ]
+    },
+    {
+      "event_family_id": "DCA19MA086",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What was the flight attendant's favorite color?\n\n<chunk id=\"chk_04aa2824a1581ecb663efdf03d5e7d0ed171438385ff3b412e615a462aefa986\">\nThe unit was not located in the wreckage, and FDR data showed that all parameters related to TAWS alerts remained “off” for the entire accident sequence.\n</chunk>\n\n<chunk id=\"chk_0361e3e7b75a46a5d6271cf6a012782bcda104949ade9637a19f75fe6a5a452e\">\nThe captain said that he continued to hear (over the interphone) the flight attendants discussing a hole in the cabin, so he wanted to land the airplane as soon as possible.\n</chunk>\n\n<chunk id=\"chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481\">\nThus, the NTSB concludes that ineffective safety management at both Liberty and NYONair resulted in a lack of prioritization and mitigation of foreseeable risks.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":null,\"citations\":[],\"abstained\":true,\"abstention_reason\":\"The supplied chunks do not contain that information.\"}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-fc64a7cf7bacb144",
+      "source_chunk_ids": [
+        "chk_04aa2824a1581ecb663efdf03d5e7d0ed171438385ff3b412e615a462aefa986",
+        "chk_0361e3e7b75a46a5d6271cf6a012782bcda104949ade9637a19f75fe6a5a452e",
+        "chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481"
+      ]
+    },
+    {
+      "event_family_id": "DCA24MA063",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What was the flight attendant's favorite color?\n\n<chunk id=\"chk_0361e3e7b75a46a5d6271cf6a012782bcda104949ade9637a19f75fe6a5a452e\">\nThe captain said that he continued to hear (over the interphone) the flight attendants discussing a hole in the cabin, so he wanted to land the airplane as soon as possible.\n</chunk>\n\n<chunk id=\"chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481\">\nThus, the NTSB concludes that ineffective safety management at both Liberty and NYONair resulted in a lack of prioritization and mitigation of foreseeable risks.\n</chunk>\n\n<chunk id=\"chk_0650fccf76d3dcfc2e52ef3f3f5194111aea36823d3be5c85dab678afdbf39e5\">\nAs a result, the accident helicopter was not required to comply with the requirements of version H and subsequent versions.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":null,\"citations\":[],\"abstained\":true,\"abstention_reason\":\"The supplied chunks do not contain that information.\"}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-57ea1cdc9eb4f8c1",
+      "source_chunk_ids": [
+        "chk_0361e3e7b75a46a5d6271cf6a012782bcda104949ade9637a19f75fe6a5a452e",
+        "chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481",
+        "chk_0650fccf76d3dcfc2e52ef3f3f5194111aea36823d3be5c85dab678afdbf39e5"
+      ]
+    },
+    {
+      "event_family_id": "ERA18MA099",
+      "messages": [
+        {
+          "content": "Answer aviation-report questions using only the supplied chunks. Return only one grounded-json-v1 object with exactly these fields: {\"answer\":string|null,\"citations\":[{\"chunk_id\":string,\"quote\":string}],\"abstained\":boolean,\"abstention_reason\":string|null}. Keep the answer under 40 words and each exact quote under 25 words. When evidence is insufficient, set answer to null, citations to [], abstained to true, and give a short abstention_reason.",
+          "role": "system"
+        },
+        {
+          "content": "What was the flight attendant's favorite color?\n\n<chunk id=\"chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481\">\nThus, the NTSB concludes that ineffective safety management at both Liberty and NYONair resulted in a lack of prioritization and mitigation of foreseeable risks.\n</chunk>\n\n<chunk id=\"chk_0650fccf76d3dcfc2e52ef3f3f5194111aea36823d3be5c85dab678afdbf39e5\">\nAs a result, the accident helicopter was not required to comply with the requirements of version H and subsequent versions.\n</chunk>\n\n<chunk id=\"chk_1cf928f09337854a5cbd0a9462593799b3e893163e34867b92eb3e8ba206589d\">\nA witness at a golf course near the final approach path captured an 11-second video showing the airplane on final approach with the left landing gear trailing aft from its normal position.\n</chunk>",
+          "role": "user"
+        },
+        {
+          "content": "{\"answer\":null,\"citations\":[],\"abstained\":true,\"abstention_reason\":\"The supplied chunks do not contain that information.\"}",
+          "role": "assistant"
+        }
+      ],
+      "record_id": "sft-rag-97d7d1890d54754a",
+      "source_chunk_ids": [
+        "chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481",
+        "chk_0650fccf76d3dcfc2e52ef3f3f5194111aea36823d3be5c85dab678afdbf39e5",
+        "chk_1cf928f09337854a5cbd0a9462593799b3e893163e34867b92eb3e8ba206589d"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "selection": {
+    "abstentions": 4,
+    "answerable": 8,
+    "method": "reviewed_parent_with_two_train_distractors_v1"
+  },
+  "split": "train",
+  "status": "automated_gate_only",
+  "version": "1.0.0"
+}

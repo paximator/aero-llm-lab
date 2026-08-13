@@ -8,6 +8,7 @@ from aerollm.training.qlora import (
     load_training_messages,
     render_training_chat,
     render_training_prompt,
+    render_training_target,
     training_order,
     tree_sha256,
 )
@@ -57,6 +58,18 @@ def test_base_model_chat_rendering_is_explicit() -> None:
         '[SYSTEM]\nGround answers.\n\n[USER]\nQuestion\n\n[ASSISTANT]\n{"answer":"Fact"}'
     )
     assert render_training_prompt(messages).endswith("[ASSISTANT]\n")
+    assert render_training_target(messages, "<eos>").endswith('{"answer":"Fact"}<eos>')
+
+
+def test_training_target_requires_eos_token() -> None:
+    messages = [
+        {"role": "system", "content": "Ground answers."},
+        {"role": "user", "content": "Question"},
+        {"role": "assistant", "content": '{"answer":"Fact"}'},
+    ]
+
+    with pytest.raises(ValueError, match="eos_token"):
+        render_training_target(messages, "")
 
 
 def test_training_order_is_deterministic_and_epoch_shuffled() -> None:

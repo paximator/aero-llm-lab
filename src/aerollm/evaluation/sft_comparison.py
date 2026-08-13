@@ -31,6 +31,8 @@ _SYSTEM_CONCISE_V2 = (
 def classify_failure(row: Mapping[str, Any], *, max_new_tokens: int) -> str | None:
     """Assign one stable primary failure without weakening fail-closed validation."""
     if not row["warnings"]:
+        if row.get("abstained") and not row.get("correct"):
+            return "unexpected_abstention"
         return None
     raw = str(row["raw_output"]).strip()
     completion_tokens = int(row.get("completion_tokens", 0))

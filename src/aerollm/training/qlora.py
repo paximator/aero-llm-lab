@@ -96,6 +96,13 @@ def render_training_prompt(messages: list[dict[str, str]]) -> str:
     return render_training_chat(messages[:-1] + [{"role": "assistant", "content": ""}])
 
 
+def render_training_target(messages: list[dict[str, str]], eos_token: str) -> str:
+    """Render one complete training sequence with an explicit learned terminator."""
+    if not isinstance(eos_token, str) or not eos_token:
+        raise ValueError("tokenizer eos_token is required")
+    return render_training_chat(messages) + eos_token
+
+
 def training_order(record_count: int, steps: int, seed: int) -> list[int]:
     """Shuffle each epoch deterministically to avoid task-order recency collapse."""
     if record_count < 1 or steps < 1:
@@ -178,7 +185,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     order = training_order(len(messages), args.steps, config.seed)
     for step, record_index in enumerate(order):
         item = messages[record_index]
-        text = render_training_chat(item)
+        text = render_training_target(item, tokenizer.eos_token)
         prompt = render_training_prompt(item)
         encoded = tokenizer(
             text,
