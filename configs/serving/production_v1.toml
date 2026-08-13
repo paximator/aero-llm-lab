@@ -1,0 +1,18 @@
+[service]
+name = "aerollm-serving"
+version = "v1"
+
+[answer]
+top_k = 4
+max_new_tokens = 256
+temperature = 0.0
+prompt_version = "serving-v1"
+
+[runtime]
+corpus_path = "artifacts/corpora/ntsb-pilot-v1.json"
+model_path = "artifacts/models/Ministral-3-3B-Instruct-2512"
+
+[model]
+id = "mistralai/Ministral-3-3B-Instruct-2512"
+revision = "b35d4dfe56c142746f54dbd64f579faab2744308"
+fp8_kernel_revision = "7cdb05d472d6c954c7d03182ed836ebfd4610df0"

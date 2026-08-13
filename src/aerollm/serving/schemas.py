@@ -30,6 +30,10 @@ class HealthResponse(BaseModel):
     version: str
 
 
+class ReadinessResponse(BaseModel):
+    status: Literal["ready", "not_ready"]
+
+
 class ErrorDetail(BaseModel):
     code: str
     message: str

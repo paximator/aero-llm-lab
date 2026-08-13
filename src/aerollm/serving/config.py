@@ -37,6 +37,8 @@ class ServingConfig:
     @classmethod
     def from_toml(cls, path: Path) -> ServingConfig:
         value = tomllib.loads(path.read_text(encoding="utf-8"))
+        if not set(value).issuperset({"service", "answer"}):
+            raise ValueError("missing serving configuration tables")
         service = _table(value, "service")
         answer = _table(value, "answer")
         if set(service) != {"name", "version"} or set(answer) != {

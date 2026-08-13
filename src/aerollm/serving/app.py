@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 import time
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
@@ -12,7 +14,13 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from aerollm.serving.config import ServingConfig
-from aerollm.serving.contracts import AnswerBackend, Postprocessor, Retriever
+from aerollm.serving.contracts import (
+    AnswerBackend,
+    DependencyInitializer,
+    Postprocessor,
+    Retriever,
+    ServingDependencies,
+)
 from aerollm.serving.fakes import FakeAnswerBackend, FakeRetriever, IdentityPostprocessor
 from aerollm.serving.schemas import (
     AnswerRequest,
@@ -20,10 +28,20 @@ from aerollm.serving.schemas import (
     ErrorDetail,
     ErrorResponse,
     HealthResponse,
+    ReadinessResponse,
     Source,
 )
 
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
+
+
+class ServiceNotReadyError(RuntimeError):
+    pass
+
+
+@dataclass(slots=True)
+class _RuntimeState:
+    dependencies: ServingDependencies | None
 
 
 def create_app(
@@ -33,6 +51,7 @@ def create_app(
     backend: AnswerBackend | None = None,
     retriever: Retriever | None = None,
     postprocessor: Postprocessor | None = None,
+    initializer: DependencyInitializer | None = None,
 ) -> FastAPI:
     """Create an app with explicit replaceable runtime dependencies.
 
@@ -43,10 +62,29 @@ def create_app(
     if config is not None and config_path is not None:
         raise ValueError("provide config or config_path, not both")
     settings = config or (ServingConfig.from_toml(config_path) if config_path else ServingConfig())
-    answer_backend = backend or FakeAnswerBackend()
-    passage_retriever = retriever or FakeRetriever()
-    answer_postprocessor = postprocessor or IdentityPostprocessor()
-    app = FastAPI(title=settings.service_name, version=settings.service_version)
+    injected = (backend, retriever, postprocessor)
+    if initializer is not None and any(item is not None for item in injected):
+        raise ValueError("initializer cannot be combined with injected dependencies")
+    dependencies = None if initializer else ServingDependencies(
+        backend=backend or FakeAnswerBackend(),
+        retriever=retriever or FakeRetriever(),
+        postprocessor=postprocessor or IdentityPostprocessor(),
+    )
+    runtime = _RuntimeState(dependencies)
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        if initializer is not None:
+            try:
+                runtime.dependencies = initializer()
+            except Exception:
+                runtime.dependencies = None
+        yield
+        runtime.dependencies = None
+
+    app = FastAPI(
+        title=settings.service_name, version=settings.service_version, lifespan=lifespan,
+    )
 
     @app.middleware("http")
     async def request_context(request: Request, call_next):  # type: ignore[no-untyped-def]
@@ -64,9 +102,22 @@ def create_app(
     async def internal_error(request: Request, _error: Exception) -> JSONResponse:
         return _error_response(request, 500, "internal_error", "Request could not be completed")
 
+    @app.exception_handler(ServiceNotReadyError)
+    async def not_ready_error(request: Request, _error: ServiceNotReadyError) -> JSONResponse:
+        return _error_response(request, 503, "not_ready", "Service is not ready")
+
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
         return HealthResponse(service=settings.service_name, version=settings.service_version)
+
+    @app.get(
+        "/ready", response_model=ReadinessResponse,
+        responses={503: {"model": ReadinessResponse}},
+    )
+    def ready() -> ReadinessResponse | JSONResponse:
+        if runtime.dependencies is None:
+            return JSONResponse(status_code=503, content={"status": "not_ready"})
+        return ReadinessResponse(status="ready")
 
     @app.post(
         "/v1/answer",
@@ -74,14 +125,17 @@ def create_app(
         responses={422: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
     )
     def answer(payload: AnswerRequest, request: Request) -> AnswerResponse:
+        dependencies = runtime.dependencies
+        if dependencies is None:
+            raise ServiceNotReadyError
         started = time.perf_counter()
-        passages = passage_retriever.retrieve(payload.question, top_k=settings.top_k)
-        generated = answer_backend.answer(
+        passages = dependencies.retriever.retrieve(payload.question, top_k=settings.top_k)
+        generated = dependencies.backend.answer(
             payload.question, passages, request_id=request.state.request_id,
             max_new_tokens=settings.max_new_tokens, temperature=settings.temperature,
             prompt_version=settings.prompt_version,
         )
-        final_answer = answer_postprocessor.process(generated.text, passages)
+        final_answer = dependencies.postprocessor.process(generated.text, passages)
         return AnswerResponse(
             request_id=request.state.request_id,
             answer=final_answer,

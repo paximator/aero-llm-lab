@@ -4,7 +4,8 @@ from fastapi.testclient import TestClient
 
 from aerollm.serving.app import create_app
 from aerollm.serving.config import ServingConfig
-from aerollm.serving.contracts import BackendAnswer, RetrievedPassage
+from aerollm.serving.contracts import BackendAnswer, RetrievedPassage, ServingDependencies
+from aerollm.serving.fakes import FakeAnswerBackend, FakeRetriever, IdentityPostprocessor
 
 
 def test_health_reports_configured_service() -> None:
@@ -93,3 +94,51 @@ def test_invalid_incoming_request_id_is_replaced() -> None:
     response = TestClient(create_app()).get("/health", headers={"x-request-id": "bad id"})
 
     assert response.headers["x-request-id"] != "bad id"
+
+
+def test_static_dependencies_are_ready() -> None:
+    response = TestClient(create_app()).get("/ready")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ready"}
+
+
+def test_initializer_runs_at_startup_and_becomes_ready() -> None:
+    calls: list[str] = []
+
+    def initialize() -> ServingDependencies:
+        calls.append("initialize")
+        return ServingDependencies(
+            FakeAnswerBackend(), FakeRetriever(), IdentityPostprocessor(),
+        )
+
+    app = create_app(initializer=initialize)
+    with TestClient(app) as client:
+        assert client.get("/ready").json() == {"status": "ready"}
+        assert client.post("/v1/answer", json={"question": "Question"}).status_code == 200
+
+    assert calls == ["initialize"]
+
+
+def test_failed_initializer_stays_live_but_unready_without_leaking_error() -> None:
+    def initialize() -> ServingDependencies:
+        raise RuntimeError("secret local model path")
+
+    app = create_app(initializer=initialize)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        health = client.get("/health")
+        readiness = client.get("/ready")
+        answer = client.post(
+            "/v1/answer", json={"question": "Question"},
+            headers={"x-request-id": "not-ready-1"},
+        )
+
+    assert health.status_code == 200
+    assert readiness.status_code == 503
+    assert readiness.json() == {"status": "not_ready"}
+    assert answer.status_code == 503
+    assert answer.json()["error"] == {
+        "code": "not_ready", "message": "Service is not ready",
+        "request_id": "not-ready-1",
+    }
+    assert "secret" not in answer.text

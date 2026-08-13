@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
@@ -35,3 +36,13 @@ class AnswerBackend(Protocol):
 @runtime_checkable
 class Postprocessor(Protocol):
     def process(self, answer: str, passages: tuple[RetrievedPassage, ...]) -> str: ...
+
+
+@dataclass(frozen=True, slots=True)
+class ServingDependencies:
+    backend: AnswerBackend
+    retriever: Retriever
+    postprocessor: Postprocessor
+
+
+DependencyInitializer = Callable[[], ServingDependencies]

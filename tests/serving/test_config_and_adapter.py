@@ -5,6 +5,7 @@ import pytest
 
 from aerollm.generation import BackendIdentity, FakeBackend
 from aerollm.serving.adapters import ExistingMistralAdapter
+from aerollm.serving.bootstrap import ProductionConfig
 from aerollm.serving.config import ServingConfig
 from aerollm.serving.contracts import RetrievedPassage
 
@@ -38,3 +39,11 @@ def test_existing_mistral_adapter_uses_preconstructed_backend() -> None:
 def test_serving_config_rejects_invalid_values() -> None:
     with pytest.raises(ValueError, match="top_k"):
         ServingConfig(top_k=0)
+
+
+def test_repository_production_config_loads_without_loading_model() -> None:
+    config = ProductionConfig.from_toml(Path("configs/serving/production_v1.toml"))
+
+    assert config.corpus_path == Path("artifacts/corpora/ntsb-pilot-v1.json")
+    assert config.model_id == "mistralai/Ministral-3-3B-Instruct-2512"
+    assert "aerollm.generation.ministral_backend" not in sys.modules
