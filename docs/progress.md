@@ -32,15 +32,27 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Completed and froze the serving-v1 prototype after aligning its versioned JSON
   prompt, chunk-aware context, and fail-closed `PostprocessorV1` behavior with the
   offline grounded pipeline. Advanced serving performance work remains deferred.
-- Built the first 50-record train-only, evidence-linked SFT validation dataset over
-  13 event families, with leakage, provenance, duplicate, schema, citation, and
-  token-budget validation. Independent owner sampling remains pending before QLoRA.
+- Built and reviewed the first 50-record train-only, evidence-linked SFT validation
+  dataset over 13 event families, with leakage, provenance, duplicate, schema,
+  citation, and token-budget validation.
+- Completed QLoRA memory smoke, tiny-overfit, adapter save/reload, and a first
+  50-record run on the RTX 4070 Laptop GPU. The 50-record adapter remains the
+  development baseline.
+- Compared Base and SFT on all 27 reviewed development questions with identical gold
+  evidence. Task accuracy improved from 18.5% to 44.4%, and valid grounded output
+  from 0% to 37.0%; this isolates generation and is not a RAG claim.
+- Ran a failure-driven 90-record corrective experiment. It regressed accuracy to
+  33.3%, exposed and fixed ordered-training recency bias, and was rejected rather
+  than promoted.
+- Materialized the three evaluation-suite-v2 development reports into a validated
+  745-chunk corpus and ran the complete RAG versus SFT+RAG path. Retrieval hit an
+  annotated gold chunk at top 3 for 63.0%, but both generators failed closed on all
+  examples; this is retained as a negative development result.
 
 ## Current milestone
 
-Build evaluation-suite v2 and task-specific scoring as bounded credibility gates,
-while beginning the train-only evidence-linked SFT dataset. Then run the QLoRA
-memory and tiny-overfit gates without adding new framework layers.
+Classify the retrieved-context contract failures exposed by the SFT+RAG development
+run before spending time on another adapter training experiment.
 
 Evaluation-suite v2 currently has 27 approved development examples and 45
 ready-to-fill test slots that still require independent human authoring and review.
@@ -51,9 +63,11 @@ for the explicit delivery boundary.
 
 1. Evaluation-suite v2: 50–100 reviewed examples across independent event families.
 2. Task-specific scoring and a shared failure taxonomy.
-3. Repository-owner sample review of the 50-record SFT validation dataset.
-4. QLoRA memory smoke, tiny overfit, adapter save/reload, then first real run.
-5. Expand to reviewed SFT data and run the frozen five-system comparison.
+3. Separate prompt-length, citation-format, parsing, and context-selection failures
+   in the completed RAG versus SFT+RAG development run.
+4. Author genuinely new train-split causal and multi-evidence SFT examples before a
+   future v3; templated recomposition is rejected by the v2 result.
+5. Complete independent test authoring before any frozen five-system claim.
 
 The detailed priority gates and explicit deferred scope are maintained in
 [`docs/roadmap.md`](roadmap.md).

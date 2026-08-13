@@ -226,9 +226,9 @@ not become another framework-building phase that postpones post-training.
 - [ ] Task-specific deterministic and rubric scoring is versioned.
 - [ ] One prediction schema supports all five system variants.
 - [ ] SFT records are evidence-linked, validated, and test-leakage-free.
-- [ ] QLoRA memory smoke passes.
-- [ ] Tiny-overfit, adapter save, reload, and evaluation pass.
-- [ ] The first real SFT adapter and manifest exist.
+- [x] QLoRA memory smoke passes.
+- [x] Tiny-overfit, adapter save, reload, and development evaluation pass.
+- [x] The first real SFT adapter and manifest exist.
 - [ ] SFT and SFT+RAG run on the same frozen suite as the baselines.
 - [ ] Results include uncertainty, failure categories, examples, and limitations.
 - [ ] README headline metrics link to reproducible reports.
