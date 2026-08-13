@@ -59,6 +59,24 @@ def test_builder_rejects_changed_parsed_artifact(tmp_path: Path) -> None:
         build_corpus([source_manifest], config)
 
 
+def test_builder_honors_explicit_frozen_split(tmp_path: Path) -> None:
+    source_manifest, config = _input_report(tmp_path, event_id="DCA20MA059")
+
+    result = build_corpus(
+        [source_manifest], config,
+        explicit_family_splits={"DCA20MA059": Split.TEST},
+    )
+
+    assert result.corpus.sources[0].split is Split.TEST
+
+
+def test_builder_rejects_incomplete_explicit_split_map(tmp_path: Path) -> None:
+    source_manifest, config = _input_report(tmp_path, event_id="DCA20MA059")
+
+    with pytest.raises(ValueError, match="explicit family split mismatch"):
+        build_corpus([source_manifest], config, explicit_family_splits={})
+
+
 def test_validation_reports_uncovered_nonempty_pages() -> None:
     text = "first page\nsecond page"
     digest = hashlib.sha256(text.encode()).hexdigest()

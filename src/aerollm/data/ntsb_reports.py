@@ -41,7 +41,10 @@ class NTSBReportSource:
         transport = self.transport or _urlopen_pdf_transport
         response = transport(
             document.source_url,
-            {"Accept": "application/pdf", "User-Agent": "aerollm-lab/0.1"},
+            {
+                "Accept": "application/pdf",
+                "User-Agent": "Mozilla/5.0 (compatible; aerollm-lab/0.1)",
+            },
             self.timeout_seconds,
             self.max_bytes,
             self.allowed_hosts,

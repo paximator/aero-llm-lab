@@ -193,6 +193,187 @@ def build_review(
     }
 
 
+def select_replacement(
+    candidates: Iterable[PilotCandidate], *, reviewed: Mapping[str, object],
+    config: SelectionConfig, rejected_event_id: str,
+    ineligible_event_ids: set[str] | None = None,
+) -> tuple[PilotCandidate, Split]:
+    """Select one deterministic, untouched replacement for a rejected assignment."""
+    selections = reviewed.get("selections")
+    excluded = reviewed.get("excluded_event_families")
+    if not isinstance(selections, list) or not isinstance(excluded, list):
+        raise ValueError("invalid reviewed selection packet")
+    rejected = [
+        item for item in selections
+        if isinstance(item, dict) and item.get("event_family_id") == rejected_event_id
+    ]
+    if len(rejected) != 1 or rejected[0].get("review", {}).get("status") != "rejected":
+        raise ValueError("replacement target must be exactly one rejected event")
+    split = Split(str(rejected[0]["proposed_split"]))
+    blocked = {str(item) for item in excluded}
+    blocked.update(
+        str(item["event_family_id"]) for item in selections if isinstance(item, dict)
+    )
+    blocked.update(ineligible_event_ids or set())
+    eligible = [
+        candidate for candidate in candidates
+        if candidate.event_id not in blocked and candidate.report_url
+    ]
+    if not eligible:
+        raise ValueError("no untouched replacement candidates remain")
+    chosen = min(
+        eligible,
+        key=lambda item: (
+            _stable_key(
+                config.seed, f"replacement\0{split.value}\0{item.event_id}",
+            ),
+            item.event_id,
+        ),
+    )
+    return chosen, split
+
+
+def build_replacement_review(
+    candidate: PilotCandidate, split: Split, *, reviewed: Mapping[str, object],
+    config: SelectionConfig, rejected_event_id: str,
+    verification_notes: str,
+) -> dict[str, object]:
+    """Build a one-event follow-up packet without rewriting the owner's review."""
+    selection = {
+        "event_family_id": candidate.event_id,
+        "event_id": candidate.event_id,
+        "source_id": candidate.source_id,
+        "occurred_on": candidate.occurred_on.isoformat(),
+        "proposed_split": split.value,
+        "report_url": candidate.report_url,
+        "metadata": dict(sorted(candidate.attributes.items())),
+        "automated_verification": verification_notes,
+        "review": {"status": config.initial_status, "notes": ""},
+    }
+    identity = {
+        "selection_id": f"{config.selection_id}-replacement",
+        "seed": config.seed,
+        "parent_selection_sha256": str(reviewed["selection_sha256"]),
+        "replaces_event_family_id": rejected_event_id,
+        "assignment": {
+            "event_family_id": candidate.event_id,
+            "split": split.value,
+        },
+    }
+    digest = hashlib.sha256(
+        json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return {
+        "schema_version": 1,
+        "status": "review_required",
+        "replacement_sha256": digest,
+        **identity,
+        "allowed_review_statuses": list(config.statuses),
+        "instructions": "Review only this replacement event, then approve or reject it.",
+        "selections": [selection],
+    }
+
+
+def freeze_reviewed_selection(
+    reviewed: Mapping[str, object], replacement: Mapping[str, object], *,
+    config: SelectionConfig,
+) -> dict[str, object]:
+    """Validate two approved review packets and return the immutable final selection."""
+    base_identity = {
+        key: reviewed[key]
+        for key in (
+            "selection_id", "seed", "source_corpus_sha256",
+            "excluded_event_families", "assignments",
+        )
+    }
+    base_digest = hashlib.sha256(
+        json.dumps(base_identity, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    if reviewed.get("selection_sha256") != base_digest:
+        raise ValueError("original selection digest does not match its assignments")
+    if replacement.get("parent_selection_sha256") != base_digest:
+        raise ValueError("replacement does not reference the reviewed selection")
+
+    replacement_identity = {
+        key: replacement[key]
+        for key in (
+            "selection_id", "seed", "parent_selection_sha256",
+            "replaces_event_family_id", "assignment",
+        )
+    }
+    replacement_digest = hashlib.sha256(
+        json.dumps(replacement_identity, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    if replacement.get("replacement_sha256") != replacement_digest:
+        raise ValueError("replacement digest does not match its assignment")
+
+    base_items = reviewed.get("selections")
+    replacement_items = replacement.get("selections")
+    if not isinstance(base_items, list) or not isinstance(replacement_items, list):
+        raise ValueError("review packets must contain selections")
+    rejected = [
+        item for item in base_items
+        if isinstance(item, dict) and item.get("review", {}).get("status") == "rejected"
+    ]
+    approved = [
+        item for item in base_items
+        if isinstance(item, dict) and item.get("review", {}).get("status") == "approved"
+    ]
+    if len(rejected) != 1 or len(approved) != config.target - 1:
+        raise ValueError("original review must contain 15 approvals and one rejection")
+    rejected_id = rejected[0].get("event_family_id")
+    if replacement.get("replaces_event_family_id") != rejected_id:
+        raise ValueError("replacement target does not match the rejected event")
+    if len(replacement_items) != 1:
+        raise ValueError("replacement review must contain exactly one selection")
+    replacement_item = replacement_items[0]
+    if (
+        not isinstance(replacement_item, dict)
+        or replacement_item.get("review", {}).get("status") != "approved"
+    ):
+        raise ValueError("replacement must be approved before freeze")
+    if replacement_item.get("proposed_split") != rejected[0].get("proposed_split"):
+        raise ValueError("replacement must preserve the rejected event's split")
+
+    final_items = [
+        {key: value for key, value in item.items() if key != "review"}
+        for item in (*approved, replacement_item)
+    ]
+    final_items.sort(key=lambda item: (str(item["proposed_split"]), str(item["event_family_id"])))
+    family_ids = [str(item["event_family_id"]) for item in final_items]
+    if len(family_ids) != config.target or len(set(family_ids)) != config.target:
+        raise ValueError("frozen selection must contain unique event families")
+    counts = {
+        split: sum(item["proposed_split"] == split.value for item in final_items)
+        for split in Split
+    }
+    if counts != dict(config.quotas):
+        raise ValueError("frozen selection does not preserve split quotas")
+    excluded = {str(item) for item in reviewed["excluded_event_families"]}
+    if excluded.intersection(family_ids):
+        raise ValueError("frozen selection overlaps the source corpus")
+
+    frozen_identity = {
+        "selection_id": config.selection_id,
+        "seed": config.seed,
+        "source_corpus_sha256": reviewed["source_corpus_sha256"],
+        "event_families": final_items,
+    }
+    frozen_digest = hashlib.sha256(
+        json.dumps(frozen_identity, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return {
+        "schema_version": 1,
+        "status": "frozen",
+        "frozen_selection_sha256": frozen_digest,
+        "review_provenance": {
+            "selection_sha256": base_digest,
+            "replacement_sha256": replacement_digest,
+        },
+        **frozen_identity,
+    }
+
+
 def write_review(path: Path, review: Mapping[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(

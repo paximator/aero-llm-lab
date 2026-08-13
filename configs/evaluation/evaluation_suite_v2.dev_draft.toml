@@ -1,0 +1,214 @@
+dataset_id = "ntsb-grounded-qa-suite-v2"
+version = "2.0.0-draft"
+author = "openai-codex-assisted"
+
+[[examples]]
+id = "dev-cen16-fatalities"
+event_id = "CEN16MA036"
+task_type = "numeric"
+question = "How many people died in the Execuflight flight 1526 accident?"
+answer = "Nine people died: the captain, first officer, and seven passengers."
+quotes = ["The captain, first officer, and seven passengers died"]
+
+[[examples]]
+id = "dev-cen16-faf-altitude"
+event_id = "CEN16MA036"
+task_type = "numeric"
+question = "At approximately what altitude did flight 1526 cross the final approach fix?"
+answer = "About 2,700 ft mean sea level."
+quotes = ["crossed the FAF at an altitude of about 2,700 ft msl"]
+
+[[examples]]
+id = "dev-cen16-when"
+event_id = "CEN16MA036"
+task_type = "date_time"
+question = "When did the Execuflight flight 1526 accident occur?"
+answer = "November 10, 2015, at about 1453 eastern standard time."
+quotes = ["On November 10, 2015, about 1453 eastern standard time"]
+
+[[examples]]
+id = "dev-cen16-aircraft"
+event_id = "CEN16MA036"
+task_type = "entity_identifier"
+question = "What aircraft model and registration operated as Execuflight flight 1526?"
+answer = "A British Aerospace HS 125-700A (Hawker 700A), registered N237WR."
+quotes = ["British Aerospace HS 125-700A (Hawker 700A), N237WR"]
+
+[[examples]]
+id = "dev-cen16-imc"
+event_id = "CEN16MA036"
+task_type = "categorical_yes_no"
+question = "Did instrument meteorological conditions prevail for flight 1526?"
+answer = "Yes."
+quotes = ["Instrument meteorological conditions prevailed"]
+
+[[examples]]
+id = "dev-cen16-stall"
+event_id = "CEN16MA036"
+task_type = "causal_finding"
+question = "What two conditions caused flight 1526 to enter a stall when the first officer tried to arrest the descent?"
+answer = "Increased drag from the improper 45° flap configuration and low airspeed."
+quotes = ["the increased drag due to the improper flaps 45° configuration and the low airspeed"]
+
+[[examples]]
+id = "dev-cen16-unstable"
+event_id = "CEN16MA036"
+task_type = "multi_evidence_grounded_qa"
+question = "What airspeed and flap-configuration evidence showed that flight 1526 was unstabilized at minimum descent altitude?"
+answer = "It was 11 knots below the 124-knot minimum and configured with 45° flaps."
+quotes = ["the airspeed was 11 knots below the minimum required airspeed of 124 knots", "the airplane was improperly configured with 45° flaps"]
+
+[[examples]]
+id = "dev-cen16-luggage"
+event_id = "CEN16MA036"
+task_type = "unanswerable"
+question = "What color was the passengers' luggage on flight 1526?"
+rubric = "The report does not provide the passengers' luggage color."
+
+[[examples]]
+id = "dev-cen16-meal"
+event_id = "CEN16MA036"
+task_type = "unanswerable"
+question = "What meal did the first officer eat immediately before flight 1526?"
+rubric = "The report does not identify a specific preflight meal for the first officer."
+
+[[examples]]
+id = "dev-dca13-fatalities"
+event_id = "DCA13MA081"
+task_type = "numeric"
+question = "How many crewmembers died in the National Airlines Bagram accident?"
+answer = "Seven crewmembers died."
+quotes = ["All seven crewmembers"]
+
+[[examples]]
+id = "dev-dca13-when"
+event_id = "DCA13MA081"
+task_type = "date_time"
+question = "When did the National Airlines Bagram accident occur?"
+answer = "April 29, 2013, at about 1527 local time."
+quotes = ["On April 29, 2013, about 1527 local time"]
+
+[[examples]]
+id = "dev-dca13-aircraft"
+event_id = "DCA13MA081"
+task_type = "entity_identifier"
+question = "What aircraft model and registration were involved in the Bagram accident?"
+answer = "A Boeing 747-400 BCF, registered N949CA."
+quotes = ["Boeing 747-400 BCF, N949CA"]
+
+[[examples]]
+id = "dev-dca13-cargo"
+event_id = "DCA13MA081"
+task_type = "entity_identifier"
+question = "What types and quantities of MRAP vehicles were aboard the accident airplane?"
+answer = "Two 12-ton M-ATVs and three 18-ton Cougars."
+quotes = ["Two vehicles were 12-ton MRAP all-terrain vehicles (M-ATVs) and three were 18-ton Cougars"]
+
+[[examples]]
+id = "dev-dca13-all-crew"
+event_id = "DCA13MA081"
+task_type = "categorical_yes_no"
+question = "Did all seven crewmembers aboard the National Airlines flight die?"
+answer = "Yes."
+quotes = ["All seven crewmembers"]
+
+[[examples]]
+id = "dev-dca13-restraint"
+event_id = "DCA13MA081"
+task_type = "causal_finding"
+question = "Why did the cargo likely move aft during takeoff?"
+answer = "It was not properly restrained."
+quotes = ["The likely reason for the aft movement of the cargo was that it was not properly restrained"]
+
+[[examples]]
+id = "dev-dca13-probable-cause"
+event_id = "DCA13MA081"
+task_type = "causal_finding"
+question = "What organizational deficiency did the NTSB identify as the probable cause of the Bagram accident?"
+answer = "National Airlines had inadequate procedures for restraining special cargo loads."
+quotes = ["National Airlines’ inadequate procedures for restraining special cargo loads"]
+
+[[examples]]
+id = "dev-dca13-damage-sequence"
+event_id = "DCA13MA081"
+task_type = "multi_evidence_grounded_qa"
+question = "Where did the rear M-ATV move, and what critical airplane systems did it damage?"
+answer = "It moved aft into the tail and damaged hydraulic systems and horizontal stabilizer components."
+quotes = ["moved aft into the tail section of the airplane", "damaging hydraulic systems and horizontal stabilizer components"]
+
+[[examples]]
+id = "dev-dca13-favorite-color"
+event_id = "DCA13MA081"
+task_type = "unanswerable"
+question = "What was the loadmaster's favorite color?"
+rubric = "The report does not state the loadmaster's favorite color."
+
+[[examples]]
+id = "dev-era14-fatalities"
+event_id = "ERA14MA271"
+task_type = "numeric"
+question = "How many occupants died in the Gulfstream accident at Bedford?"
+answer = "Seven occupants died: two pilots, one flight attendant, and four passengers."
+quotes = ["The two pilots, a flight attendant, and four passengers died"]
+
+[[examples]]
+id = "dev-era14-when"
+event_id = "ERA14MA271"
+task_type = "date_time"
+question = "When did the Gulfstream accident at Bedford occur?"
+answer = "May 31, 2014, at about 2140 eastern daylight time."
+quotes = ["On May 31, 2014, about 2140 eastern daylight time"]
+
+[[examples]]
+id = "dev-era14-aircraft"
+event_id = "ERA14MA271"
+task_type = "entity_identifier"
+question = "What aircraft model and registration were involved in the Bedford accident?"
+answer = "A Gulfstream Aerospace Corporation G-IV, registered N121JM."
+quotes = ["Gulfstream Aerospace Corporation G-IV, N121JM"]
+
+[[examples]]
+id = "dev-era14-vmc"
+event_id = "ERA14MA271"
+task_type = "categorical_yes_no"
+question = "Did night visual meteorological conditions prevail at Bedford?"
+answer = "Yes."
+quotes = ["Night visual meteorological conditions prevailed"]
+
+[[examples]]
+id = "dev-era14-gust-lock"
+event_id = "ERA14MA271"
+task_type = "causal_finding"
+question = "What two pre-takeoff omissions allowed the locked flight controls to go undetected?"
+answer = "The crew did not disengage the gust lock and did not perform a flight control check."
+quotes = ["neglected to disengage the airplane’s gust lock system", "neglected to perform a flight control check"]
+
+[[examples]]
+id = "dev-era14-check-history"
+event_id = "ERA14MA271"
+task_type = "multi_evidence_grounded_qa"
+question = "What did the quick-access-recorder review show about the crew's previous flight-control checks?"
+answer = "They had omitted complete flight-control checks before 98% of their previous 175 takeoffs."
+quotes = ["the pilots had neglected to perform complete flight control checks", "before 98% of their previous 175 takeoffs"]
+
+[[examples]]
+id = "dev-era14-reject-delay"
+event_id = "ERA14MA271"
+task_type = "multi_evidence_grounded_qa"
+question = "How did the crew delay the rejected takeoff after recognizing the lock, and when could the airplane still have stopped safely?"
+answer = "They delayed braking about 10 seconds and power reduction another 4 seconds; the airplane could still have stopped on pavement up to about 11 seconds after the first lock warning."
+quotes = ["could have been stopped on the paved surface", "delayed applying brakes for about 10 seconds", "further delayed reducing power by 4 seconds"]
+
+[[examples]]
+id = "dev-era14-passenger-meal"
+event_id = "ERA14MA271"
+task_type = "unanswerable"
+question = "What meal was served to the passengers before takeoff?"
+rubric = "The report does not identify a meal served to the passengers."
+
+[[examples]]
+id = "dev-era14-luggage"
+event_id = "ERA14MA271"
+task_type = "unanswerable"
+question = "What brand of luggage did the passengers carry?"
+rubric = "The report does not identify the passengers' luggage brand."

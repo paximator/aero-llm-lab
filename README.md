@@ -215,6 +215,17 @@ Review `artifacts/pilot/corpus_v2_selection.review.json` using
 `docs/evaluation/corpus-v2-selection-review-guide.md`. This stage does not download
 PDFs or draft evaluation questions.
 
+After the reviewed selection has been frozen and corpus v2 materialized, generate
+the 72-slot annotation workbook with:
+
+```powershell
+uv run aerollm-build-suite-v2-review
+```
+
+Review it using
+`docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`. Development
+questions are drafts; locked-test slots must be independently human-authored.
+
 Do not pass `--refresh-plan` during materialization: that flag intentionally
 replaces the reviewed selection. Generated source snapshots, parsed documents,
 chunks, failure reports, and corpora are stored under ignored `artifacts/` paths.

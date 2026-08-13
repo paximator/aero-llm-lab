@@ -50,3 +50,7 @@ the remaining deterministic candidate pool, then returned for another review.
 After selection approval, the repository will download and validate PDFs, parse and
 chunk them, build corpus v2, and only then generate the question-by-question draft
 annotation packet.
+
+If an event is rejected, its replacement is written to a separate one-event follow-up
+packet. The original review file is preserved. Review that packet with the same status
+values; only the replacement needs another human decision.

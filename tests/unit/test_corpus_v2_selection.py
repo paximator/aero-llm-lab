@@ -4,7 +4,14 @@ from pathlib import Path
 import pytest
 
 from aerollm.common.schemas import Split
-from aerollm.data.corpus_v2_selection import SelectionConfig, build_review, select_candidates
+from aerollm.data.corpus_v2_selection import (
+    SelectionConfig,
+    build_replacement_review,
+    build_review,
+    freeze_reviewed_selection,
+    select_candidates,
+    select_replacement,
+)
 from aerollm.data.pilot import PilotCandidate
 
 
@@ -61,3 +68,83 @@ def test_selection_refuses_to_weaken_approved_target(tmp_path: Path) -> None:
         select_candidates(
             (_candidate("E1", 2020),), excluded_families=set(), config=config,
         )
+
+
+def test_replacement_preserves_split_and_excludes_reviewed_events(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    reviewed = build_review(
+        select_candidates(
+            tuple(_candidate(f"E{index}", 2018 + index) for index in range(4)),
+            excluded_families={"OLD"}, config=config,
+        ),
+        config=config, excluded_families={"OLD"}, source_corpus_sha256="a" * 64,
+    )
+    rejected = next(item for item in reviewed["selections"] if item["proposed_split"] == "train")
+    rejected["review"]["status"] = "rejected"
+
+    candidate, split = select_replacement(
+        (*(_candidate(f"E{index}", 2018 + index) for index in range(4)), _candidate("NEW", 2025)),
+        reviewed=reviewed, config=config,
+        rejected_event_id=rejected["event_family_id"],
+    )
+    follow_up = build_replacement_review(
+        candidate, split, reviewed=reviewed, config=config,
+        rejected_event_id=rejected["event_family_id"], verification_notes="public PDF verified",
+    )
+
+    assert candidate.event_id == "NEW"
+    assert split is Split.TRAIN
+    assert follow_up["replaces_event_family_id"] == rejected["event_family_id"]
+    assert follow_up["selections"][0]["review"]["status"] == "draft"
+    assert len(follow_up["replacement_sha256"]) == 64
+
+
+def test_replacement_target_must_be_rejected(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    reviewed = build_review(
+        select_candidates(
+            tuple(_candidate(f"E{index}", 2018 + index) for index in range(4)),
+            excluded_families=set(), config=config,
+        ),
+        config=config, excluded_families=set(), source_corpus_sha256="a" * 64,
+    )
+
+    with pytest.raises(ValueError, match="rejected event"):
+        select_replacement(
+            (_candidate("NEW", 2025),), reviewed=reviewed, config=config,
+            rejected_event_id=reviewed["selections"][0]["event_family_id"],
+        )
+
+
+def test_freeze_combines_approved_replacement_and_preserves_quotas(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    reviewed = build_review(
+        select_candidates(
+            tuple(_candidate(f"E{index}", 2018 + index) for index in range(4)),
+            excluded_families={"OLD"}, config=config,
+        ),
+        config=config, excluded_families={"OLD"}, source_corpus_sha256="a" * 64,
+    )
+    for item in reviewed["selections"]:
+        item["review"]["status"] = "approved"
+    rejected = next(item for item in reviewed["selections"] if item["proposed_split"] == "train")
+    rejected["review"]["status"] = "rejected"
+    replacement = build_replacement_review(
+        _candidate("NEW", 2025), Split.TRAIN, reviewed=reviewed, config=config,
+        rejected_event_id=rejected["event_family_id"], verification_notes="verified",
+    )
+    replacement["selections"][0]["review"]["status"] = "approved"
+
+    frozen = freeze_reviewed_selection(reviewed, replacement, config=config)
+
+    assert frozen["status"] == "frozen"
+    assert len(frozen["event_families"]) == 4
+    expected = {"NEW"}
+    expected.update(
+        item["event_family_id"]
+        for item in reviewed["selections"]
+        if item is not rejected
+    )
+    assert {item["event_family_id"] for item in frozen["event_families"]} == expected
+    assert all("review" not in item for item in frozen["event_families"])
+    assert len(frozen["frozen_selection_sha256"]) == 64
