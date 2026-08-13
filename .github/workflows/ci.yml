@@ -31,8 +31,8 @@ jobs:
         with:
           version: "0.8.12"
           enable-cache: true
-      - name: Install locked core and development dependencies
-        run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
+      - name: Install locked development and serving dependencies
+        run: uv sync --locked --extra dev --extra serving --python ${{ matrix.python-version }}
       - name: Verify environment
         run: uv run --locked aerollm-doctor
       - name: Lint
