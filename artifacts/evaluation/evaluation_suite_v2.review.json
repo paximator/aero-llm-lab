@@ -30,7 +30,7 @@
   "examples": [
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -48,10 +48,14 @@
       "reference_answer": "Nine people died: the captain, first officer, and seven passengers.",
       "report_id": "CEN16MA036:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the captain died",
+        "the first officer died",
+        "seven passengers died"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "numeric_exact_or_tolerance_v1",
       "secondary_tags": [
         "natural_language",
@@ -65,7 +69,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -74,7 +78,7 @@
           "chunk_id": "chk_0d46dfc68a09700f37cb97a6cf243060442417d68b3278fa0876da69ee2c2765",
           "page_end": 11,
           "page_start": 11,
-          "quote": "crossed the FAF at an altitude of about 2,700 ft msl"
+          "quote": "The airplane crossed the FAF at an altitude of about 2,700 ft msl"
         }
       ],
       "example_id": "dev-cen16-faf-altitude",
@@ -85,8 +89,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "numeric_exact_or_tolerance_v1",
       "secondary_tags": [
         "natural_language",
@@ -100,7 +104,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -120,8 +124,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_datetime_v1",
       "secondary_tags": [
         "natural_language",
@@ -135,7 +139,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -144,7 +148,7 @@
           "chunk_id": "chk_5abc772459e6574ae4d35d1b9eab1b844a0cd0fef186127a0cc441a1b5050ec8",
           "page_end": 10,
           "page_start": 10,
-          "quote": "British Aerospace HS 125-700A (Hawker 700A), N237WR"
+          "quote": "Execuflight flight 1526, a\nBritish Aerospace HS 125-700A (Hawker 700A), N237WR"
         }
       ],
       "example_id": "dev-cen16-aircraft",
@@ -153,10 +157,13 @@
       "reference_answer": "A British Aerospace HS 125-700A (Hawker 700A), registered N237WR.",
       "report_id": "CEN16MA036:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the airplane was a British Aerospace HS 125-700A (Hawker 700A)",
+        "the airplane was registered N237WR"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_entity_set_v1",
       "secondary_tags": [
         "natural_language",
@@ -170,7 +177,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -190,8 +197,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "categorical_exact_v1",
       "secondary_tags": [
         "natural_language",
@@ -204,7 +211,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -222,10 +229,13 @@
       "reference_answer": "Increased drag from the improper 45° flap configuration and low airspeed.",
       "report_id": "CEN16MA036:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the flaps were improperly configured at 45°",
+        "the airspeed was low"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -238,7 +248,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -262,10 +272,14 @@
       "reference_answer": "It was 11 knots below the 124-knot minimum and configured with 45° flaps.",
       "report_id": "CEN16MA036:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the minimum required airspeed was 124 knots",
+        "the actual airspeed was 11 knots below the minimum",
+        "the flaps were configured improperly at 45°"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -278,7 +292,7 @@
     },
     {
       "answerable": false,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": false,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -291,8 +305,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "abstention_v1",
       "secondary_tags": [
         "natural_language",
@@ -305,7 +319,7 @@
     },
     {
       "answerable": false,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": false,
       "event_family_id": "CEN16MA036",
       "event_id": "CEN16MA036",
@@ -318,8 +332,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "abstention_v1",
       "secondary_tags": [
         "natural_language",
@@ -332,7 +346,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -352,8 +366,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "numeric_exact_or_tolerance_v1",
       "secondary_tags": [
         "natural_language",
@@ -367,7 +381,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -387,8 +401,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_datetime_v1",
       "secondary_tags": [
         "natural_language",
@@ -402,7 +416,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -422,8 +436,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_entity_set_v1",
       "secondary_tags": [
         "natural_language",
@@ -437,7 +451,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -457,8 +471,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_entity_set_v1",
       "secondary_tags": [
         "natural_language",
@@ -472,7 +486,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -492,8 +506,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "categorical_exact_v1",
       "secondary_tags": [
         "natural_language",
@@ -506,7 +520,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -524,10 +538,12 @@
       "reference_answer": "It was not properly restrained.",
       "report_id": "DCA13MA081:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the cargo was not properly restrained"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -540,7 +556,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -560,8 +576,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -574,7 +590,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -598,10 +614,14 @@
       "reference_answer": "It moved aft into the tail and damaged hydraulic systems and horizontal stabilizer components.",
       "report_id": "DCA13MA081:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the rear M-ATV moved into the tail",
+        "the rear M-ATV damaged the hydraulic system",
+        "the rear M-ATV damaged some horizontal stabilizer components"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -614,7 +634,7 @@
     },
     {
       "answerable": false,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": false,
       "event_family_id": "DCA13MA081",
       "event_id": "DCA13MA081",
@@ -627,8 +647,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "abstention_v1",
       "secondary_tags": [
         "natural_language",
@@ -641,7 +661,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -659,10 +679,15 @@
       "reference_answer": "Seven occupants died: two pilots, one flight attendant, and four passengers.",
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the two pilots died",
+        "one flight attendant died",
+        "four passengers died",
+        "seven occupants died"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "numeric_exact_or_tolerance_v1",
       "secondary_tags": [
         "natural_language",
@@ -676,7 +701,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -696,8 +721,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_datetime_v1",
       "secondary_tags": [
         "natural_language",
@@ -711,7 +736,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -731,8 +756,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "normalized_entity_set_v1",
       "secondary_tags": [
         "natural_language",
@@ -746,7 +771,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -766,8 +791,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "categorical_exact_v1",
       "secondary_tags": [
         "natural_language",
@@ -780,7 +805,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -804,10 +829,13 @@
       "reference_answer": "The crew did not disengage the gust lock and did not perform a flight control check.",
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
-      "required_key_facts": [],
+      "required_key_facts": [
+        "the crew did not disengage the airplane's gust lock system",
+        "the crew did not perform a flight control check"
+      ],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -820,7 +848,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -829,13 +857,7 @@
           "chunk_id": "chk_9db2d568414982dca0a8d1956a262fd8b63abe7c8748ff07e13d03a25582698a",
           "page_end": 10,
           "page_start": 10,
-          "quote": "the                   pilots  had neglected to perform\ncomplete    flight  control  checks"
-        },
-        {
-          "chunk_id": "chk_9db2d568414982dca0a8d1956a262fd8b63abe7c8748ff07e13d03a25582698a",
-          "page_end": 10,
-          "page_start": 10,
-          "quote": "before       98%  of  their  previous  175  takeoffs"
+          "quote": "the pilots had neglected to perform\ncomplete flight control checks before 98% of their previous 175 takeoffs"
         }
       ],
       "example_id": "dev-era14-check-history",
@@ -845,13 +867,13 @@
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [],
-      "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_notes": "spacing problem on quotes fixed, synthetized both quotes into a single one since they are following",
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
-        "multi_evidence"
+        "single_evidence"
       ],
       "split": "development",
       "structured_target": null,
@@ -860,7 +882,7 @@
     },
     {
       "answerable": true,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": true,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -869,19 +891,19 @@
           "chunk_id": "chk_60b9f84d7798b83737cf0f95f6b60714f35a52605da5fb1a2fd26421ed3a010f",
           "page_end": 10,
           "page_start": 10,
-          "quote": "could have been stopped on the\npaved surface"
+          "quote": "If the flight\ncrew had initiated a rejected takeoff at the time of the PIC’s first “lock is on” comment or at any\ntime up until about 11 seconds after this comment, the airplane could have been stopped on the\npaved surface"
         },
         {
           "chunk_id": "chk_60b9f84d7798b83737cf0f95f6b60714f35a52605da5fb1a2fd26421ed3a010f",
           "page_end": 10,
           "page_start": 10,
-          "quote": "delayed applying brakes                       for  about 10 seconds"
+          "quote": "delayed applying brakes for about 10 seconds"
         },
         {
           "chunk_id": "chk_60b9f84d7798b83737cf0f95f6b60714f35a52605da5fb1a2fd26421ed3a010f",
           "page_end": 10,
           "page_start": 10,
-          "quote": "further delayed reducing power          by   4 seconds"
+          "quote": "further delayed reducing power by 4 seconds"
         }
       ],
       "example_id": "dev-era14-reject-delay",
@@ -890,10 +912,14 @@
       "reference_answer": "They delayed braking about 10 seconds and power reduction another 4 seconds; the airplane could still have stopped on pavement up to about 11 seconds after the first lock warning.",
       "report_id": "ERA14MA271:report",
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
-      "required_key_facts": [],
-      "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "required_key_facts": [
+        "about 11 seconds after the first lock warning, the airplane could have been stopped on the paved surface",
+        "the braking was delayed about 10 seconds",
+        "the power reduction was delayed about 4 seconds"
+      ],
+      "review_notes": "add to add way more context to the first quote",
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "required_key_facts_v1",
       "secondary_tags": [
         "natural_language",
@@ -906,7 +932,7 @@
     },
     {
       "answerable": false,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": false,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -919,8 +945,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "abstention_v1",
       "secondary_tags": [
         "natural_language",
@@ -933,7 +959,7 @@
     },
     {
       "answerable": false,
-      "author": "openai-codex-assisted",
+      "author": "llm-assisted",
       "citation_required": false,
       "event_family_id": "ERA14MA271",
       "event_id": "ERA14MA271",
@@ -946,8 +972,8 @@
       "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
       "required_key_facts": [],
       "review_notes": "",
-      "review_status": "draft",
-      "reviewers": [],
+      "review_status": "approved",
+      "reviewers": ["github:paximator"],
       "scoring_strategy": "abstention_v1",
       "secondary_tags": [
         "natural_language",
