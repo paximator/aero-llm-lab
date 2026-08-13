@@ -70,11 +70,14 @@ for the explicit delivery boundary.
 
 1. Evaluation-suite v2: 50–100 reviewed examples across independent event families.
 2. Task-specific scoring and a shared failure taxonomy.
-3. Separate prompt-length, citation-format, parsing, and context-selection failures
-   in the completed RAG versus SFT+RAG development run.
+3. Author reviewed retrieved-context records for exact citation copying and balanced
+   abstention; the automated micro-dataset is diagnostic only.
 4. Author genuinely new train-split causal and multi-evidence SFT examples before a
    future v3; templated recomposition is rejected by the v2 result.
 5. Complete independent test authoring before any frozen five-system claim.
 
 The detailed priority gates and explicit deferred scope are maintained in
 [`docs/roadmap.md`](roadmap.md).
+
+For a concise reviewer-oriented entry point, see the
+[development review brief](development-review.md).

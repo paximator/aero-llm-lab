@@ -185,8 +185,11 @@ P0 evaluation quality.
 
 ## P2 — Systems and secondary demonstrations
 
-1. Minimal FastAPI endpoint with typed requests, streaming, and trace IDs.
-2. vLLM under WSL2/Linux when supported; benchmark TTFT, tokens/s, p50/p95,
+1. The minimal non-streaming FastAPI v1 endpoint is complete with typed requests,
+   request IDs, safe errors, injected boundaries, and deterministic fakes. Streaming
+   remains deferred until an inference benchmark justifies it.
+2. Do not claim vLLM support. Evaluate it under WSL2/Linux only if later serving
+   requirements justify the dependency, then benchmark TTFT, tokens/s, p50/p95,
    requests/s, and peak VRAM.
 3. Educational Transformer correctness and profiling: RMSNorm, RoPE, causal/GQA
    attention, autoregressive decoding, KV cache, cached/uncached equivalence, and
@@ -206,15 +209,15 @@ SFT+DPO on the same frozen suite. A documented negative result is acceptable.
 
 ## Immediate execution queue
 
-1. Design evaluation-suite v2 coverage matrix and select new event families.
-2. Extend evaluation records with task type and scoring specification.
-3. Draft and independently review the first new examples; freeze only after the
-   target diversity and evidence gates pass.
-4. Freeze the unified prediction/prompt/manifest schemas.
-5. Build and validate the first 50 evidence-linked SFT records in parallel with
-   annotation review, without using test events.
-6. Run QLoRA memory smoke and tiny-overfit gates.
-7. Scale to the first reviewed SFT dataset and run the five-system comparison.
+1. Human-author and independently review the 45 prepared evaluation-v2 test slots.
+2. Run the full schema, evidence, leakage, duplicate, target, and coverage gates;
+   freeze the suite only after they pass.
+3. Author reviewed train-only retrieved-context examples that supervise exact
+   citation copying and balanced abstention.
+4. Require the five-example SFT+RAG development gate to pass before another full
+   adapter or 27-example run.
+5. Run the frozen five-system comparison, paired failure analysis, and uncertainty
+   only after the suite and development gate are ready.
 
 The evaluation expansion is deliberately bounded: it strengthens claims but must
 not become another framework-building phase that postpones post-training.
