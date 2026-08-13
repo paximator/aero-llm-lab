@@ -87,7 +87,8 @@ class CorpusBuildResult:
 
 
 def build_corpus(
-    source_manifest_paths: Sequence[Path], config: CorpusConfig
+    source_manifest_paths: Sequence[Path], config: CorpusConfig,
+    *, explicit_family_splits: Mapping[str, Split] | None = None,
 ) -> CorpusBuildResult:
     if not source_manifest_paths:
         raise ValueError("at least one source manifest is required")
@@ -95,10 +96,21 @@ def build_corpus(
     flattened = [item for group in records for item in group]
     if not flattened:
         raise ValueError("source manifests contain no parsed report documents")
-    family_splits = assign_family_splits(
-        (item.event_family_id for item in flattened), seed=config.seed,
-        fractions=config.fractions,
-    )
+    families = {item.event_family_id for item in flattened}
+    if explicit_family_splits is None:
+        family_splits = assign_family_splits(
+            families, seed=config.seed, fractions=config.fractions,
+        )
+    else:
+        family_splits = dict(explicit_family_splits)
+        if set(family_splits) != families:
+            missing = sorted(families - set(family_splits))
+            extra = sorted(set(family_splits) - families)
+            raise ValueError(
+                f"explicit family split mismatch; missing={missing}, extra={extra}"
+            )
+        if not all(isinstance(split, Split) for split in family_splits.values()):
+            raise ValueError("explicit family splits must contain Split values")
     sources = tuple(
         SourceManifestEntry(
             item.source_id, item.event_id, item.event_family_id,

@@ -1,0 +1,272 @@
+{
+  "event_families": [
+    {
+      "event_family_id": "CEN16MA036",
+      "event_id": "CEN16MA036",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Instrument (IMC)"
+      },
+      "occurred_on": "2015-11-10",
+      "proposed_split": "development",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1603.pdf",
+      "source_id": "CEN16MA036"
+    },
+    {
+      "event_family_id": "DCA13MA081",
+      "event_id": "DCA13MA081",
+      "metadata": {
+        "country": "AF",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2013-04-29",
+      "proposed_split": "development",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1501.pdf",
+      "source_id": "DCA13MA081"
+    },
+    {
+      "event_family_id": "ERA14MA271",
+      "event_id": "ERA14MA271",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2014-06-01",
+      "proposed_split": "development",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1503.pdf",
+      "source_id": "ERA14MA271"
+    },
+    {
+      "event_family_id": "DCA13MA120",
+      "event_id": "DCA13MA120",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2013-07-06",
+      "proposed_split": "test",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1401.pdf",
+      "source_id": "DCA13MA120"
+    },
+    {
+      "event_family_id": "DCA13MA133",
+      "event_id": "DCA13MA133",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Unknown"
+      },
+      "occurred_on": "2013-08-14",
+      "proposed_split": "test",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1402.pdf",
+      "source_id": "DCA13MA133"
+    },
+    {
+      "event_family_id": "DCA15MA029",
+      "event_id": "DCA15MA029",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Instrument (IMC)"
+      },
+      "occurred_on": "2014-12-08",
+      "proposed_split": "test",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1601.pdf",
+      "source_id": "DCA15MA029"
+    },
+    {
+      "event_family_id": "DCA17FA021",
+      "event_id": "DCA17FA021",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Serious",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2016-10-28",
+      "proposed_split": "test",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1801.pdf",
+      "source_id": "DCA17FA021"
+    },
+    {
+      "event_family_id": "WPR11MA454",
+      "event_id": "WPR11MA454",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2011-09-16",
+      "proposed_split": "test",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAB1201.pdf",
+      "source_id": "WPR11MA454"
+    },
+    {
+      "automated_verification": "Public PDF opened successfully on 2026-08-13. Official NTSB investigation page maps ANC10MA068 to report AAR-11-03 and confirms the 2010-08-09 event date.",
+      "event_family_id": "ANC10MA068",
+      "event_id": "ANC10MA068",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Approved by Office Director",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2010-08-09",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1103.pdf",
+      "source_id": "ANC10MA068"
+    },
+    {
+      "event_family_id": "CEN23MA034",
+      "event_id": "CEN23MA034",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "location": "On airport property",
+        "mode": "Aviation",
+        "report_type": "Board-adopted by Notation",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2022-11-12",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AIR-24-07.pdf",
+      "source_id": "CEN23MA034"
+    },
+    {
+      "event_family_id": "DCA11IA015",
+      "event_id": "DCA11IA015",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Incident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "None",
+        "weather": "Instrument (IMC)"
+      },
+      "occurred_on": "2010-12-29",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1201.pdf",
+      "source_id": "DCA11IA015"
+    },
+    {
+      "event_family_id": "DCA12FA051",
+      "event_id": "DCA12FA051",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Fatal",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2012-03-15",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1404.pdf",
+      "source_id": "DCA12FA051"
+    },
+    {
+      "event_family_id": "DCA13IA037",
+      "event_id": "DCA13IA037",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Incident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "None",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2013-01-07",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AIR1401.pdf",
+      "source_id": "DCA13IA037"
+    },
+    {
+      "event_family_id": "DCA15FA085",
+      "event_id": "DCA15FA085",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Minor",
+        "weather": "Instrument (IMC)"
+      },
+      "occurred_on": "2015-03-05",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1602.pdf",
+      "source_id": "DCA15FA085"
+    },
+    {
+      "event_family_id": "DCA17FA076",
+      "event_id": "DCA17FA076",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Accident",
+        "mode": "Aviation",
+        "report_type": "Board-adopted at Board Meeting",
+        "severity": "Minor",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2017-03-08",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AAR1901.pdf",
+      "source_id": "DCA17FA076"
+    },
+    {
+      "event_family_id": "DCA24LA094",
+      "event_id": "DCA24LA094",
+      "metadata": {
+        "country": "USA",
+        "event_type": "Incident",
+        "mode": "Aviation",
+        "report_type": "Approved by Office Director",
+        "severity": "None",
+        "weather": "Visual (VMC)"
+      },
+      "occurred_on": "2024-02-06",
+      "proposed_split": "train",
+      "report_url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/AIR2406.pdf",
+      "source_id": "DCA24LA094"
+    }
+  ],
+  "frozen_selection_sha256": "3a60ea85c55ee1c8cf54ee8730f12122b01c8f8f5d25e10ec725682588de9972",
+  "review_provenance": {
+    "replacement_sha256": "7fd9da7cf9870ba6949d3ab16f15525dd5bede7d2ffddbcc5484a01c0f21dcc0",
+    "selection_sha256": "27da833675cb8a79b2345da7b27abb1e973e70fa6a15a21a09cc3340ff32f242"
+  },
+  "schema_version": 1,
+  "seed": "aerollm-corpus-v2-selection-2026",
+  "selection_id": "ntsb-corpus-v2-candidates",
+  "source_corpus_sha256": "37aa9ed77c3476b149ed8f4d455a7e8680e9c0359edf323117c422d4a765ac6d",
+  "status": "frozen"
+}

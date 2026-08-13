@@ -1,132 +1,234 @@
 # Implementation roadmap
 
-The roadmap is organized around demonstrable increments. Each phase ends with an
-artifact and an explicit gate; later techniques are added only when their baseline
-and evaluation are trustworthy.
+This roadmap incorporates the January 2026 portfolio review. The repository has
+enough framework infrastructure; priority now goes to a credible end-to-end
+post-training comparison rather than additional horizontal features.
 
-## Phase 0 — Frame the experiment
+## Portfolio objective
 
-**Deliverables**
+The first portfolio release must let a reviewer trace one controlled experiment:
 
-- Choose one or two initial task contracts and define valid outputs.
-- Identify candidate public report sources and document usage constraints.
-- Write evaluation rubrics, dataset schemas, and an experiment manifest schema.
-- Use Ministral 3 3B as the primary local checkpoint family under the documented
-  8 GB VRAM / 64 GB RAM hardware budget; pin an exact revision before the first run.
-- Add Python packaging, linting, tests, and a reproducible command interface.
+```text
+minimal instruct → task-prompted → RAG → QLoRA SFT → SFT + RAG
+```
 
-**Exit gate:** a reviewer can tell what success means, what data may be used, what
-cannot enter the test set, and how a run is reproduced.
+Every system uses the same task contracts, prediction schema, evaluation runner,
+and frozen test suite. Retrieval, generation, and post-training failures remain
+separable. New capabilities cannot bypass this comparison.
 
-## Phase 1 — Data and evaluation foundation
+## Priority rules
 
-**Deliverables**
+1. Use development data for every design or parameter choice.
+2. Never tune from the existing or future frozen-test outputs.
+3. Prefer data/evaluation quality over new framework layers or model count.
+4. Add a technique only to address an observed failure category.
+5. Preserve simple baselines and publish negative results.
+6. Complete the post-training vertical slice before agents, DPO, or serving polish.
 
-- Acquire a small corpus with URLs, checksums, timestamps, and provenance.
-- Parse text while retaining page/section positions; measure parser/OCR quality.
-- Normalize, deduplicate, and create report-level train/dev/test splits.
-- Hand-author and independently check a compact gold evaluation set.
-- Implement deterministic metrics, failure categories, and a Markdown/HTML report.
+## P0 — First portfolio release
 
-**Exit gate:** the build is repeatable from a manifest, leakage checks pass, gold
-examples point to verifiable evidence, and a trivial baseline produces a report.
+### P0.1 — Evaluation suite v2
 
-## Phase 2 — Base, prompted, and retrieval baselines
-
-**Deliverables**
-
-- Run base and versioned prompted baselines through one inference interface.
-- Implement lexical and dense retrieval, then a measured hybrid baseline.
-- Evaluate chunking and Recall@k before generation quality.
-- Add reranking only after documenting baseline retrieval failures.
-- Run RAG with page/section citations and abstention behavior.
-
-**Exit gate:** all variants use identical examples; retrieval and generation
-failures are separable; claimed gains include paired results and uncertainty.
-
-## Phase 3 — Parameter-efficient SFT
+The ten-example test set remains a valid pipeline baseline, but it is too small and
+event-concentrated for strong model-quality claims. Build a new suite from events
+that have not been used for prompt/retrieval selection.
 
 **Deliverables**
 
-- Build evidence-linked SFT records with automated validation and manual samples.
-- Establish a LoRA recipe; add QLoRA if the hardware budget requires it.
-- Track configs, revisions, seeds, curves, wall time, and peak VRAM.
-- Evaluate SFT closed-book and SFT+RAG on the frozen suite.
-- Ablate data volume, adapter settings, and prompt format where useful.
+- Approximately 50–100 manually reviewed examples.
+- Several independent event/report families in each applicable split.
+- Documented task/category counts: factual extraction, numeric/date, entity/ID,
+  causal, multi-evidence, answerable, unanswerable, and citation-sensitive.
+- Immutable evidence spans, report-level splitting, leakage validation, and digest.
+- A migration note: v1 results remain historical and are not silently overwritten.
 
-**Exit gate:** results explain where SFT helps, hurts, or duplicates RAG; the
-adapter and evaluation are reproducible; regressions are categorized.
+**Gate**
 
-## Phase 4 — Serving and systems characterization
+- Every test example has independent human review.
+- No event family crosses train/development/test.
+- All evidence resolves to canonical chunks.
+- Test labels have not informed prompts, retrieval settings, or training data.
 
-**Deliverables**
+### P0.2 — Task-specific evaluation v2
 
-- Expose typed FastAPI endpoints with streaming and trace IDs.
-- Serve with vLLM under documented model and quantization settings.
-- Add smoke/load tests and measure cold/warm latency, throughput, and VRAM.
-- Compare quality versus latency under fixed load shapes.
-- Containerize the serving path and document hardware assumptions.
-
-**Exit gate:** a fresh environment launches the service and reproduces a published
-benchmark within an agreed tolerance.
-
-## Phase 5 — Bounded tools and agent evaluation
+Replace universal answer overlap as the headline measure while retaining it as a
+diagnostic. Extend the schema with a task type and an explicit scoring strategy.
 
 **Deliverables**
 
-- Add typed, read-only tools with validation and timeouts.
-- Implement bounded orchestration with full traces and iteration limits.
-- Evaluate tool choice, arguments, recovery, and end-to-end task success.
-- Compare against direct prompting/RAG on tasks that genuinely need tools.
+- Deterministic number/date/ID/categorical/yes-no/structured-field scorers.
+- Key-fact or rubric scoring for open grounded QA.
+- Citation validity, support, abstention, and answer correctness reported separately.
+- Versioned semantic/manual evaluation protocol; no single opaque judge metric.
+- Stable failure taxonomy:
+  `retrieval_miss`, `retrieval_low_rank`, `context_truncation`,
+  `answer_mismatch`, `unsupported_answer`, `missing_citation`,
+  `incorrect_citation`, `missed_abstention`, `unexpected_abstention`,
+  `format_violation`, and `generation_truncation`.
 
-**Exit gate:** tools produce a measured task-success improvement and failures are
-observable and safely terminated; otherwise retain tools without an agent loop.
+**Gate**
 
-## Phase 6 — Educational Transformer track
+- Scoring dispatches by declared task type.
+- Representative examples and edge cases are human-reviewed.
+- The evaluator consumes the same prediction record for every system variant.
 
-This track can proceed independently once the main evaluation foundation is stable.
+### P0.3 — Freeze the generation interface
 
-**Deliverables**
-
-- Implement and explain RMSNorm, causal attention, RoPE, and transformer blocks.
-- Add autoregressive generation and a preallocated KV cache.
-- Test shapes, masking, cached/uncached equivalence, and cache growth.
-- Profile decoding with and without caching.
-
-**Exit gate:** tests establish mathematical and behavioral correctness and the
-documentation connects the implementation to production inference.
-
-## Phase 7 — Optional preference tuning
-
-**Prerequisite:** SFT evaluation reveals a stable, preference-shaped failure mode,
-and preference labels can be collected consistently.
+The v1 base/prompted/RAG run is complete. Before training, close the remaining
+provenance gaps without adding another inference framework.
 
 **Deliverables**
 
-- Define a preference rubric and audit annotator agreement.
-- Build evidence-linked chosen/rejected pairs without test contamination.
-- Run DPO against the same SFT checkpoint and frozen evaluation suite.
-- Report gains, regressions, calibration, and training cost.
+- Rename the current “base” precisely as `minimal-instruct`; a true pretrained
+  checkpoint is a separate optional baseline, not an alias.
+- Immutable prompt records with ID, version, SHA-256, system prompt, answer schema,
+  citation format, and abstention rule.
+- Prediction records containing query, retrieval/reranking scores, selected chunk
+  IDs, selected-context token count, prompt/completion tokens, citations,
+  abstention, and runtime trace.
+- A small experiment manifest containing git commit, command, dataset/model/prompt/
+  retriever digests, hardware, prediction path, and metrics path.
 
-**Exit gate:** DPO supplies a statistically and practically meaningful benefit; if
-not, publish the negative result and retain the simpler SFT system.
+**Gate**
 
-## Recommended first release
+- Minimal-instruct, prompted, and RAG replay through one evaluator.
+- Retrieval misses and answer-generation failures render separately.
+- No configuration change is selected from frozen-test outcomes.
 
-The strongest early portfolio release is Phases 0–3 plus a minimal Phase 4 serving
-path. It demonstrates the coherent core: trustworthy data, leakage-aware evaluation,
-retrieval diagnostics, parameter-efficient post-training, and controlled comparison
-of base/prompted/RAG/SFT/SFT+RAG. Agents, DPO, and the educational track deepen that
-story rather than delaying it.
+### P0.4 — Evidence-linked SFT dataset
 
-## Cross-cutting definition of done
+This is the highest-value missing engineering capability. Build training records
+only from train-split reports; development examples may validate behavior but test
+events are categorically excluded.
 
-For every phase:
+**Deliverables**
 
-- commands run from configuration rather than edited notebooks;
-- tests cover critical transformations and schemas;
-- artifacts carry provenance and deterministic IDs;
-- logs do not expose sensitive document contents or credentials;
-- failure examples are retained for regression testing;
-- documentation states hardware, model revision, data version, and limitations;
-- generated reports include aggregate metrics and representative failures.
+- Chat-formatted records with system/user/assistant messages.
+- Report, event, source-chunk, generator, synthetic status, and review provenance.
+- Validators for source/evidence existence, event split, duplicate content, schema,
+  citations, and the configured token budget.
+- Dataset digest, category distribution, length statistics, rejected-record report,
+  and a manually reviewed sample.
+- Staged volumes: approximately 50 records for pipeline/tiny-overfit validation,
+  then about 250 high-quality records for the first meaningful run. Expand only if
+  an ablation justifies it.
+
+**Gate**
+
+- Zero test-event contamination.
+- Every retained factual answer is evidence-linked.
+- A reviewer can trace any training record back to immutable report chunks.
+
+### P0.5 — QLoRA training gates
+
+Use the documented local hardware envelope and `uv`. WSL2/Linux is preferred if
+bitsandbytes or trainer support is materially more reliable than native Windows.
+
+**Gate A: memory smoke**
+
+- Load the pinned Mistral-family checkpoint in 4-bit.
+- Inject LoRA, run forward/backward and one optimizer step.
+- Record GPU/driver/Torch/CUDA, RAM, sequence length, batch sizes, and peak VRAM.
+
+**Gate B: tiny overfit**
+
+- Deliberately overfit 8–32 validated records.
+- Demonstrate a strong loss decrease and expected training behavior.
+- Save, reload, fingerprint, and evaluate the adapter through the shared backend.
+
+**Gate C: first real SFT run**
+
+- Train on the first reviewed dataset using a pinned config and seed.
+- Record dataset/model revisions, LoRA targets/rank/alpha, quantization, optimizer,
+  learning rate/scheduler, effective batch size, steps, curves, wall time, peak
+  VRAM, validation metrics, checkpoints, and adapter digest.
+
+### P0.6 — Frozen comparison
+
+Evaluate these systems on evaluation-suite v2 without changing its labels or the
+selected configurations:
+
+```text
+minimal-instruct
+prompted
+RAG
+SFT
+SFT + RAG
+```
+
+**Analysis requirements**
+
+- Identify formatting, terminology, extraction, abstention, and instruction gains.
+- Separate report-specific grounding gains attributable to RAG.
+- Detect SFT hallucination or memorized-prior regressions.
+- Explain whether SFT+RAG improves use of retrieved evidence.
+- Include representative failures and paired per-example comparisons.
+
+**P0 exit gate**
+
+- A reloadable adapter and its digest exist.
+- All five systems use one evaluator and frozen suite.
+- Headline results link to manifests, configs, and reports.
+- Limitations and negative results are explicit.
+
+## P1 — Credibility and presentation
+
+Complete after the first SFT comparison, except for components already required by
+P0 evaluation quality.
+
+1. Add paired bootstrap confidence intervals and win/loss/tie counts.
+2. Render per-task metrics and stable failure-taxonomy counts.
+3. Add a README comparison table linked to detailed reports.
+4. Harden experiment manifests and deterministic report rendering.
+5. Run targeted data-volume or adapter ablations only when they answer a concrete
+   question from the first SFT result.
+
+## P2 — Systems and secondary demonstrations
+
+1. Minimal FastAPI endpoint with typed requests, streaming, and trace IDs.
+2. vLLM under WSL2/Linux when supported; benchmark TTFT, tokens/s, p50/p95,
+   requests/s, and peak VRAM.
+3. Educational Transformer correctness and profiling: RMSNorm, RoPE, causal/GQA
+   attention, autoregressive decoding, KV cache, cached/uncached equivalence, and
+   measured decoding improvement.
+4. Read-only tool calling only for tasks that direct RAG cannot solve; measure tool
+   selection, arguments, unnecessary calls, recovery, and end-to-end success.
+
+Avoid Kubernetes, elaborate orchestration, another vector database, or additional
+retrieval techniques without measured justification.
+
+## P3 — Optional preference tuning
+
+Attempt DPO only if SFT exposes a stable preference-shaped failure such as
+unsupported answer versus abstention, valid versus plausible citations, concise
+versus verbose answers, or schema-valid versus invalid output. Compare SFT and
+SFT+DPO on the same frozen suite. A documented negative result is acceptable.
+
+## Immediate execution queue
+
+1. Design evaluation-suite v2 coverage matrix and select new event families.
+2. Extend evaluation records with task type and scoring specification.
+3. Draft and independently review the first new examples; freeze only after the
+   target diversity and evidence gates pass.
+4. Freeze the unified prediction/prompt/manifest schemas.
+5. Build and validate the first 50 evidence-linked SFT records in parallel with
+   annotation review, without using test events.
+6. Run QLoRA memory smoke and tiny-overfit gates.
+7. Scale to the first reviewed SFT dataset and run the five-system comparison.
+
+The evaluation expansion is deliberately bounded: it strengthens claims but must
+not become another framework-building phase that postpones post-training.
+
+## Definition of done for the next major milestone
+
+- [ ] Evaluation-suite v2 covers multiple independent report families.
+- [ ] Approximately 50–100 examples are manually reviewed and frozen.
+- [ ] Task-specific deterministic and rubric scoring is versioned.
+- [ ] One prediction schema supports all five system variants.
+- [ ] SFT records are evidence-linked, validated, and test-leakage-free.
+- [ ] QLoRA memory smoke passes.
+- [ ] Tiny-overfit, adapter save, reload, and evaluation pass.
+- [ ] The first real SFT adapter and manifest exist.
+- [ ] SFT and SFT+RAG run on the same frozen suite as the baselines.
+- [ ] Results include uncertainty, failure categories, examples, and limitations.
+- [ ] README headline metrics link to reproducible reports.

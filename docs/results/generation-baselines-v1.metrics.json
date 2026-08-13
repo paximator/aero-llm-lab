@@ -1,0 +1,18 @@
+{
+  "corpus_sha256": "37aa9ed77c3476b149ed8f4d455a7e8680e9c0359edf323117c422d4a765ac6d",
+  "development": {
+    "config_sha256": "ef97868f9435dbe636af9dd1f6134121ec78dc958e6b9a09a8198ec4168af141",
+    "dataset_sha256": "a294b0c38b89058b9447f9ccd076ae487c4636944161e1e6f7b69d13f0fdcdd1",
+    "token_f1": {"base": 0.1176099401, "prompted": 0.2367132931, "rag": 0.3347646398},
+    "rag_gold_evidence_coverage": 0.7777777778,
+    "rag_citation_precision": 0.7777777778,
+    "rag_refusal_accuracy": 1.0
+  },
+  "test": {
+    "config_sha256": "4ee0789a935710814917e254719bb033c9c0408ea7d489a00afa316522f947f2",
+    "dataset_sha256": "c095f7bd656f0dfebfdd7ea4cb221c7a11d76c7a6aef1df3ebd9cf952e044723",
+    "token_f1": {"base": 0.0913788226, "prompted": 0.2127963654, "rag": 0.2826339173},
+    "rag_gold_evidence_coverage": 0.6,
+    "rag_citation_precision": 0.7
+  }
+}

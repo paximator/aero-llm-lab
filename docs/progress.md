@@ -26,13 +26,23 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Proved native-Windows generation feasibility for the pinned official Ministral 3
   3B Instruct FP8 checkpoint: 4.96 GB peak allocated VRAM and 1.12 generated
   tokens/second on the detected 45 W RTX 4070 Laptop GPU after kernel caching.
+- Completed development-selected and digest-locked base/prompted/RAG generation
+  baselines. On the frozen test set, token F1 increased from 0.091 to 0.213 to
+  0.283; RAG evidence coverage was limited to 0.600 by retrieval.
 
 ## Current milestone
 
-Build base, prompted, and RAG generation evaluation using the frozen retrieval
-operating points. Select prompts and context budgets using development only.
+Build evaluation-suite v2 and task-specific scoring as bounded credibility gates,
+while beginning the train-only evidence-linked SFT dataset. Then run the QLoRA
+memory and tiny-overfit gates without adding new framework layers.
 
 ## Next milestones
 
-1. Base, prompted, and RAG generation comparisons on the frozen task suite.
-2. QLoRA SFT on the documented local hardware budget.
+1. Evaluation-suite v2: 50–100 reviewed examples across independent event families.
+2. Task-specific scoring and a shared failure taxonomy.
+3. Evidence-linked, leakage-checked SFT dataset (50-record validation stage).
+4. QLoRA memory smoke, tiny overfit, adapter save/reload, then first real run.
+5. Minimal-instruct/prompted/RAG/SFT/SFT+RAG frozen comparison.
+
+The detailed priority gates and explicit deferred scope are maintained in
+[`docs/roadmap.md`](roadmap.md).

@@ -177,9 +177,54 @@ uv run aerollm-generation-smoke artifacts/models/ministral-3-3b-instruct-2512 `
 The first invocation includes Triton compilation. Run the identical command again
 to measure a warm kernel cache, and keep both artifacts distinct.
 
+Run the development-only base, prompted, and RAG comparison with the pinned local
+artifacts. The command checkpoints after every answer and resumes identical runs:
+
+```powershell
+uv run aerollm-evaluate-generation `
+  --config configs/evaluation/generation_dev_v1.toml `
+  --dataset data/evaluation/retrieval_dev_v1.json `
+  --corpus artifacts/corpora/ntsb-pilot-v1.json `
+  --dense-index artifacts/indexes/e5-small-v2 `
+  --dense-model artifacts/models/intfloat-e5-small-v2 `
+  --reranker-model artifacts/models/cross-encoder-ms-marco-minilm-l6-v2 `
+  --generation-model artifacts/models/ministral-3-3b-instruct-2512 `
+  --output artifacts/evaluation/generation_dev_v1.json `
+  --review-output artifacts/evaluation/generation_dev_v1.review.json
+```
+
+The test configuration is digest-locked and additionally requires the explicit
+`--allow-frozen-test` flag. Do not run it while selecting prompts or retrieval
+settings; the exact one-time command and results are documented in
+`docs/results/generation-baselines-v1.md`.
+
 The dense retrieval baseline uses the pinned `intfloat/e5-small-v2` revision in
 `configs/retrieval/dense_e5_small_v2.toml`. Model weights, persistent embeddings,
 and raw run reports remain under ignored `artifacts/` paths.
+
+Generate the metadata-only corpus-v2 event review packet from verified cached NTSB
+snapshots (add `--discover` after loading the ignored NTSB environment when more
+metadata is required):
+
+```powershell
+uv run aerollm-select-corpus-v2 `
+  --source-corpus artifacts/corpora/ntsb-pilot-v1.json
+```
+
+Review `artifacts/pilot/corpus_v2_selection.review.json` using
+`docs/evaluation/corpus-v2-selection-review-guide.md`. This stage does not download
+PDFs or draft evaluation questions.
+
+After the reviewed selection has been frozen and corpus v2 materialized, generate
+the 72-slot annotation workbook with:
+
+```powershell
+uv run aerollm-build-suite-v2-review
+```
+
+Review it using
+`docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`. Development
+questions are drafts; locked-test slots must be independently human-authored.
 
 Do not pass `--refresh-plan` during materialization: that flag intentionally
 replaces the reviewed selection. Generated source snapshots, parsed documents,
