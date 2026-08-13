@@ -16,7 +16,7 @@ class ServingConfig:
     top_k: int = 4
     max_new_tokens: int = 256
     temperature: float = 0.0
-    prompt_version: str = "serving-v1"
+    prompt_version: str = "grounded-json-v1"
     request_timeout_seconds: float = 30.0
     max_concurrency: int = 1
     max_question_characters: int = 4_000
@@ -60,18 +60,26 @@ class ServingConfig:
         answer = _table(value, "answer")
         safety = _table(value, "safety")
         if set(service) != {"name", "version"} or set(answer) != {
-            "top_k", "max_new_tokens", "temperature", "prompt_version",
+            "top_k",
+            "max_new_tokens",
+            "temperature",
+            "prompt_version",
         }:
             raise ValueError("invalid serving configuration fields")
         if set(safety) != {
-            "request_timeout_seconds", "max_concurrency", "max_question_characters",
+            "request_timeout_seconds",
+            "max_concurrency",
+            "max_question_characters",
             "max_context_characters",
         }:
             raise ValueError("invalid serving safety configuration fields")
         return cls(
-            service_name=service["name"], service_version=service["version"],
-            top_k=answer["top_k"], max_new_tokens=answer["max_new_tokens"],
-            temperature=answer["temperature"], prompt_version=answer["prompt_version"],
+            service_name=service["name"],
+            service_version=service["version"],
+            top_k=answer["top_k"],
+            max_new_tokens=answer["max_new_tokens"],
+            temperature=answer["temperature"],
+            prompt_version=answer["prompt_version"],
             request_timeout_seconds=safety["request_timeout_seconds"],
             max_concurrency=safety["max_concurrency"],
             max_question_characters=safety["max_question_characters"],

@@ -29,6 +29,9 @@ This page is the narrative milestone log. Reproducible measurements live in
 - Completed development-selected and digest-locked base/prompted/RAG generation
   baselines. On the frozen test set, token F1 increased from 0.091 to 0.213 to
   0.283; RAG evidence coverage was limited to 0.600 by retrieval.
+- Completed and froze the serving-v1 prototype after aligning its versioned JSON
+  prompt, chunk-aware context, and fail-closed `PostprocessorV1` behavior with the
+  offline grounded pipeline. Advanced serving performance work remains deferred.
 
 ## Current milestone
 

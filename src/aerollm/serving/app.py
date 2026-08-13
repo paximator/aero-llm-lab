@@ -22,6 +22,7 @@ from aerollm.serving.contracts import (
     AnswerBackend,
     DependencyInitializer,
     Postprocessor,
+    ProcessedServingAnswer,
     RetrievedPassage,
     Retriever,
     ScopeValidationError,
@@ -81,10 +82,14 @@ def create_app(
     injected = (backend, retriever, postprocessor)
     if initializer is not None and any(item is not None for item in injected):
         raise ValueError("initializer cannot be combined with injected dependencies")
-    dependencies = None if initializer else ServingDependencies(
-        backend=backend or FakeAnswerBackend(),
-        retriever=retriever or FakeRetriever(),
-        postprocessor=postprocessor or IdentityPostprocessor(),
+    dependencies = (
+        None
+        if initializer
+        else ServingDependencies(
+            backend=backend or FakeAnswerBackend(),
+            retriever=retriever or FakeRetriever(),
+            postprocessor=postprocessor or IdentityPostprocessor(),
+        )
     )
     runtime = _RuntimeState(dependencies, BoundedSemaphore(settings.max_concurrency))
 
@@ -99,7 +104,9 @@ def create_app(
         runtime.dependencies = None
 
     app = FastAPI(
-        title=settings.service_name, version=settings.service_version, lifespan=lifespan,
+        title=settings.service_name,
+        version=settings.service_version,
+        lifespan=lifespan,
     )
 
     @app.middleware("http")
@@ -114,14 +121,20 @@ def create_app(
             response.headers["x-request-id"] = request.state.request_id
             return response
         finally:
-            _LOGGER.info(json.dumps({
-                "event": "http_request",
-                "request_id": request.state.request_id,
-                "method": request.method,
-                "path": request.url.path,
-                "status_code": status,
-                "latency_ms": round((time.perf_counter() - started) * 1_000, 3),
-            }, sort_keys=True, separators=(",", ":")))
+            _LOGGER.info(
+                json.dumps(
+                    {
+                        "event": "http_request",
+                        "request_id": request.state.request_id,
+                        "method": request.method,
+                        "path": request.url.path,
+                        "status_code": status,
+                        "latency_ms": round((time.perf_counter() - started) * 1_000, 3),
+                    },
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, _error: RequestValidationError) -> JSONResponse:
@@ -152,7 +165,8 @@ def create_app(
         return HealthResponse(service=settings.service_name, version=settings.service_version)
 
     @app.get(
-        "/ready", response_model=ReadinessResponse,
+        "/ready",
+        response_model=ReadinessResponse,
         responses={503: {"model": ReadinessResponse}},
     )
     def ready() -> ReadinessResponse | JSONResponse:
@@ -174,7 +188,7 @@ def create_app(
         started = time.perf_counter()
         try:
             with anyio.fail_after(settings.request_timeout_seconds):
-                final_answer, backend_name, passages = await anyio.to_thread.run_sync(
+                processed, backend_name, passages = await anyio.to_thread.run_sync(
                     _answer_pipeline,
                     dependencies,
                     payload.question,
@@ -189,11 +203,21 @@ def create_app(
             raise ServingTimeoutError from error
         return AnswerResponse(
             request_id=request.state.request_id,
-            answer=final_answer,
-            sources=[Source(
-                chunk_id=item.chunk_id, score=item.score,
-                event_id=item.event_id, report_id=item.report_id,
-            ) for item in passages],
+            answer=processed.answer,
+            citations=[
+                {"chunk_id": item.chunk_id, "quote": item.quote} for item in processed.citations
+            ],
+            abstained=processed.abstained,
+            abstention_reason=processed.abstention_reason,
+            sources=[
+                Source(
+                    chunk_id=item.chunk_id,
+                    score=item.score,
+                    event_id=item.event_id,
+                    report_id=item.report_id,
+                )
+                for item in passages
+            ],
             backend=backend_name,
             latency_ms=(time.perf_counter() - started) * 1_000,
         )
@@ -209,23 +233,30 @@ def _answer_pipeline(
     request_id: str,
     settings: ServingConfig,
     concurrency: BoundedSemaphore,
-) -> tuple[str, str, tuple[RetrievedPassage, ...]]:
+) -> tuple[ProcessedServingAnswer, str, tuple[RetrievedPassage, ...]]:
     with concurrency:
         passages = dependencies.retriever.retrieve(
-            question, top_k=settings.top_k, event_id=event_id, report_id=report_id,
+            question,
+            top_k=settings.top_k,
+            event_id=event_id,
+            report_id=report_id,
         )
         passages = _bounded_context(passages, settings.max_context_characters)
         generated = dependencies.backend.answer(
-            question, passages, request_id=request_id,
-            max_new_tokens=settings.max_new_tokens, temperature=settings.temperature,
+            question,
+            passages,
+            request_id=request_id,
+            max_new_tokens=settings.max_new_tokens,
+            temperature=settings.temperature,
             prompt_version=settings.prompt_version,
         )
-        final = dependencies.postprocessor.process(generated.text, passages)
-        return final, generated.backend, passages
+        processed = dependencies.postprocessor.process(generated.text, passages)
+        return processed, generated.backend, passages
 
 
 def _bounded_context(
-    passages: tuple[RetrievedPassage, ...], limit: int,
+    passages: tuple[RetrievedPassage, ...],
+    limit: int,
 ) -> tuple[RetrievedPassage, ...]:
     bounded: list[RetrievedPassage] = []
     remaining = limit
@@ -234,16 +265,26 @@ def _bounded_context(
             break
         text = passage.text[:remaining]
         if text:
-            bounded.append(RetrievedPassage(
-                passage.chunk_id, text, passage.score, passage.event_id, passage.report_id,
-            ))
+            bounded.append(
+                RetrievedPassage(
+                    passage.chunk_id,
+                    text,
+                    passage.score,
+                    passage.event_id,
+                    passage.report_id,
+                )
+            )
             remaining -= len(text)
     return tuple(bounded)
 
 
 def _error_response(request: Request, status: int, code: str, message: str) -> JSONResponse:
     request_id = getattr(request.state, "request_id", str(uuid4()))
-    payload = ErrorResponse(error=ErrorDetail(
-        code=code, message=message, request_id=request_id,
-    ))
+    payload = ErrorResponse(
+        error=ErrorDetail(
+            code=code,
+            message=message,
+            request_id=request_id,
+        )
+    )
     return JSONResponse(status_code=status, content=payload.model_dump())

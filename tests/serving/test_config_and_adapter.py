@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from aerollm.generation import BackendIdentity, FakeBackend
+from aerollm.generation.grounded_prompt import GROUNDED_RAG_PROMPT_VERSION
 from aerollm.serving.adapters import ExistingMistralAdapter
 from aerollm.serving.bootstrap import ProductionConfig
 from aerollm.serving.config import ServingConfig
@@ -20,19 +21,27 @@ def test_repository_serving_config_loads() -> None:
 
 
 def test_existing_mistral_adapter_uses_preconstructed_backend() -> None:
+    requests = []
     backend = FakeBackend(
-        {"question": "answer"},
+        responder=lambda request: requests.append(request) or "answer",
         identity=BackendIdentity("transformers-ministral-fp8", "mistral", "commit"),
     )
     adapter = ExistingMistralAdapter(backend)
 
     result = adapter.answer(
-        "question", (RetrievedPassage("one", "context", 1.0),),
-        request_id="req", max_new_tokens=12, temperature=0.0, prompt_version="serving-v1",
+        "question",
+        (RetrievedPassage("one", "context", 1.0),),
+        request_id="req",
+        max_new_tokens=12,
+        temperature=0.0,
+        prompt_version=GROUNDED_RAG_PROMPT_VERSION,
     )
 
     assert result.text == "answer"
     assert result.backend == "transformers-ministral-fp8:mistral"
+    assert requests[0].prompt.endswith("Question: question")
+    assert requests[0].context == ('<chunk id="one">\ncontext\n</chunk>',)
+    assert requests[0].prompt_version == GROUNDED_RAG_PROMPT_VERSION
     assert "aerollm.generation.ministral_backend" not in sys.modules
     assert "vllm" not in result.backend.casefold()
 
@@ -42,6 +51,20 @@ def test_serving_config_rejects_invalid_values() -> None:
         ServingConfig(top_k=0)
     with pytest.raises(ValueError, match="request_timeout_seconds"):
         ServingConfig(request_timeout_seconds=0.0)
+
+
+def test_existing_adapter_rejects_a_different_prompt_contract() -> None:
+    adapter = ExistingMistralAdapter(FakeBackend())
+
+    with pytest.raises(ValueError, match="canonical grounded prompt"):
+        adapter.answer(
+            "question",
+            (RetrievedPassage("one", "context", 1.0),),
+            request_id="req",
+            max_new_tokens=12,
+            temperature=0.0,
+            prompt_version="legacy-prompt",
+        )
 
 
 def test_repository_production_config_loads_without_loading_model() -> None:

@@ -7,10 +7,13 @@ from threading import Lock
 
 from fastapi.testclient import TestClient
 
+from aerollm.postprocessing import PostprocessorV1, RetrievedEvidence
+from aerollm.serving.adapters import GroundedServingPostprocessor
 from aerollm.serving.app import create_app
 from aerollm.serving.config import ServingConfig
 from aerollm.serving.contracts import (
     BackendAnswer,
+    ProcessedServingAnswer,
     RetrievedPassage,
     ScopeValidationError,
     ServingDependencies,
@@ -19,9 +22,14 @@ from aerollm.serving.fakes import FakeAnswerBackend, FakeRetriever, IdentityPost
 
 
 def test_health_reports_configured_service() -> None:
-    client = TestClient(create_app(config=ServingConfig(
-        service_name="test-serving", service_version="v1",
-    )))
+    client = TestClient(
+        create_app(
+            config=ServingConfig(
+                service_name="test-serving",
+                service_version="v1",
+            )
+        )
+    )
 
     response = client.get("/health")
 
@@ -34,7 +42,8 @@ def test_answer_is_deterministic_and_propagates_request_id() -> None:
     client = TestClient(create_app())
 
     first = client.post(
-        "/v1/answer", json={"question": "What happened?"},
+        "/v1/answer",
+        json={"question": "What happened?"},
         headers={"x-request-id": "request-123"},
     )
     second = client.post("/v1/answer", json={"question": "What happened?"})
@@ -62,20 +71,70 @@ def test_dependencies_are_injected_through_protocol_boundaries() -> None:
             return BackendAnswer(" raw ", "injected")
 
     class Postprocessor:
-        def process(self, answer: str, passages: tuple[RetrievedPassage, ...]) -> str:
+        def process(
+            self, answer: str, passages: tuple[RetrievedPassage, ...]
+        ) -> ProcessedServingAnswer:
             events.append((answer, passages))
-            return answer.strip()
+            return ProcessedServingAnswer(answer.strip(), (), False)
 
-    client = TestClient(create_app(
-        retriever=Retriever(), backend=Backend(), postprocessor=Postprocessor(),
-    ))
+    client = TestClient(
+        create_app(
+            retriever=Retriever(),
+            backend=Backend(),
+            postprocessor=Postprocessor(),
+        )
+    )
     response = client.post("/v1/answer", json={"question": "Question"})
 
     assert response.json()["answer"] == "raw"
-    assert response.json()["sources"] == [{
-        "chunk_id": "chunk-7", "score": 0.75, "event_id": None, "report_id": None,
-    }]
+    assert response.json()["sources"] == [
+        {
+            "chunk_id": "chunk-7",
+            "score": 0.75,
+            "event_id": None,
+            "report_id": None,
+        }
+    ]
     assert len(events) == 3
+
+
+def test_serving_and_offline_postprocessing_are_equivalent() -> None:
+    passage = RetrievedPassage("chunk-1", "The aircraft landed safely.", 1.0)
+    raw = json.dumps(
+        {
+            "answer": "The aircraft landed safely.",
+            "citations": [{"chunk_id": "chunk-1", "quote": "landed safely"}],
+            "abstained": False,
+            "abstention_reason": None,
+        }
+    )
+
+    class Retriever:
+        def retrieve(self, query: str, *, top_k: int, **scope):  # type: ignore[no-untyped-def]
+            del query, top_k, scope
+            return (passage,)
+
+    class Backend:
+        def answer(self, question, passages, **options):  # type: ignore[no-untyped-def]
+            del question, passages, options
+            return BackendAnswer(raw, "deterministic")
+
+    offline = PostprocessorV1().process(raw, (RetrievedEvidence(passage.chunk_id, passage.text),))
+    response = TestClient(
+        create_app(
+            retriever=Retriever(),
+            backend=Backend(),
+            postprocessor=GroundedServingPostprocessor(),
+        )
+    ).post("/v1/answer", json={"question": "What happened?"})
+
+    assert response.status_code == 200
+    assert response.json()["answer"] == offline.answer
+    assert response.json()["abstained"] == offline.abstained
+    assert response.json()["abstention_reason"] == offline.abstention_reason
+    assert response.json()["citations"] == [
+        {"chunk_id": item.chunk_id, "quote": item.quote} for item in offline.citations
+    ]
 
 
 def test_validation_and_backend_failures_do_not_leak_details() -> None:
@@ -86,19 +145,25 @@ def test_validation_and_backend_failures_do_not_leak_details() -> None:
             raise RuntimeError("secret model path")
 
     failing_client = TestClient(
-        create_app(retriever=FailingRetriever()), raise_server_exceptions=False,
+        create_app(retriever=FailingRetriever()),
+        raise_server_exceptions=False,
     )
     failed = failing_client.post(
-        "/v1/answer", json={"question": "valid"}, headers={"x-request-id": "failure-1"},
+        "/v1/answer",
+        json={"question": "valid"},
+        headers={"x-request-id": "failure-1"},
     )
 
     assert invalid.status_code == 422
     assert invalid.json()["error"]["message"] == "Request validation failed"
     assert failed.status_code == 500
-    assert failed.json() == {"error": {
-        "code": "internal_error", "message": "Request could not be completed",
-        "request_id": "failure-1",
-    }}
+    assert failed.json() == {
+        "error": {
+            "code": "internal_error",
+            "message": "Request could not be completed",
+            "request_id": "failure-1",
+        }
+    }
     assert "secret" not in failed.text
 
 
@@ -121,7 +186,9 @@ def test_initializer_runs_at_startup_and_becomes_ready() -> None:
     def initialize() -> ServingDependencies:
         calls.append("initialize")
         return ServingDependencies(
-            FakeAnswerBackend(), FakeRetriever(), IdentityPostprocessor(),
+            FakeAnswerBackend(),
+            FakeRetriever(),
+            IdentityPostprocessor(),
         )
 
     app = create_app(initializer=initialize)
@@ -141,7 +208,8 @@ def test_failed_initializer_stays_live_but_unready_without_leaking_error() -> No
         health = client.get("/health")
         readiness = client.get("/ready")
         answer = client.post(
-            "/v1/answer", json={"question": "Question"},
+            "/v1/answer",
+            json={"question": "Question"},
             headers={"x-request-id": "not-ready-1"},
         )
 
@@ -150,7 +218,8 @@ def test_failed_initializer_stays_live_but_unready_without_leaking_error() -> No
     assert readiness.json() == {"status": "not_ready"}
     assert answer.status_code == 503
     assert answer.json()["error"] == {
-        "code": "not_ready", "message": "Service is not ready",
+        "code": "not_ready",
+        "message": "Service is not ready",
         "request_id": "not-ready-1",
     }
     assert "secret" not in answer.text
@@ -194,12 +263,16 @@ def test_slow_backend_returns_safe_timeout() -> None:
 
     config = ServingConfig(request_timeout_seconds=0.01)
     response = TestClient(create_app(config=config, backend=Backend())).post(
-        "/v1/answer", json={"question": "Question"}, headers={"x-request-id": "timeout-1"},
+        "/v1/answer",
+        json={"question": "Question"},
+        headers={"x-request-id": "timeout-1"},
     )
 
     assert response.status_code == 504
     assert response.json()["error"] == {
-        "code": "timeout", "message": "Request timed out", "request_id": "timeout-1",
+        "code": "timeout",
+        "message": "Request timed out",
+        "request_id": "timeout-1",
     }
 
 
@@ -224,9 +297,12 @@ def test_backend_concurrency_is_bounded() -> None:
     client = TestClient(create_app(config=config, backend=Backend()))
 
     with ThreadPoolExecutor(max_workers=2) as executor:
-        responses = list(executor.map(
-            lambda _: client.post("/v1/answer", json={"question": "Question"}), range(2),
-        ))
+        responses = list(
+            executor.map(
+                lambda _: client.post("/v1/answer", json={"question": "Question"}),
+                range(2),
+            )
+        )
 
     assert [response.status_code for response in responses] == [200, 200]
     assert maximum_active == 1
@@ -236,15 +312,19 @@ def test_request_log_is_structured_and_excludes_question(caplog) -> None:  # typ
     caplog.set_level(logging.INFO, logger="aerollm.serving")
 
     response = TestClient(create_app()).post(
-        "/v1/answer", json={"question": "sensitive question"},
+        "/v1/answer",
+        json={"question": "sensitive question"},
         headers={"x-request-id": "log-1"},
     )
 
     record = json.loads(caplog.records[-1].message)
     assert response.status_code == 200
     assert record == {
-        "event": "http_request", "request_id": "log-1", "method": "POST",
-        "path": "/v1/answer", "status_code": 200,
+        "event": "http_request",
+        "request_id": "log-1",
+        "method": "POST",
+        "path": "/v1/answer",
+        "status_code": 200,
         "latency_ms": record["latency_ms"],
     }
     assert record["latency_ms"] >= 0
@@ -254,15 +334,28 @@ def test_request_log_is_structured_and_excludes_question(caplog) -> None:  # typ
 def test_scope_is_forwarded_and_source_provenance_is_returned() -> None:
     class Retriever:
         def retrieve(
-            self, query: str, *, top_k: int, event_id: str | None = None,
+            self,
+            query: str,
+            *,
+            top_k: int,
+            event_id: str | None = None,
             report_id: str | None = None,
         ) -> tuple[RetrievedPassage, ...]:
             assert (query, top_k, event_id, report_id) == (
-                "Question", 4, "event-7", "report-7",
+                "Question",
+                4,
+                "event-7",
+                "report-7",
             )
-            return (RetrievedPassage(
-                "chunk-7", "evidence", 0.9, "event-7", "report-7",
-            ),)
+            return (
+                RetrievedPassage(
+                    "chunk-7",
+                    "evidence",
+                    0.9,
+                    "event-7",
+                    "report-7",
+                ),
+            )
 
     response = TestClient(create_app(retriever=Retriever())).post(
         "/v1/answer",
@@ -270,10 +363,14 @@ def test_scope_is_forwarded_and_source_provenance_is_returned() -> None:
     )
 
     assert response.status_code == 200
-    assert response.json()["sources"] == [{
-        "chunk_id": "chunk-7", "score": 0.9,
-        "event_id": "event-7", "report_id": "report-7",
-    }]
+    assert response.json()["sources"] == [
+        {
+            "chunk_id": "chunk-7",
+            "score": 0.9,
+            "event_id": "event-7",
+            "report_id": "report-7",
+        }
+    ]
 
 
 def test_invalid_scope_returns_safe_validation_error() -> None:
@@ -283,13 +380,15 @@ def test_invalid_scope_returns_safe_validation_error() -> None:
             raise ScopeValidationError("unknown private corpus identifier")
 
     response = TestClient(create_app(retriever=Retriever())).post(
-        "/v1/answer", json={"question": "Question", "event_id": "unknown"},
+        "/v1/answer",
+        json={"question": "Question", "event_id": "unknown"},
         headers={"x-request-id": "scope-1"},
     )
 
     assert response.status_code == 422
     assert response.json()["error"] == {
-        "code": "invalid_scope", "message": "Event/report scope is invalid",
+        "code": "invalid_scope",
+        "message": "Event/report scope is invalid",
         "request_id": "scope-1",
     }
     assert "private" not in response.text

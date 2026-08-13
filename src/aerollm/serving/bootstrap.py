@@ -13,11 +13,10 @@ from typing import Protocol
 from aerollm.evaluation.corpus import CorpusManifest
 from aerollm.retrieval.bm25 import BM25Index
 from aerollm.retrieval.schemas import RetrievalResult
-from aerollm.serving.adapters import ExistingMistralAdapter
+from aerollm.serving.adapters import ExistingMistralAdapter, GroundedServingPostprocessor
 from aerollm.serving.app import create_app
 from aerollm.serving.config import ServingConfig
 from aerollm.serving.contracts import RetrievedPassage, ScopeValidationError, ServingDependencies
-from aerollm.serving.fakes import IdentityPostprocessor
 
 DEFAULT_PRODUCTION_CONFIG = Path("configs/serving/production_v1.toml")
 CONFIG_ENVIRONMENT_VARIABLE = "AEROLLM_SERVING_CONFIG"
@@ -86,18 +85,30 @@ class ProductionConfig:
         dense = _table(value, "dense")
         reranker = _table(value, "reranker")
         if set(runtime) != {
-            "corpus_path", "model_path", "dense_index_path", "dense_model_path",
-            "reranker_model_path", "fp8_kernel_path",
+            "corpus_path",
+            "model_path",
+            "dense_index_path",
+            "dense_model_path",
+            "reranker_model_path",
+            "fp8_kernel_path",
         } or set(model) != {
-            "id", "revision", "fp8_kernel_revision",
+            "id",
+            "revision",
+            "fp8_kernel_revision",
         }:
             raise ValueError("invalid production serving configuration fields")
-        if set(retrieval) != {
-            "mode", "lexical_weight", "rrf_constant", "hybrid_candidate_k",
-            "reranker_candidate_k",
-        } or set(dense) != {"id", "revision", "device", "batch_size"} or set(
-            reranker
-        ) != {"id", "revision", "device", "batch_size"}:
+        if (
+            set(retrieval)
+            != {
+                "mode",
+                "lexical_weight",
+                "rrf_constant",
+                "hybrid_candidate_k",
+                "reranker_candidate_k",
+            }
+            or set(dense) != {"id", "revision", "device", "batch_size"}
+            or set(reranker) != {"id", "revision", "device", "batch_size"}
+        ):
             raise ValueError("invalid production retrieval configuration fields")
         return cls(
             serving=ServingConfig.from_toml(path),
@@ -148,8 +159,11 @@ class FilteredSearchIndex:
 
 class CorpusSearchRetriever:
     def __init__(
-        self, corpus: CorpusManifest, index: SearchIndex,
-        *, scoped_index_factory=None,
+        self,
+        corpus: CorpusManifest,
+        index: SearchIndex,
+        *,
+        scoped_index_factory=None,
     ) -> None:  # type: ignore[no-untyped-def]
         documents = {document.document_id: document for document in corpus.documents}
         sources = {source.sha256: source for source in corpus.sources}
@@ -162,19 +176,27 @@ class CorpusSearchRetriever:
         self._scoped_index_factory = scoped_index_factory
 
     def retrieve(
-        self, query: str, *, top_k: int, event_id: str | None = None,
+        self,
+        query: str,
+        *,
+        top_k: int,
+        event_id: str | None = None,
         report_id: str | None = None,
     ) -> tuple[RetrievedPassage, ...]:
         allowed = self._allowed_ids(event_id, report_id)
         index = self._index
         if allowed is not None:
-            index = self._scoped_index_factory(allowed) if self._scoped_index_factory else (
-                FilteredSearchIndex(index, allowed, len(self._chunks))
+            index = (
+                self._scoped_index_factory(allowed)
+                if self._scoped_index_factory
+                else (FilteredSearchIndex(index, allowed, len(self._chunks)))
             )
         result = index.search(query, k=top_k)
         return tuple(
             RetrievedPassage(
-                hit.chunk_id, self._chunks[hit.chunk_id], hit.score,
+                hit.chunk_id,
+                self._chunks[hit.chunk_id],
+                hit.score,
                 self._provenance[hit.chunk_id].event_id,
                 self._provenance[hit.chunk_id].source_document_id,
             )
@@ -182,12 +204,15 @@ class CorpusSearchRetriever:
         )
 
     def _allowed_ids(
-        self, event_id: str | None, report_id: str | None,
+        self,
+        event_id: str | None,
+        report_id: str | None,
     ) -> frozenset[str] | None:
         if event_id is None and report_id is None:
             return None
         allowed = frozenset(
-            chunk_id for chunk_id, source in self._provenance.items()
+            chunk_id
+            for chunk_id, source in self._provenance.items()
             if (event_id is None or source.event_id == event_id)
             and (report_id is None or source.source_document_id == report_id)
         )
@@ -220,12 +245,14 @@ def build_production_dependencies(config: ProductionConfig) -> ServingDependenci
     return ServingDependencies(
         backend=ExistingMistralAdapter(model),
         retriever=retriever,
-        postprocessor=IdentityPostprocessor(),
+        postprocessor=GroundedServingPostprocessor(),
     )
 
 
 def build_production_retriever(
-    config: ProductionConfig, corpus: CorpusManifest, corpus_sha256: str,
+    config: ProductionConfig,
+    corpus: CorpusManifest,
+    corpus_sha256: str,
 ) -> CorpusSearchRetriever:
     lexical = BM25Index(corpus.chunks, corpus_sha256=corpus_sha256)
     if config.retrieval_mode == "bm25":
@@ -238,8 +265,10 @@ def build_production_retriever(
     from aerollm.retrieval.rerank_transformers import TransformersCrossEncoder
 
     encoder = TransformersDenseEncoder.from_local_path(
-        config.dense_model_path, model_id=config.dense_model_id,
-        model_revision=config.dense_model_revision, device=config.dense_device,
+        config.dense_model_path,
+        model_id=config.dense_model_id,
+        model_revision=config.dense_model_revision,
+        device=config.dense_device,
         batch_size=config.dense_batch_size,
     )
     dense = DenseIndex.load(config.dense_index_path, encoder)
@@ -248,6 +277,7 @@ def build_production_retriever(
         raise ValueError("dense index corpus digest does not match serving corpus")
     if dense.manifest.chunk_ids != expected_chunk_ids:
         raise ValueError("dense index chunks do not match serving corpus")
+
     def hybrid_index(allowed: frozenset[str] | None = None) -> HybridIndex:
         lexical_index = lexical
         dense_index = dense
@@ -255,27 +285,38 @@ def build_production_retriever(
             lexical_index = FilteredSearchIndex(lexical, allowed, len(corpus.chunks))
             dense_index = FilteredSearchIndex(dense, allowed, len(corpus.chunks))
         return HybridIndex(
-            lexical_index, dense_index, lexical_index_id=lexical.manifest.index_id,
-            dense_index_id=dense.manifest.index_id, lexical_weight=config.lexical_weight,
-            rrf_constant=config.rrf_constant, candidate_k=config.hybrid_candidate_k,
+            lexical_index,
+            dense_index,
+            lexical_index_id=lexical.manifest.index_id,
+            dense_index_id=dense.manifest.index_id,
+            lexical_weight=config.lexical_weight,
+            rrf_constant=config.rrf_constant,
+            candidate_k=config.hybrid_candidate_k,
         )
 
     hybrid = hybrid_index()
     scorer = TransformersCrossEncoder.from_local_path(
-        config.reranker_model_path, model_id=config.reranker_model_id,
-        model_revision=config.reranker_model_revision, device=config.reranker_device,
+        config.reranker_model_path,
+        model_id=config.reranker_model_id,
+        model_revision=config.reranker_model_revision,
+        device=config.reranker_device,
         batch_size=config.reranker_batch_size,
     )
+
     def reranked_index(allowed: frozenset[str] | None = None) -> RerankedIndex:
         candidates = hybrid if allowed is None else hybrid_index(allowed)
         return RerankedIndex(
-            candidates, corpus.chunks, scorer,
+            candidates,
+            corpus.chunks,
+            scorer,
             candidate_index_id=candidates.manifest.index_id,
             candidate_k=config.reranker_candidate_k,
         )
 
     return CorpusSearchRetriever(
-        corpus, reranked_index(), scoped_index_factory=reranked_index,
+        corpus,
+        reranked_index(),
+        scoped_index_factory=reranked_index,
     )
 
 

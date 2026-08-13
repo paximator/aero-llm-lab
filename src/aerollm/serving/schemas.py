@@ -20,9 +20,17 @@ class Source(BaseModel):
     report_id: str | None = None
 
 
+class Citation(BaseModel):
+    chunk_id: str
+    quote: str
+
+
 class AnswerResponse(BaseModel):
     request_id: str
-    answer: str
+    answer: str | None
+    citations: list[Citation] = Field(default_factory=list)
+    abstained: bool = False
+    abstention_reason: str | None = None
     sources: list[Source]
     backend: str
     latency_ms: float

@@ -2,19 +2,26 @@
 
 import hashlib
 
-from aerollm.serving.contracts import BackendAnswer, RetrievedPassage
+from aerollm.serving.contracts import BackendAnswer, ProcessedServingAnswer, RetrievedPassage
 
 
 class FakeRetriever:
     def retrieve(
-        self, query: str, *, top_k: int, event_id: str | None = None,
+        self,
+        query: str,
+        *,
+        top_k: int,
+        event_id: str | None = None,
         report_id: str | None = None,
     ) -> tuple[RetrievedPassage, ...]:
         digest = hashlib.sha256(query.encode("utf-8")).hexdigest()[:12]
         return tuple(
             RetrievedPassage(
-                f"fake-{digest}-{index}", f"Evidence {index} for: {query}", 1.0 / index,
-                event_id, report_id,
+                f"fake-{digest}-{index}",
+                f"Evidence {index} for: {query}",
+                1.0 / index,
+                event_id,
+                report_id,
             )
             for index in range(1, min(top_k, 2) + 1)
         )
@@ -22,8 +29,14 @@ class FakeRetriever:
 
 class FakeAnswerBackend:
     def answer(
-        self, question: str, passages: tuple[RetrievedPassage, ...], *,
-        request_id: str, max_new_tokens: int, temperature: float, prompt_version: str,
+        self,
+        question: str,
+        passages: tuple[RetrievedPassage, ...],
+        *,
+        request_id: str,
+        max_new_tokens: int,
+        temperature: float,
+        prompt_version: str,
     ) -> BackendAnswer:
         del request_id, max_new_tokens, temperature, prompt_version
         payload = "|".join((question, *(passage.chunk_id for passage in passages)))
@@ -32,6 +45,8 @@ class FakeAnswerBackend:
 
 
 class IdentityPostprocessor:
-    def process(self, answer: str, passages: tuple[RetrievedPassage, ...]) -> str:
+    def process(
+        self, answer: str, passages: tuple[RetrievedPassage, ...]
+    ) -> ProcessedServingAnswer:
         del passages
-        return answer
+        return ProcessedServingAnswer(answer, (), False)
