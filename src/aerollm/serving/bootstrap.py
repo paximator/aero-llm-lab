@@ -31,6 +31,7 @@ class ProductionConfig:
     model_id: str
     model_revision: str
     fp8_kernel_revision: str
+    fp8_kernel_path: Path
     retrieval_mode: str
     dense_index_path: Path
     dense_model_path: Path
@@ -86,7 +87,7 @@ class ProductionConfig:
         reranker = _table(value, "reranker")
         if set(runtime) != {
             "corpus_path", "model_path", "dense_index_path", "dense_model_path",
-            "reranker_model_path",
+            "reranker_model_path", "fp8_kernel_path",
         } or set(model) != {
             "id", "revision", "fp8_kernel_revision",
         }:
@@ -105,6 +106,7 @@ class ProductionConfig:
             model_id=model["id"],  # type: ignore[arg-type]
             model_revision=model["revision"],  # type: ignore[arg-type]
             fp8_kernel_revision=model["fp8_kernel_revision"],  # type: ignore[arg-type]
+            fp8_kernel_path=Path(runtime["fp8_kernel_path"]),  # type: ignore[arg-type]
             retrieval_mode=retrieval["mode"],  # type: ignore[arg-type]
             dense_index_path=Path(runtime["dense_index_path"]),  # type: ignore[arg-type]
             dense_model_path=Path(runtime["dense_model_path"]),  # type: ignore[arg-type]
@@ -151,6 +153,11 @@ def build_production_dependencies(config: ProductionConfig) -> ServingDependenci
 
     from aerollm.generation.ministral_backend import MinistralBackend
 
+    if not config.fp8_kernel_path.is_dir():
+        raise ValueError("configured local FP8 kernel path does not exist")
+    os.environ["LOCAL_KERNELS"] = (
+        f"kernels-community/finegrained-fp8={config.fp8_kernel_path.as_posix()}"
+    )
     model = MinistralBackend.from_local_path(
         config.model_path,
         model_id=config.model_id,

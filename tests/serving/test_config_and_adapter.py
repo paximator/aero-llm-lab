@@ -52,4 +52,5 @@ def test_repository_production_config_loads_without_loading_model() -> None:
     assert config.retrieval_mode == "hybrid_reranked"
     assert config.dense_model_id == "intfloat/e5-small-v2"
     assert config.reranker_candidate_k == 20
+    assert config.fp8_kernel_path == Path("artifacts/kernels/finegrained-fp8")
     assert "aerollm.generation.ministral_backend" not in sys.modules

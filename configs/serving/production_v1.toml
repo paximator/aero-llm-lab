@@ -4,12 +4,12 @@ version = "v1"
 
 [answer]
 top_k = 4
-max_new_tokens = 256
+max_new_tokens = 48
 temperature = 0.0
 prompt_version = "serving-v1"
 
 [safety]
-request_timeout_seconds = 30.0
+request_timeout_seconds = 120.0
 max_concurrency = 1
 max_question_characters = 4000
 max_context_characters = 16000
@@ -20,6 +20,7 @@ model_path = "artifacts/models/Ministral-3-3B-Instruct-2512"
 dense_index_path = "artifacts/indexes/e5-small-v2"
 dense_model_path = "artifacts/models/e5-small-v2"
 reranker_model_path = "artifacts/models/ms-marco-MiniLM-L6-v2"
+fp8_kernel_path = "artifacts/kernels/finegrained-fp8"
 
 [model]
 id = "mistralai/Ministral-3-3B-Instruct-2512"
