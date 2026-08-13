@@ -1,0 +1,69 @@
+# Evaluation suite v2 status
+
+This note records the implementation status and the deliberate delivery boundary
+of evaluation suite v2 for development review. It must not be read as a frozen
+benchmark announcement.
+
+## Status at a glance
+
+| Area | Status | Meaning |
+| --- | --- | --- |
+| Coverage plan | Approved | The target is 72 examples with fixed task-type quotas. |
+| Corpus and split assignment | Ready | Eight independent event families are assigned: three to development and five to test. |
+| Development examples | Complete for this stage | 27 model-assisted question/answer records have been reviewed and approved. |
+| Test examples | Structure ready; content outstanding | 45 quota-controlled slots have their report, event family, split, task type, and scoring strategy assigned, but still require independent human authoring. |
+| Suite freeze | Not ready | The suite remains `2.0.0-draft` with status `human_review_and_test_authoring_required`. |
+
+## Deliberate scope choice
+
+The initial implementation completed 27 development question/answer records to
+exercise the annotation schema and workflow end to end: task allocation, exact
+evidence resolution, answerability, scoring strategy, tags, review status, and
+coverage accounting.
+
+The remaining 45 records were intentionally created as ready-to-fill test slots.
+Their stable fields are already populated, but their questions, reference answers,
+evidence, structured targets, required facts, authors, and reviews must be supplied
+through the human workflow. This time-boxed boundary makes the unfinished work
+visible and avoids presenting model-generated test labels as independent human
+evaluation data.
+
+This is therefore a completed development scaffold, not a completed evaluation
+suite. The 27 approved development records can support workflow development and
+diagnostics. The 45 test slots cannot yet support benchmark results or model-quality
+claims.
+
+## Methodological position
+
+- Published v1 event families keep their historical splits.
+- Test event families remain isolated from prompt, retrieval, training, and
+  hyperparameter selection.
+- Model-assisted drafting is allowed for development records and is recorded with
+  `is_synthetic: true`.
+- Test questions must be independently human-authored; later review must be carried
+  out by someone other than the author.
+- Coverage is controlled before test authoring so that annotation effort cannot
+  silently reshape the benchmark around convenient questions.
+- The suite is frozen only after schema, evidence, duplicate, leakage, coverage,
+  and independent-review gates pass.
+
+## Remaining work
+
+1. Human-author all 45 test slots from their assigned reports and task types.
+2. Complete task-specific targets, required key facts, evidence spans, and
+   full-report search notes for unanswerable examples.
+3. Independently review every test record and resolve requested changes.
+4. Run schema, exact-evidence, event-family leakage, duplicate/near-duplicate,
+   task-target consistency, and coverage validation.
+5. Freeze the final bytes and SHA-256 digest, then record the migration boundary
+   from the historical v1 benchmark.
+
+Until those steps are complete, the correct top-level status is
+`human_review_and_test_authoring_required`.
+
+## Review entry points
+
+- Coverage decision: `configs/evaluation/evaluation_suite_v2.proposal.toml`
+- Review workbook: `artifacts/evaluation/evaluation_suite_v2.review.json`
+- Annotation procedure: `docs/evaluation/evaluation-suite-v2-annotation-review-guide.md`
+- Corpus selection procedure: `docs/evaluation/corpus-v2-selection-review-guide.md`

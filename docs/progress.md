@@ -36,6 +36,11 @@ Build evaluation-suite v2 and task-specific scoring as bounded credibility gates
 while beginning the train-only evidence-linked SFT dataset. Then run the QLoRA
 memory and tiny-overfit gates without adding new framework layers.
 
+Evaluation-suite v2 currently has 27 approved development examples and 45
+ready-to-fill test slots that still require independent human authoring and review.
+See the [suite v2 status and remaining work](evaluation/evaluation-suite-v2-status.md)
+for the explicit delivery boundary.
+
 ## Next milestones
 
 1. Evaluation-suite v2: 50–100 reviewed examples across independent event families.
