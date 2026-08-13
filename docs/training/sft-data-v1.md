@@ -7,6 +7,7 @@ It is a pipeline-validation dataset, not the future 250-record reviewed SFT set.
 Each record retains:
 
 - record, event, event-family, report, and source-chunk identities;
+- the official NTSB investigation page and exact PDF page numbers;
 - system, user, and assistant messages;
 - task type and synthetic provenance;
 - review status and an inspectable token-count estimate;
@@ -36,3 +37,15 @@ Five distributed records received a model-assisted qualitative sample review in
 `data/training/sft_v1_50.sample_review.json`. That review found the records usable
 for pipeline validation and identified one lower-value document cross-reference.
 It is explicitly not a substitute for repository-owner sampling before training.
+
+Inspect one record without joining corpus internals manually:
+
+```powershell
+uv run aerollm-review-sft-data data/training/sft_v1_50.json `
+  --record sft-3da25ea25fb5d3df
+```
+
+The command prints the official investigation page, the PDF page number(s), the
+source chunk, instruction, expected answer, and exact citation. On the NTSB page,
+open the `Reports` section to reach the associated PDF. The dataset deliberately
+labels this as an investigation URL rather than claiming it is a direct PDF URL.

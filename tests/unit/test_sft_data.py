@@ -8,6 +8,7 @@ from aerollm.common.documents import Chunk
 from aerollm.common.schemas import Document, PageSpan, Split
 from aerollm.evaluation.corpus import CorpusManifest, SourceManifestEntry
 from aerollm.training.sft_data import build_sft_dataset, validate_sft_dataset
+from aerollm.training.sft_review_cli import main as review_main
 
 
 def _corpus() -> CorpusManifest:
@@ -56,6 +57,8 @@ def test_builder_selects_only_train_families_and_exact_evidence() -> None:
         "family-1",
         "family-2",
     }
+    assert dataset["records"][0]["source_pages"] == [1]
+    assert dataset["records"][0]["investigation_url"].endswith("event-1.aspx")
     validate_sft_dataset(dataset, corpus)
 
 
@@ -102,3 +105,21 @@ def test_repository_dataset_has_expected_validation_stage_shape() -> None:
     )
     record_ids = {record["record_id"] for record in dataset["records"]}
     assert {item["record_id"] for item in review["reviews"]} <= record_ids
+
+
+def test_review_cli_shows_official_url_pages_and_expected_answer(capsys) -> None:  # type: ignore[no-untyped-def]
+    root = Path(__file__).parents[2]
+
+    result = review_main(
+        [
+            str(root / "data/training/sft_v1_50.json"),
+            "--record",
+            "sft-3da25ea25fb5d3df",
+        ]
+    )
+
+    output = capsys.readouterr().out
+    assert result == 0
+    assert "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx" in output
+    assert "PDF page(s):" in output
+    assert "Expected answer:" in output

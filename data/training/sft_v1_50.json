@@ -5,6 +5,7 @@
     {
       "event_family_id": "ANC20MA010",
       "event_id": "ANC20MA010",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -26,12 +27,16 @@
       "source_chunk_ids": [
         "chk_006c68fc7ef3933d293dc1ad5509cef83bd7213a9f72b518bb90a7632d68a55d"
       ],
+      "source_pages": [
+        18
+      ],
       "task_type": "grounded_extraction",
       "token_count": 232
     },
     {
       "event_family_id": "CEN19FA072",
       "event_id": "CEN19FA072",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19FA072.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -53,12 +58,16 @@
       "source_chunk_ids": [
         "chk_00eae0f160fc09fc7341499c26e5b298261e0138853d8707fd3e53abb7d50f4a"
       ],
+      "source_pages": [
+        63
+      ],
       "task_type": "grounded_extraction",
       "token_count": 222
     },
     {
       "event_family_id": "CEN19MA141",
       "event_id": "CEN19MA141",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19MA141.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -80,12 +89,16 @@
       "source_chunk_ids": [
         "chk_0040c35a5c1c9b60c263e86a2af835c19f3cdcd9510c1b1bd6d78a92937a2353"
       ],
+      "source_pages": [
+        44
+      ],
       "task_type": "grounded_extraction",
       "token_count": 376
     },
     {
       "event_family_id": "DCA18MA142",
       "event_id": "DCA18MA142",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA18MA142.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -107,12 +120,16 @@
       "source_chunk_ids": [
         "chk_01d6c9fada1639e2e201f0c898dd7f16b7893f7d7dabc3a6462932c12733e842"
       ],
+      "source_pages": [
+        23
+      ],
       "task_type": "grounded_extraction",
       "token_count": 303
     },
     {
       "event_family_id": "DCA19MA086",
       "event_id": "DCA19MA086",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA19MA086.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -134,12 +151,16 @@
       "source_chunk_ids": [
         "chk_00602e727f76ec6e77520755b5ff46fa00ac593213016e6e5e5dc761ac044fa1"
       ],
+      "source_pages": [
+        23
+      ],
       "task_type": "grounded_extraction",
       "token_count": 139
     },
     {
       "event_family_id": "DCA20MA002",
       "event_id": "DCA20MA002",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA20MA002.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -161,12 +182,16 @@
       "source_chunk_ids": [
         "chk_006b7f29171ef83f369f1d39627342a240c1c822a1e812c01f0d4710831713aa"
       ],
+      "source_pages": [
+        60
+      ],
       "task_type": "grounded_extraction",
       "token_count": 343
     },
     {
       "event_family_id": "DCA23FA149",
       "event_id": "DCA23FA149",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23FA149.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -188,12 +213,16 @@
       "source_chunk_ids": [
         "chk_001e64d4cbeacb10f2a15af465d47cd26eb1c10f33bb1fe714943bd6908feee1"
       ],
+      "source_pages": [
+        12
+      ],
       "task_type": "grounded_extraction",
       "token_count": 337
     },
     {
       "event_family_id": "DCA23LA125",
       "event_id": "DCA23LA125",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23LA125.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -215,12 +244,16 @@
       "source_chunk_ids": [
         "chk_03e6c6d21207b33337c113b73a8fa84eebe9ba07b5088103b3c23b66d67b898c"
       ],
+      "source_pages": [
+        25
+      ],
       "task_type": "grounded_extraction",
       "token_count": 170
     },
     {
       "event_family_id": "DCA24MA063",
       "event_id": "DCA24MA063",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA24MA063.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -242,12 +275,16 @@
       "source_chunk_ids": [
         "chk_00522b08cb830f42e6677e203f4581d6fe0addb3e348ad4bf9d58136c734e7d2"
       ],
+      "source_pages": [
+        12
+      ],
       "task_type": "grounded_extraction",
       "token_count": 282
     },
     {
       "event_family_id": "ERA18MA099",
       "event_id": "ERA18MA099",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA18MA099.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -269,12 +306,16 @@
       "source_chunk_ids": [
         "chk_0011837325e21bb7ae180eb5daa0bea516398c09225a7cd02e7709867af60245"
       ],
+      "source_pages": [
+        101
+      ],
       "task_type": "grounded_extraction",
       "token_count": 378
     },
     {
       "event_family_id": "ERA22FA279",
       "event_id": "ERA22FA279",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA22FA279.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -296,12 +337,16 @@
       "source_chunk_ids": [
         "chk_026d45387438263e4967a85dbe7a0aaa895fff6d6c503a6e007cf6e85221b967"
       ],
+      "source_pages": [
+        66
+      ],
       "task_type": "grounded_extraction",
       "token_count": 268
     },
     {
       "event_family_id": "WPR19MA177",
       "event_id": "WPR19MA177",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/WPR19MA177.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -323,12 +368,16 @@
       "source_chunk_ids": [
         "chk_01a4e0bddf4919e85ad0eccec38586bdba655d8ad5f3986f23551731cc59434c"
       ],
+      "source_pages": [
+        46
+      ],
       "task_type": "grounded_extraction",
       "token_count": 251
     },
     {
       "event_family_id": "WPR25FA088",
       "event_id": "WPR25FA088",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/WPR25FA088.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -350,12 +399,16 @@
       "source_chunk_ids": [
         "chk_1906e67e1951828924802f63cf956cfb9f2396f4bf250900438739f45d1ea2a0"
       ],
+      "source_pages": [
+        2
+      ],
       "task_type": "grounded_extraction",
       "token_count": 259
     },
     {
       "event_family_id": "ANC20MA010",
       "event_id": "ANC20MA010",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -377,12 +430,16 @@
       "source_chunk_ids": [
         "chk_010f2faa4f8ad5ca13782332d7a3333c1c7fc2b509d87cff9f9361d0c753a2b8"
       ],
+      "source_pages": [
+        83
+      ],
       "task_type": "grounded_extraction",
       "token_count": 312
     },
     {
       "event_family_id": "CEN19FA072",
       "event_id": "CEN19FA072",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19FA072.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -404,12 +461,16 @@
       "source_chunk_ids": [
         "chk_01a9ee1fdd92777f7f65fa0d6a6c118e5698cfe6effaf4c3a0585a4d1a92d45c"
       ],
+      "source_pages": [
+        42
+      ],
       "task_type": "grounded_extraction",
       "token_count": 109
     },
     {
       "event_family_id": "CEN19MA141",
       "event_id": "CEN19MA141",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19MA141.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -431,12 +492,16 @@
       "source_chunk_ids": [
         "chk_02bfd63ef3878d25b1dc02b202fa35d9f1c2bbc7a003ad58e052abe721e7c8bd"
       ],
+      "source_pages": [
+        32
+      ],
       "task_type": "grounded_extraction",
       "token_count": 304
     },
     {
       "event_family_id": "DCA18MA142",
       "event_id": "DCA18MA142",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA18MA142.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -458,12 +523,16 @@
       "source_chunk_ids": [
         "chk_02f42bc8c29dd1bcbc8b29c38dc4f0bd369e8921c311e521c31abd2556a8d3d9"
       ],
+      "source_pages": [
+        87
+      ],
       "task_type": "grounded_extraction",
       "token_count": 230
     },
     {
       "event_family_id": "DCA19MA086",
       "event_id": "DCA19MA086",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA19MA086.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -485,12 +554,16 @@
       "source_chunk_ids": [
         "chk_01ad4cc94535d45ed4e087cb7f06ad8609573790d5efe92ca5826802d188f5c9"
       ],
+      "source_pages": [
+        25
+      ],
       "task_type": "grounded_extraction",
       "token_count": 309
     },
     {
       "event_family_id": "DCA20MA002",
       "event_id": "DCA20MA002",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA20MA002.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -512,12 +585,16 @@
       "source_chunk_ids": [
         "chk_00b04680e270a7ff8e79122855042447407b51de9973d8367dfb3991c3f0c6b5"
       ],
+      "source_pages": [
+        114
+      ],
       "task_type": "grounded_extraction",
       "token_count": 285
     },
     {
       "event_family_id": "DCA23FA149",
       "event_id": "DCA23FA149",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23FA149.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -539,12 +616,16 @@
       "source_chunk_ids": [
         "chk_009a2e7bad046dbabb70d3f803427eeba5d2570f0434cd6e220dd01dc3ee4597"
       ],
+      "source_pages": [
+        69
+      ],
       "task_type": "grounded_extraction",
       "token_count": 322
     },
     {
       "event_family_id": "DCA23LA125",
       "event_id": "DCA23LA125",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23LA125.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -566,12 +647,16 @@
       "source_chunk_ids": [
         "chk_082e66a242c6ed8eabd20e478cc6dd8a00f65284801d5ffb9d7a5ad9f9ae832e"
       ],
+      "source_pages": [
+        68
+      ],
       "task_type": "grounded_extraction",
       "token_count": 235
     },
     {
       "event_family_id": "DCA24MA063",
       "event_id": "DCA24MA063",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA24MA063.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -593,12 +678,16 @@
       "source_chunk_ids": [
         "chk_00709601a31427847efe4998bc67bff57661a2b856522be492b79456ae836e77"
       ],
+      "source_pages": [
+        57
+      ],
       "task_type": "grounded_extraction",
       "token_count": 298
     },
     {
       "event_family_id": "ERA18MA099",
       "event_id": "ERA18MA099",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA18MA099.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -620,12 +709,16 @@
       "source_chunk_ids": [
         "chk_007726bcbf6e7333f176963c3609b136ce1de783b5e3fa8c25cdb3d5a0bb9f88"
       ],
+      "source_pages": [
+        68
+      ],
       "task_type": "grounded_extraction",
       "token_count": 329
     },
     {
       "event_family_id": "ERA22FA279",
       "event_id": "ERA22FA279",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA22FA279.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -647,12 +740,16 @@
       "source_chunk_ids": [
         "chk_046747525b0769849c8f31c3359dc500761f35c96c947fd3319dfeac9415da1f"
       ],
+      "source_pages": [
+        50
+      ],
       "task_type": "grounded_extraction",
       "token_count": 301
     },
     {
       "event_family_id": "WPR19MA177",
       "event_id": "WPR19MA177",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/WPR19MA177.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -674,12 +771,16 @@
       "source_chunk_ids": [
         "chk_02e67842ab6f1e19e8c0312fd2a555ac8d524e5e6c49e83df77982027caed7d1"
       ],
+      "source_pages": [
+        52
+      ],
       "task_type": "grounded_extraction",
       "token_count": 286
     },
     {
       "event_family_id": "WPR25FA088",
       "event_id": "WPR25FA088",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/WPR25FA088.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -701,12 +802,16 @@
       "source_chunk_ids": [
         "chk_1cf928f09337854a5cbd0a9462593799b3e893163e34867b92eb3e8ba206589d"
       ],
+      "source_pages": [
+        1
+      ],
       "task_type": "grounded_extraction",
       "token_count": 311
     },
     {
       "event_family_id": "ANC20MA010",
       "event_id": "ANC20MA010",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -728,12 +833,16 @@
       "source_chunk_ids": [
         "chk_0132228f036a4ed09e8453aa46b323cf060503fa75848c540e6d4f7d3f928b42"
       ],
+      "source_pages": [
+        102
+      ],
       "task_type": "grounded_extraction",
       "token_count": 323
     },
     {
       "event_family_id": "CEN19FA072",
       "event_id": "CEN19FA072",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19FA072.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -755,12 +864,16 @@
       "source_chunk_ids": [
         "chk_03bd13b6f7868825c385e1846547747bd8fca791485c21fa6ba30a0333ca825d"
       ],
+      "source_pages": [
+        86
+      ],
       "task_type": "grounded_extraction",
       "token_count": 132
     },
     {
       "event_family_id": "CEN19MA141",
       "event_id": "CEN19MA141",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19MA141.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -782,12 +895,16 @@
       "source_chunk_ids": [
         "chk_037c3f116f8515056e74a68c65f0619a92f5d67b9de3b27497ca51ddc6d2899d"
       ],
+      "source_pages": [
+        6
+      ],
       "task_type": "grounded_extraction",
       "token_count": 159
     },
     {
       "event_family_id": "DCA18MA142",
       "event_id": "DCA18MA142",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA18MA142.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -809,12 +926,16 @@
       "source_chunk_ids": [
         "chk_0335d64849c107e2f14508d3763c3c48c9da0fa9371b2855833021e50f762c9a"
       ],
+      "source_pages": [
+        103
+      ],
       "task_type": "grounded_extraction",
       "token_count": 130
     },
     {
       "event_family_id": "DCA19MA086",
       "event_id": "DCA19MA086",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA19MA086.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -836,12 +957,16 @@
       "source_chunk_ids": [
         "chk_01e0f5f6caefe6f9b19d395a082843926dfad1a6679ed26243da55f09a460a27"
       ],
+      "source_pages": [
+        53
+      ],
       "task_type": "grounded_extraction",
       "token_count": 233
     },
     {
       "event_family_id": "DCA20MA002",
       "event_id": "DCA20MA002",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA20MA002.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -863,12 +988,16 @@
       "source_chunk_ids": [
         "chk_00f275fc41c6c6c66400e473b48de32e550e16c6a3b36fe4ab3dacfaa4acc05d"
       ],
+      "source_pages": [
+        196
+      ],
       "task_type": "grounded_extraction",
       "token_count": 332
     },
     {
       "event_family_id": "DCA23FA149",
       "event_id": "DCA23FA149",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23FA149.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -890,12 +1019,16 @@
       "source_chunk_ids": [
         "chk_030818fe1d2c328fa3561018707e5fa48210a582c6fcb38213fc3edbbfb25867"
       ],
+      "source_pages": [
+        20
+      ],
       "task_type": "grounded_extraction",
       "token_count": 399
     },
     {
       "event_family_id": "DCA23LA125",
       "event_id": "DCA23LA125",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23LA125.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -917,12 +1050,16 @@
       "source_chunk_ids": [
         "chk_0c36eea0822129d6fde8c8e12c899871353f5235ef0b1f2866c790c527f84e69"
       ],
+      "source_pages": [
+        48
+      ],
       "task_type": "grounded_extraction",
       "token_count": 143
     },
     {
       "event_family_id": "DCA24MA063",
       "event_id": "DCA24MA063",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA24MA063.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -944,12 +1081,16 @@
       "source_chunk_ids": [
         "chk_0248e6bdc88ed8645748315b61c7cffea8ff0cae4d43fdacb9a69cb75d204fb0"
       ],
+      "source_pages": [
+        50
+      ],
       "task_type": "grounded_extraction",
       "token_count": 254
     },
     {
       "event_family_id": "ERA18MA099",
       "event_id": "ERA18MA099",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA18MA099.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -971,12 +1112,16 @@
       "source_chunk_ids": [
         "chk_00ba74d889c42ad9a5d60cb2fdd55c21669f0d31ffed34c2653cbccf28b71d03"
       ],
+      "source_pages": [
+        73
+      ],
       "task_type": "grounded_extraction",
       "token_count": 351
     },
     {
       "event_family_id": "ERA22FA279",
       "event_id": "ERA22FA279",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA22FA279.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -998,12 +1143,16 @@
       "source_chunk_ids": [
         "chk_0650fccf76d3dcfc2e52ef3f3f5194111aea36823d3be5c85dab678afdbf39e5"
       ],
+      "source_pages": [
+        33
+      ],
       "task_type": "grounded_extraction",
       "token_count": 339
     },
     {
       "event_family_id": "WPR19MA177",
       "event_id": "WPR19MA177",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/WPR19MA177.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1025,12 +1174,16 @@
       "source_chunk_ids": [
         "chk_03b6937d4a96fe0081e62dc87597819c89c156d382a2706b4c2ea4cf2b3a5468"
       ],
+      "source_pages": [
+        52
+      ],
       "task_type": "grounded_extraction",
       "token_count": 233
     },
     {
       "event_family_id": "WPR25FA088",
       "event_id": "WPR25FA088",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/WPR25FA088.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1052,12 +1205,16 @@
       "source_chunk_ids": [
         "chk_21137c1797ec558898a2712d8ea5352795afd1e6bfc27281153e60528a5675b5"
       ],
+      "source_pages": [
+        12
+      ],
       "task_type": "grounded_extraction",
       "token_count": 342
     },
     {
       "event_family_id": "ANC20MA010",
       "event_id": "ANC20MA010",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ANC20MA010.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1079,12 +1236,16 @@
       "source_chunk_ids": [
         "chk_01454451d7ec93f0ce92d00a7aae23a299ef6a6b095e8100f63aa7e365edb338"
       ],
+      "source_pages": [
+        100
+      ],
       "task_type": "grounded_extraction",
       "token_count": 282
     },
     {
       "event_family_id": "CEN19FA072",
       "event_id": "CEN19FA072",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19FA072.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1106,12 +1267,16 @@
       "source_chunk_ids": [
         "chk_0436dc6d4864d7bbc3571816c12ff43dd908a16472e84eb4c6e90b6608193b8d"
       ],
+      "source_pages": [
+        27
+      ],
       "task_type": "grounded_extraction",
       "token_count": 333
     },
     {
       "event_family_id": "CEN19MA141",
       "event_id": "CEN19MA141",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/CEN19MA141.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1133,12 +1298,16 @@
       "source_chunk_ids": [
         "chk_06cbeeb817b5784d503f3d5cf282ffd1ca3528a9d20c0ba5de125743a5e51b94"
       ],
+      "source_pages": [
+        3
+      ],
       "task_type": "grounded_extraction",
       "token_count": 293
     },
     {
       "event_family_id": "DCA18MA142",
       "event_id": "DCA18MA142",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA18MA142.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1160,12 +1329,16 @@
       "source_chunk_ids": [
         "chk_04a2bce00d28f523e0000c8c5518910831a9b9772e535fc8db7d4a30f48645f7"
       ],
+      "source_pages": [
+        82
+      ],
       "task_type": "grounded_extraction",
       "token_count": 231
     },
     {
       "event_family_id": "DCA19MA086",
       "event_id": "DCA19MA086",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA19MA086.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1187,12 +1360,16 @@
       "source_chunk_ids": [
         "chk_01f3bd1f6fc3b9132e001942313d894c51b8a09f8a7834e6e73af4c63a746208"
       ],
+      "source_pages": [
+        118
+      ],
       "task_type": "grounded_extraction",
       "token_count": 188
     },
     {
       "event_family_id": "DCA20MA002",
       "event_id": "DCA20MA002",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA20MA002.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1214,12 +1391,16 @@
       "source_chunk_ids": [
         "chk_015d9efc56f1ee103a8dbfa55effc0a502ed8301359105b4da2716d0f8cc3234"
       ],
+      "source_pages": [
+        100
+      ],
       "task_type": "grounded_extraction",
       "token_count": 353
     },
     {
       "event_family_id": "DCA23FA149",
       "event_id": "DCA23FA149",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23FA149.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1241,12 +1422,16 @@
       "source_chunk_ids": [
         "chk_0775ae70f9ade248fc00c96db0e64662def2ba1c88510f5b81c4726f91dd968e"
       ],
+      "source_pages": [
+        44
+      ],
       "task_type": "grounded_extraction",
       "token_count": 261
     },
     {
       "event_family_id": "DCA23LA125",
       "event_id": "DCA23LA125",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA23LA125.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1268,12 +1453,16 @@
       "source_chunk_ids": [
         "chk_0c561ac088669eef1502c33e4a417e99cb5fbefd12afc15464fc474c7778d24e"
       ],
+      "source_pages": [
+        39
+      ],
       "task_type": "grounded_extraction",
       "token_count": 366
     },
     {
       "event_family_id": "DCA24MA063",
       "event_id": "DCA24MA063",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/DCA24MA063.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1295,12 +1484,16 @@
       "source_chunk_ids": [
         "chk_02af064a46d09823cb1bebc1ac9d02bb1fb9e57ee734382bfff034c65382c515"
       ],
+      "source_pages": [
+        85
+      ],
       "task_type": "grounded_extraction",
       "token_count": 212
     },
     {
       "event_family_id": "ERA18MA099",
       "event_id": "ERA18MA099",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA18MA099.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1322,12 +1515,16 @@
       "source_chunk_ids": [
         "chk_03ac132ee2296008cd977a388ab06bd64cbe2f449bd7211964fb745d0cfae481"
       ],
+      "source_pages": [
+        94
+      ],
       "task_type": "grounded_extraction",
       "token_count": 217
     },
     {
       "event_family_id": "ERA22FA279",
       "event_id": "ERA22FA279",
+      "investigation_url": "https://www.ntsb.gov/investigations/Pages/ERA22FA279.aspx",
       "messages": [
         {
           "content": "You answer aviation-report questions using only the supplied excerpt. Return the grounded-json-v1 JSON object and cite an exact span.",
@@ -1348,6 +1545,9 @@
       "review_status": "sample_review_required",
       "source_chunk_ids": [
         "chk_06d98afa2c23074419427ea586aa53a56e2b08d3f05af0fb3be5ebb8acfd4f6c"
+      ],
+      "source_pages": [
+        20
       ],
       "task_type": "grounded_extraction",
       "token_count": 126

@@ -58,7 +58,9 @@ def build_sft_dataset(
         sentence = _best_sentence(chunk.text)
         if sentence is None:
             continue
-        record = _record(source, chunk.chunk_id, chunk.text, sentence)
+        record = _record(
+            source, chunk.chunk_id, chunk.text, sentence, chunk.page_start, chunk.page_end
+        )
         if record["token_count"] <= max_tokens:
             candidates[source.event_family_id].append(record)
 
@@ -113,7 +115,9 @@ def validate_sft_dataset(
             "event_id",
             "event_family_id",
             "report_id",
+            "investigation_url",
             "source_chunk_ids",
+            "source_pages",
             "messages",
             "task_type",
             "provenance",
@@ -134,6 +138,16 @@ def validate_sft_dataset(
             source.event_family_id,
         ):
             raise ValueError("SFT record crosses event provenance")
+        expected_url = f"https://www.ntsb.gov/investigations/Pages/{source.event_id}.aspx"
+        if record["investigation_url"] != expected_url:
+            raise ValueError("SFT investigation URL does not match event provenance")
+        pages = record["source_pages"]
+        if (
+            not isinstance(pages, list)
+            or not pages
+            or not all(type(page) is int and page > 0 for page in pages)
+        ):
+            raise ValueError("SFT source_pages must contain positive page numbers")
         chunk_ids = record["source_chunk_ids"]
         if not isinstance(chunk_ids, list) or not chunk_ids:
             raise ValueError("SFT record requires source_chunk_ids")
@@ -167,7 +181,14 @@ def write_sft_dataset(dataset: Mapping[str, object], path: Path) -> None:
     )
 
 
-def _record(source, chunk_id: str, chunk_text: str, sentence: str) -> dict[str, object]:  # type: ignore[no-untyped-def]
+def _record(  # type: ignore[no-untyped-def]
+    source,
+    chunk_id: str,
+    chunk_text: str,
+    sentence: str,
+    page_start: int,
+    page_end: int,
+) -> dict[str, object]:
     excerpt = _SPACE.sub(" ", chunk_text).strip()
     user = (
         f"Extract one aviation-safety fact from this report excerpt for event "
@@ -196,7 +217,9 @@ def _record(source, chunk_id: str, chunk_text: str, sentence: str) -> dict[str, 
         "event_id": source.event_id,
         "event_family_id": source.event_family_id,
         "report_id": source.source_document_id,
+        "investigation_url": (f"https://www.ntsb.gov/investigations/Pages/{source.event_id}.aspx"),
         "source_chunk_ids": [chunk_id],
+        "source_pages": list(range(page_start, page_end + 1)),
         "messages": messages,
         "task_type": "grounded_extraction",
         "provenance": "deterministic_train_chunk_derivation",
