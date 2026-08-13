@@ -16,7 +16,7 @@ from aerollm.retrieval.schemas import RetrievalResult
 from aerollm.serving.adapters import ExistingMistralAdapter
 from aerollm.serving.app import create_app
 from aerollm.serving.config import ServingConfig
-from aerollm.serving.contracts import RetrievedPassage, ServingDependencies
+from aerollm.serving.contracts import RetrievedPassage, ScopeValidationError, ServingDependencies
 from aerollm.serving.fakes import IdentityPostprocessor
 
 DEFAULT_PRODUCTION_CONFIG = Path("configs/serving/production_v1.toml")
@@ -130,17 +130,70 @@ class SearchIndex(Protocol):
     def search(self, query: str, *, k: int = 10) -> RetrievalResult: ...
 
 
-class CorpusSearchRetriever:
-    def __init__(self, corpus: CorpusManifest, index: SearchIndex) -> None:
-        self._chunks = {chunk.chunk_id: chunk.text for chunk in corpus.chunks}
-        self._index = index
+class FilteredSearchIndex:
+    def __init__(self, index: SearchIndex, allowed_ids: frozenset[str], corpus_size: int) -> None:
+        self._index, self._allowed_ids, self._corpus_size = index, allowed_ids, corpus_size
 
-    def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]:
-        result = self._index.search(query, k=top_k)
+    def search(self, query: str, *, k: int = 10) -> RetrievalResult:
+        result = self._index.search(query, k=self._corpus_size)
+        selected = [hit for hit in result.hits if hit.chunk_id in self._allowed_ids][:k]
+        from aerollm.retrieval.schemas import RetrievalHit
+
+        hits = tuple(
+            RetrievalHit(hit.chunk_id, rank, hit.score)
+            for rank, hit in enumerate(selected, start=1)
+        )
+        return RetrievalResult(query, result.index_id, hits, result.latency_ms)
+
+
+class CorpusSearchRetriever:
+    def __init__(
+        self, corpus: CorpusManifest, index: SearchIndex,
+        *, scoped_index_factory=None,
+    ) -> None:  # type: ignore[no-untyped-def]
+        documents = {document.document_id: document for document in corpus.documents}
+        sources = {source.sha256: source for source in corpus.sources}
+        self._chunks = {chunk.chunk_id: chunk.text for chunk in corpus.chunks}
+        self._provenance = {
+            chunk.chunk_id: sources[documents[chunk.document_id].source_sha256]
+            for chunk in corpus.chunks
+        }
+        self._index = index
+        self._scoped_index_factory = scoped_index_factory
+
+    def retrieve(
+        self, query: str, *, top_k: int, event_id: str | None = None,
+        report_id: str | None = None,
+    ) -> tuple[RetrievedPassage, ...]:
+        allowed = self._allowed_ids(event_id, report_id)
+        index = self._index
+        if allowed is not None:
+            index = self._scoped_index_factory(allowed) if self._scoped_index_factory else (
+                FilteredSearchIndex(index, allowed, len(self._chunks))
+            )
+        result = index.search(query, k=top_k)
         return tuple(
-            RetrievedPassage(hit.chunk_id, self._chunks[hit.chunk_id], hit.score)
+            RetrievedPassage(
+                hit.chunk_id, self._chunks[hit.chunk_id], hit.score,
+                self._provenance[hit.chunk_id].event_id,
+                self._provenance[hit.chunk_id].source_document_id,
+            )
             for hit in result.hits
         )
+
+    def _allowed_ids(
+        self, event_id: str | None, report_id: str | None,
+    ) -> frozenset[str] | None:
+        if event_id is None and report_id is None:
+            return None
+        allowed = frozenset(
+            chunk_id for chunk_id, source in self._provenance.items()
+            if (event_id is None or source.event_id == event_id)
+            and (report_id is None or source.source_document_id == report_id)
+        )
+        if not allowed:
+            raise ScopeValidationError("unknown or contradictory event/report scope")
+        return allowed
 
 
 def build_production_dependencies(config: ProductionConfig) -> ServingDependencies:
@@ -195,21 +248,35 @@ def build_production_retriever(
         raise ValueError("dense index corpus digest does not match serving corpus")
     if dense.manifest.chunk_ids != expected_chunk_ids:
         raise ValueError("dense index chunks do not match serving corpus")
-    hybrid = HybridIndex(
-        lexical, dense, lexical_index_id=lexical.manifest.index_id,
-        dense_index_id=dense.manifest.index_id, lexical_weight=config.lexical_weight,
-        rrf_constant=config.rrf_constant, candidate_k=config.hybrid_candidate_k,
-    )
+    def hybrid_index(allowed: frozenset[str] | None = None) -> HybridIndex:
+        lexical_index = lexical
+        dense_index = dense
+        if allowed is not None:
+            lexical_index = FilteredSearchIndex(lexical, allowed, len(corpus.chunks))
+            dense_index = FilteredSearchIndex(dense, allowed, len(corpus.chunks))
+        return HybridIndex(
+            lexical_index, dense_index, lexical_index_id=lexical.manifest.index_id,
+            dense_index_id=dense.manifest.index_id, lexical_weight=config.lexical_weight,
+            rrf_constant=config.rrf_constant, candidate_k=config.hybrid_candidate_k,
+        )
+
+    hybrid = hybrid_index()
     scorer = TransformersCrossEncoder.from_local_path(
         config.reranker_model_path, model_id=config.reranker_model_id,
         model_revision=config.reranker_model_revision, device=config.reranker_device,
         batch_size=config.reranker_batch_size,
     )
-    reranked = RerankedIndex(
-        hybrid, corpus.chunks, scorer, candidate_index_id=hybrid.manifest.index_id,
-        candidate_k=config.reranker_candidate_k,
+    def reranked_index(allowed: frozenset[str] | None = None) -> RerankedIndex:
+        candidates = hybrid if allowed is None else hybrid_index(allowed)
+        return RerankedIndex(
+            candidates, corpus.chunks, scorer,
+            candidate_index_id=candidates.manifest.index_id,
+            candidate_k=config.reranker_candidate_k,
+        )
+
+    return CorpusSearchRetriever(
+        corpus, reranked_index(), scoped_index_factory=reranked_index,
     )
-    return CorpusSearchRetriever(corpus, reranked)
 
 
 def create_production_app():  # type: ignore[no-untyped-def]

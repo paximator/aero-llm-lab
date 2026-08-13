@@ -12,6 +12,8 @@ class RetrievedPassage:
     chunk_id: str
     text: str
     score: float
+    event_id: str | None = None
+    report_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,7 +24,10 @@ class BackendAnswer:
 
 @runtime_checkable
 class Retriever(Protocol):
-    def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]: ...
+    def retrieve(
+        self, query: str, *, top_k: int, event_id: str | None = None,
+        report_id: str | None = None,
+    ) -> tuple[RetrievedPassage, ...]: ...
 
 
 @runtime_checkable
@@ -46,3 +51,7 @@ class ServingDependencies:
 
 
 DependencyInitializer = Callable[[], ServingDependencies]
+
+
+class ScopeValidationError(ValueError):
+    pass

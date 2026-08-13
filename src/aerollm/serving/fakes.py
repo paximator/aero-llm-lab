@@ -6,11 +6,15 @@ from aerollm.serving.contracts import BackendAnswer, RetrievedPassage
 
 
 class FakeRetriever:
-    def retrieve(self, query: str, *, top_k: int) -> tuple[RetrievedPassage, ...]:
+    def retrieve(
+        self, query: str, *, top_k: int, event_id: str | None = None,
+        report_id: str | None = None,
+    ) -> tuple[RetrievedPassage, ...]:
         digest = hashlib.sha256(query.encode("utf-8")).hexdigest()[:12]
         return tuple(
             RetrievedPassage(
                 f"fake-{digest}-{index}", f"Evidence {index} for: {query}", 1.0 / index,
+                event_id, report_id,
             )
             for index in range(1, min(top_k, 2) + 1)
         )
